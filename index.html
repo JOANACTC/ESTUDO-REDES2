@@ -173,6 +173,8 @@ td.n{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.84rem;
 .recipe{padding:16px 20px;margin-bottom:18px;display:grid;gap:8px;background:var(--butter-soft);box-shadow:none}
 .recipe ol{margin:0;padding-left:22px;display:grid;gap:2px}
 .qlist{display:grid;gap:12px}
+.f2aula{display:grid;gap:12px;margin-bottom:14px}.f2ah{display:flex;gap:12px;align-items:center;padding:6px 2px}.f2ah h3{font-size:1.15rem}.f2ah small{color:var(--muted);font-weight:700}
+.f2an{flex:none;font-family:var(--display);font-weight:700;background:var(--c);color:var(--on-accent);border-radius:14px;padding:6px 12px;white-space:nowrap}
 .qcard{padding:16px 20px;display:grid;gap:10px}
 .qcard .top{display:flex;gap:12px;align-items:flex-start}
 .qcard .nbig{font-family:var(--display);font-weight:700;font-size:1.2rem;min-width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:var(--c-soft);color:var(--c);flex:none}
@@ -364,7 +366,7 @@ textarea:focus{border-color:var(--c);outline:none}
 </section>
 
 <section class="view" id="v-folha2" hidden>
-  <div class="pagehead"><p class="eyebrow">Folha 2</p><h1>As 40 perguntas teóricas</h1><p class="lead">No teste sai uma do Bloco A (1–20) e uma do Bloco B (21–40). Para cada uma tens os 4 pontos que a correção procura: cada ponto vale 0,5.</p></div>
+  <div class="pagehead"><p class="eyebrow">Folha 2</p><h1>As 40 perguntas teóricas</h1><p class="lead">No teste sai uma do Bloco A (1–20) e uma do Bloco B (21–40). Estão organizadas pela aula de onde vêm. Para cada uma tens os 4 pontos que a correção procura: cada ponto vale 0,5.</p></div>
   <div class="recipe card"><h3>Receita para 2 valores, em 5–6 linhas</h3><ol><li>O que é e que problema resolve.</li><li>Como funciona: as ideias essenciais.</li><li>Os comandos, quando se aplicam.</li><li>Um exemplo com o teu plano: VLAN 243, 10.43.2.0/24, DSW1 e DSW2.</li></ol></div>
   <div class="f2-tools">
     <div class="seg" role="group" aria-label="Filtrar">
@@ -1489,23 +1491,33 @@ function showTopic(id, flash){
 
 /* ---------- folha 2: banco ---------- */
 let f2filter = "all";
+// Aula de cada pergunta da lista (confirmado nos PDFs das Aulas 01–06)
+const F2AULA = {1:2,2:2,3:3,4:3,5:2,6:3,7:2,8:2,9:3,10:2,11:3,12:3,13:3,14:2,15:2,16:2,17:2,18:3,19:2,20:2,
+  21:5,22:5,23:6,24:6,25:5,26:4,27:4,28:4,29:4,30:6,31:6,32:5,33:4,34:4,35:6,36:6,37:4,38:5,39:5,40:4};
+const AULAS = {2:["Aula 02","Comutação e VLANs","sky"],3:["Aula 03","Inter-VLAN e atribuição de endereços (DHCP, IPv6)","peach"],
+  4:["Aula 04","Spanning Tree (STP, RSTP, PVST+)","mint"],5:["Aula 05","EtherChannel e redundância do gateway (HSRP)","pink"],6:["Aula 06","Segurança na camada 2","lilac"]};
 function renderF2(){
   const known = store.get("rd2-known",{});
-  document.getElementById("f2list").innerHTML = F2.map(([n,ref,q,pts])=>{
-    const bloco = n<=20?"A":"B";
+  const card = ([n,ref,q,pts])=>{
+    const bloco = n<=20?"A":"B"; const a=AULAS[F2AULA[n]];
     return `<div class="qcard card${known[n]?" known":""}" id="f2-${n}" data-b="${bloco}" style="${tcv(ref)}">
       <div class="top"><span class="nbig">${n}</span><p class="qt">${esc(q)}</p></div>
-      <div class="row"><span class="chip" style="${cv(bloco==="A"?"sky":"mint")}">Bloco ${bloco}</span>${chip(ref)}
+      <div class="row"><span class="chip" style="${cv(a[2])}">${a[0]}</span><span class="chip" style="${cv(bloco==="A"?"sky":"mint")}">Bloco ${bloco}</span>${chip(ref)}
         <button class="btn soft small" data-open="${n}">Ver os 4 pontos</button>
         <label class="know"><input type="checkbox" data-know="${n}" ${known[n]?"checked":""}> Já sei responder</label></div>
       <div class="pontos" id="pt-${n}" hidden><span class="eyebrow">O que a resposta tem de ter (0,5 cada)</span><ol>${pts.map(p=>`<li>${esc(p)}</li>`).join("")}</ol></div>
-    </div>`;}).join("");
+    </div>`; };
+  document.getElementById("f2list").innerHTML = Object.keys(AULAS).map(Number).map(au=>{
+    const qs=F2.filter(f=>F2AULA[f[0]]===au); const [t,sub,c]=AULAS[au]; const bl=au<=3?"A":"B";
+    return `<section class="f2aula" data-b="${bl}" style="${cv(c)}"><div class="f2ah"><span class="f2an">${t}</span><div><h3>${esc(sub)}</h3><small>Bloco ${bl} · ${qs.length} perguntas: ${qs.map(f=>f[0]).join(", ")}</small></div></div>${qs.map(card).join("")}</section>`;
+  }).join("");
   document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>{const p=document.getElementById("pt-"+b.dataset.open); p.hidden=!p.hidden; b.textContent=p.hidden?"Ver os 4 pontos":"Esconder";}));
   document.querySelectorAll("[data-know]").forEach(cb=>cb.addEventListener("change",()=>{const k=store.get("rd2-known",{}); k[cb.dataset.know]=cb.checked; store.set("rd2-known",k); cb.closest(".qcard").classList.toggle("known",cb.checked); f2progress(); applyF2();}));
   f2progress(); applyF2();
 }
 function f2progress(){ const k=store.get("rd2-known",{}); const n=Object.values(k).filter(Boolean).length; document.getElementById("f2prog").textContent=`${n} de 40 já sei`; document.getElementById("f2bar").style.width=(n/40*100)+"%"; }
-function applyF2(){ const k=store.get("rd2-known",{}); document.querySelectorAll("#f2list .qcard").forEach(c=>{ const n=c.id.slice(3); c.hidden = (f2filter==="A"||f2filter==="B") ? c.dataset.b!==f2filter : (f2filter==="todo" ? !!k[n] : false); }); }
+function applyF2(){ const k=store.get("rd2-known",{}); document.querySelectorAll("#f2list .qcard").forEach(c=>{ const n=c.id.slice(3); c.hidden = (f2filter==="A"||f2filter==="B") ? c.dataset.b!==f2filter : (f2filter==="todo" ? !!k[n] : false); });
+  document.querySelectorAll("#f2list .f2aula").forEach(sec=>sec.hidden=![...sec.querySelectorAll(".qcard")].some(c=>!c.hidden)); }
 document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{ f2filter=b.dataset.f; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false")); applyF2(); }));
 
 /* ---------- testes ---------- */
