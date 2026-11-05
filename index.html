@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estudar RD2 com a NN 43</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: caderno de estudo em pastel; barra de separadores no topo, cartões por tema com cor própria, testes como folhas */
+:root{
+  --bg:#FBF5FF; --paper:#FFFFFF; --ink:#3A2C4D; --muted:#76688A; --line:#EADFF5;
+  --pink:#FF7EB0; --pink-soft:#FFE1EE;
+  --mint:#3FBF8F; --mint-soft:#DDF7EC;
+  --sky:#4DA3F0; --sky-soft:#DDEEFF;
+  --lilac:#9B7BF7; --lilac-soft:#ECE5FF;
+  --butter:#E8B400; --butter-soft:#FFF4CC;
+  --peach:#FF8A5B; --peach-soft:#FFE6DA;
+  --ok:#2FA874; --ok-soft:#DBF5E8; --bad:#E0466E; --bad-soft:#FFE0E8; --warn:#C98A00;
+  --code-bg:#F4EEFC; --on-accent:#FFFFFF;
+  --display:"Fredoka","Nunito",ui-rounded,system-ui,sans-serif;
+  --body:"Nunito",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1D1726; --paper:#2A2236; --ink:#F4ECFA; --muted:#BBAACB; --line:#3D3250;
+  --pink:#FF8DBA; --pink-soft:#4A2639; --mint:#5FD8A9; --mint-soft:#1F3E33;
+  --sky:#7DBCFF; --sky-soft:#1E3149; --lilac:#B49CFF; --lilac-soft:#352B55;
+  --butter:#FFD34D; --butter-soft:#40361A; --peach:#FFA47E; --peach-soft:#4A2D22;
+  --ok:#5FD8A9; --ok-soft:#1F3E33; --bad:#FF7A9C; --bad-soft:#4A2232; --warn:#FFD34D;
+  --code-bg:#231C2F; --on-accent:#1D1726; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1D1726; --paper:#2A2236; --ink:#F4ECFA; --muted:#BBAACB; --line:#3D3250;
+  --pink:#FF8DBA; --pink-soft:#4A2639; --mint:#5FD8A9; --mint-soft:#1F3E33;
+  --sky:#7DBCFF; --sky-soft:#1E3149; --lilac:#B49CFF; --lilac-soft:#352B55;
+  --butter:#FFD34D; --butter-soft:#40361A; --peach:#FFA47E; --peach-soft:#4A2D22;
+  --ok:#5FD8A9; --ok-soft:#1F3E33; --bad:#FF7A9C; --bad-soft:#4A2232; --warn:#FFD34D;
+  --code-bg:#231C2F; --on-accent:#1D1726; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.2;text-wrap:balance;margin:0}
+code,pre,.mono{font-family:var(--mono);font-size:.86em}
+a{color:inherit}
+button{font-family:var(--body);cursor:pointer}
+:focus-visible{outline:3px solid var(--lilac);outline-offset:2px;border-radius:8px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:2px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:12px;padding-block:10px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:1.15rem;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.blob{width:28px;height:28px;border-radius:50% 46% 52% 48%;background:conic-gradient(var(--pink),var(--butter),var(--mint),var(--sky),var(--lilac),var(--pink));flex:none}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+nav.tabs a{text-decoration:none;font-weight:800;font-size:.92rem;padding:7px 14px;border-radius:999px;background:var(--bg);border:2px solid var(--line);color:var(--muted)}
+nav.tabs a:hover{border-color:var(--lilac);color:var(--ink)}
+nav.tabs a[aria-current="page"]{background:var(--lilac);border-color:var(--lilac);color:var(--on-accent)}
+main{padding-block:24px 80px}
+.hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;background:var(--paper);border:2px solid var(--line);border-radius:28px;padding:24px 26px;margin-bottom:24px}
+.hero h1{font-size:clamp(1.6rem,4vw,2.3rem)}
+.hero p{margin:.4rem 0 0;color:var(--muted);max-width:60ch}
+.count{text-align:center;background:var(--pink-soft);border-radius:24px;padding:14px 22px;min-width:130px}
+.count b{display:block;font-family:var(--display);font-size:3rem;line-height:1;color:var(--pink);font-variant-numeric:tabular-nums}
+.count span{font-weight:800;font-size:.85rem;color:var(--muted)}
+@media (max-width:620px){.hero{grid-template-columns:1fr;padding:20px}.count{justify-self:start}}
+.parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:28px}
+.part{border-radius:22px;padding:16px 18px}
+.part h3{font-size:1.05rem;margin-bottom:4px}
+.part p{margin:0;font-size:.93rem}
+.part.p1{background:var(--sky-soft)} .part.p2{background:var(--butter-soft)} .part.p3{background:var(--mint-soft)}
+@media (max-width:760px){.parts{grid-template-columns:1fr}}
+.sec-title{display:flex;align-items:baseline;gap:10px;margin:8px 0 14px;flex-wrap:wrap}
+.sec-title h2{font-size:1.5rem}
+.sec-title small{color:var(--muted);font-weight:700}
+.cal{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.day{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.day.today{border-color:var(--pink);box-shadow:0 0 0 4px var(--pink-soft)}
+.day.done{opacity:.72}
+.day.done .dnum{text-decoration:line-through}
+.day.exam{background:var(--pink);border-color:var(--pink);color:var(--on-accent)}
+.day.exam .dwk{color:var(--on-accent)}
+.dhead{display:flex;align-items:center;gap:10px}
+.dnum{font-family:var(--display);font-weight:700;font-size:1.7rem;line-height:1;font-variant-numeric:tabular-nums}
+.dwk{font-weight:800;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.dtag{margin-left:auto;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--bg);color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.day.today .dtag{background:var(--pink);color:var(--on-accent)}
+.day ul{margin:0;padding-left:18px;font-size:.92rem}
+.day li{margin:2px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:var(--c-soft,var(--lilac-soft));color:var(--ink);border:1.5px solid transparent}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--c,var(--lilac))}
+.chip:hover{border-color:var(--c,var(--lilac))}
+.dcheck{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.85rem;color:var(--muted);margin-top:auto}
+.dcheck input{width:18px;height:18px;accent-color:var(--mint)}
+.day.exam .dcheck{display:none}
+.res-layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start}
+.toc{position:sticky;top:84px;background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:4px;max-height:calc(100vh - 110px);overflow:auto}
+.toc h4{font-size:.9rem;color:var(--muted);margin:2px 6px 6px}
+.toc a{text-decoration:none;font-weight:700;font-size:.88rem;padding:5px 8px;border-radius:10px;display:flex;gap:8px;align-items:center}
+.toc a::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.toc a:hover{background:var(--bg)}
+@media (max-width:860px){.res-layout{grid-template-columns:1fr}.toc{position:static;max-height:none;flex-direction:row;flex-wrap:wrap}.toc h4{width:100%}}
+.topic{background:var(--paper);border:2px solid var(--line);border-radius:26px;margin-bottom:18px;overflow:hidden;transition:box-shadow .4s}
+.topic.flash{box-shadow:0 0 0 5px var(--c)}
+.topic>header{background:var(--c-soft);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topic>header h3{font-size:1.25rem}
+.topic .num{width:34px;height:34px;border-radius:12px;background:var(--c);color:var(--on-accent);font-family:var(--display);font-weight:700;display:grid;place-items:center;flex:none}
+.topic .src{margin-left:auto;font-size:.78rem;font-weight:800;color:var(--muted)}
+.topic .body{padding:14px 20px 18px;display:grid;gap:12px}
+.topic .body>*{min-width:0}
+.topic ul{margin:0;padding-left:20px}
+.topic li{margin:3px 0}
+.topic p{margin:0}
+.box{border-radius:16px;padding:10px 14px}
+.box h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.box.trap{background:var(--peach-soft)} .box.trap h4{color:var(--peach)}
+.box.tip{background:var(--mint-soft)} .box.tip h4{color:var(--mint)}
+pre.cmd{background:var(--code-bg);border-radius:14px;padding:10px 14px;margin:0;overflow-x:auto;line-height:1.5;border-left:5px solid var(--c)}
+pre.cmd .c{color:var(--muted)}
+.tq{font-size:.85rem;color:var(--muted);font-weight:700}
+.tq b{color:var(--ink)}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{padding:6px 10px;border-bottom:1.5px solid var(--line);text-align:left;vertical-align:top}
+th{font-family:var(--display);font-weight:600;background:var(--bg)}
+td.n{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.84rem;white-space:nowrap}
+.test-head{background:var(--paper);border:2px solid var(--line);border-radius:26px;padding:18px 22px;margin-bottom:20px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+.test-head>div:first-child{min-width:0;flex:1 1 280px}
+.test-head h2{font-size:1.5rem}
+.test-head p{margin:2px 0 0;color:var(--muted);font-size:.93rem;max-width:62ch}
+.score{display:flex;gap:10px;flex-wrap:wrap}
+.pill{border-radius:16px;padding:8px 14px;text-align:center;background:var(--bg);min-width:96px}
+.pill b{display:block;font-family:var(--display);font-size:1.35rem;font-variant-numeric:tabular-nums}
+.pill span{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.folha{margin:26px 0 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.folha h3{font-size:1.25rem}
+.folha .tagf{font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:999px;background:var(--c-soft);color:var(--ink)}
+.q{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:14px 18px;margin-bottom:12px}
+.q.right{border-color:var(--ok)} .q.wrong{border-color:var(--bad)} .q.blank{border-color:var(--butter)}
+.qhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.qn{font-family:var(--display);font-weight:700;background:var(--c-soft);color:var(--ink);border-radius:10px;padding:1px 9px}
+.qsub{font-size:.78rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.qtext{font-weight:700;margin:0 0 8px}
+.opts{display:grid;gap:6px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:7px 12px;border-radius:14px;border:2px solid var(--line);cursor:pointer;background:var(--paper)}
+.opt:hover{border-color:var(--lilac)}
+.opt input{margin-top:5px;accent-color:var(--lilac);flex:none}
+.opt.is-correct{background:var(--ok-soft);border-color:var(--ok)}
+.opt.is-wrong{background:var(--bad-soft);border-color:var(--bad)}
+.sol{margin-top:10px;border-radius:16px;padding:10px 14px;background:var(--bg);font-size:.93rem;display:grid;gap:6px}
+.sol .verdict{font-weight:800}
+.right .verdict{color:var(--ok)} .wrong .verdict{color:var(--bad)} .blank .verdict{color:var(--warn)}
+.golink{justify-self:start;text-decoration:none;font-weight:800;font-size:.85rem;padding:5px 12px;border-radius:999px;background:var(--c-soft);border:2px solid var(--c)}
+.golink:hover{background:var(--c);color:var(--on-accent)}
+.exhibit{background:var(--code-bg);border-radius:14px;padding:10px 14px;margin:6px 0 10px;overflow-x:auto;white-space:pre;font-family:var(--mono);font-size:.82rem;line-height:1.45}
+.exh-title{font-weight:800;font-size:.85rem;color:var(--muted)}
+.fill{display:grid;grid-template-columns:minmax(0,1fr);gap:4px;margin:8px 0}
+.fill label{font-weight:700;font-size:.93rem}
+.fill input{font-family:var(--mono);font-size:.9rem;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink);width:100%}
+.fill input:focus{border-color:var(--lilac);outline:none}
+.fill.right input{border-color:var(--ok);background:var(--ok-soft)}
+.fill.wrong input{border-color:var(--bad);background:var(--bad-soft)}
+.fill .ans{font-size:.85rem}
+.fill .ans code{background:var(--code-bg);padding:1px 6px;border-radius:6px}
+.prompt-line{font-family:var(--mono);font-size:.84rem;color:var(--muted);margin:2px 0 6px}
+textarea{width:100%;min-height:130px;font-family:var(--body);font-size:.95rem;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--paper);color:var(--ink);resize:vertical}
+textarea:focus{border-color:var(--lilac);outline:none}
+.topics4{display:grid;gap:6px}
+.topics4 label{display:flex;gap:10px;align-items:flex-start;padding:6px 10px;border-radius:12px;background:var(--paper)}
+.topics4 input{margin-top:5px;accent-color:var(--mint);flex:none}
+details summary{cursor:pointer}
+details p{margin:.4rem 0 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0}
+.btn{border:none;border-radius:999px;padding:11px 22px;font-weight:800;font-size:1rem;background:var(--lilac);color:var(--on-accent)}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:var(--paper);color:var(--ink);border:2px solid var(--line)}
+.legend{font-size:.9rem;color:var(--muted);margin:0 0 10px}
+.result{background:var(--paper);border:2px solid var(--lilac);border-radius:22px;padding:14px 18px;margin:0 0 18px;display:grid;gap:6px}
+.result h3{font-size:1.15rem}
+.result p{margin:0}
+.back{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:6;border:none;border-radius:999px;padding:12px 18px;font-weight:800;background:var(--pink);color:var(--on-accent);box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.foot{color:var(--muted);font-size:.85rem;margin-top:30px}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <div class="brand"><span class="blob" aria-hidden="true"></span>RD2 · Teste 1</div>
+  <nav class="tabs" aria-label="Secções">
+    <a href="#calendario" data-view="calendario">Calendário</a>
+    <a href="#resumo" data-view="resumo">Resumo</a>
+    <a href="#teste-a" data-view="teste-a">Teste A</a>
+    <a href="#teste-b" data-view="teste-b">Teste B</a>
+    <a href="#teste-c" data-view="teste-c">Teste C</a>
+  </nav>
+</div></header>
+
+<main class="wrap">
+
+<section class="view" id="v-calendario">
+  <div class="hero">
+    <div>
+      <h1>Plano até 17 de novembro</h1>
+      <p>Um bocadinho por dia: primeiro as aulas 1 a 3, depois 4 a 6, e no fim o TP07 e os testes cronometrados. Marca cada dia quando o acabares. Está tudo com o teu NN = 43.</p>
+    </div>
+    <div class="count" aria-live="polite"><b id="daysLeft">12</b><span id="daysLabel">dias para o teste</span></div>
+  </div>
+  <div class="parts">
+    <div class="part p1"><h3>Folha 1 · 15 escolhas múltiplas</h3><p>Uma por subgrupo. Certa +1, errada −1/3, branco 0. Só responde se eliminares pelo menos 2 opções.</p></div>
+    <div class="part p2"><h3>Folha 2 · 2 teóricas</h3><p>Uma do Bloco A (pergs. 1–20) e uma do B (21–40). 2 valores cada: ideia, comandos, exemplo 10.43.d.0/24.</p></div>
+    <div class="part p3"><h3>Folha 3 · prática</h3><p>Parte A diagnóstico (ler shows) e Parte B configuração (comandos completos, um por linha), TP02 a TP07.</p></div>
+  </div>
+  <div class="sec-title"><h2>Dia a dia</h2><small>45 minutos de teste, sem consulta</small></div>
+  <div class="cal" id="cal"></div>
+</section>
+
+<section class="view" id="v-resumo" hidden>
+  <div class="sec-title"><h2>Resumo da matéria</h2><small>aulas 1–7 · TP02–TP07 · NN = 43</small></div>
+  <div class="res-layout">
+    <nav class="toc" id="toc" aria-label="Temas"><h4>Temas</h4></nav>
+    <div id="topics">
+
+<article class="topic" id="r-cenario" style="--c:var(--pink);--c-soft:var(--pink-soft)">
+  <header><span class="num">0</span><h3>O teu cenário (NN = 43)</h3><span class="src">TP03–TP07</span></header>
+  <div class="body">
+    <p>Quase todas as perguntas [Cenário] e toda a Folha 3 usam este plano. Sabe-o de cor.</p>
+    <div class="tbl"><table>
+      <tr><th>VLAN</th><th>Nome</th><th>Rede</th><th>Gateway (HSRP)</th><th>Ativo / raiz STP</th><th>Portas de acesso</th></tr>
+      <tr><td class="n">143</td><td>ADMIN-43</td><td class="n">10.43.1.0/24</td><td class="n">10.43.1.1</td><td>DSW1</td><td>ASW1 Fa0/1–8</td></tr>
+      <tr><td class="n">243</td><td>COMERCIAL-43</td><td class="n">10.43.2.0/24</td><td class="n">10.43.2.1</td><td>DSW2</td><td>ASW1 Fa0/9–16 · ASW2 Fa0/1–8</td></tr>
+      <tr><td class="n">343</td><td>TECNICO-43</td><td class="n">10.43.3.0/24</td><td class="n">10.43.3.1</td><td>DSW1</td><td>ASW2 Fa0/9–16 · ASW3 Fa0/1–8</td></tr>
+      <tr><td class="n">443</td><td>SERVIDORES-43</td><td class="n">10.43.4.0/24</td><td class="n">10.43.4.1</td><td>DSW2</td><td>ASW3 Fa0/9–16 (Server0 = 10.43.4.10)</td></tr>
+      <tr><td class="n">543</td><td>WIFI-CONV-43</td><td class="n">10.43.5.0/24</td><td class="n">10.43.5.1</td><td>DSW1</td><td>só pelo WLC (TP07)</td></tr>
+      <tr><td class="n">943</td><td>GESTAO-43</td><td class="n">10.43.9.0/24</td><td class="n">10.43.9.1</td><td>DSW1</td><td>ASW3 Fa0/20–23</td></tr>
+      <tr><td class="n">999</td><td>NATIVA-BLACKHOLE</td><td>—</td><td>—</td><td>—</td><td>nativa dos trunks e portas não usadas</td></tr>
+    </table></div>
+    <ul>
+      <li>SVIs: <b>DSW1 = .2</b>, <b>DSW2 = .3</b>, gateway virtual HSRP = <b>.1</b>. Regra fácil: VLAN ímpar (143, 343, 543, 943) é do DSW1, par (243, 443) é do DSW2.</li>
+      <li>ASW1–3: <b>Gi0/1 → DSW1</b> e <b>Gi0/2 → DSW2</b>. Nos DSW: Gi1/0/1–3 para os ASW e <b>Gi1/0/23–24 = Po1</b> entre DSW1 e DSW2.</li>
+      <li>Router Lisboa: Fa0/0 10.43.0.1/30 ↔ DSW1 Gi1/1/1 10.43.0.2; Fa1/0 10.43.0.5/30 ↔ DSW2 Gi1/1/1 10.43.0.6. RIPv2 entre eles.</li>
+      <li>DHCP no router: pools ADMIN-43, COMERCIAL-43, TECNICO-43, excluídos .1–.20, DNS 10.43.4.10, domínio minhaempresa.pt. Servidores e Gestão são estáticos.</li>
+      <li>TP07: WLC na ASW3 Fa0/21 (trunk), LAP na ASW1 Fa0/20 (acesso 943).</li>
+    </ul>
+  </div>
+</article>
+
+<article class="topic" id="r-gestao" style="--c:var(--lilac);--c-soft:var(--lilac-soft)">
+  <header><span class="num">1</span><h3>Gestão da configuração e SSH</h3><span class="src">Aula 1 · TP02</span></header>
+  <div class="body">
+    <ul>
+      <li><b>running-config</b> está na RAM (perde-se ao reiniciar); <b>startup-config</b> está na NVRAM. Guardar: <code>copy running-config startup-config</code>.</li>
+      <li><code>enable secret</code> guarda a palavra-passe com hash; <code>service password-encryption</code> só cifra (fraco) as que estão em texto.</li>
+      <li>SSH precisa de: hostname diferente de "Switch", <code>ip domain-name</code>, chaves RSA, utilizador local e vty só com SSH. Prefere-se ao Telnet porque cifra tudo, incluindo a palavra-passe.</li>
+      <li>Cópias de segurança: <code>copy running-config tftp</code>; repor com <code>copy tftp running-config</code>.</li>
+      <li>CDP (Cisco) e LLDP (norma) mostram os vizinhos: <code>show cdp neighbors detail</code>.</li>
+    </ul>
+    <pre class="cmd">hostname Lisboa-ASW1
+ip domain-name minhaempresa.pt
+crypto key generate rsa          <span class="c">! modulus 1024 ou mais</span>
+ip ssh version 2
+username admin secret Cisco123
+line vty 0 15
+ login local
+ transport input ssh</pre>
+    <div class="box trap"><h4>Pegadinha</h4><p>Sem hostname e domain-name o <code>crypto key generate rsa</code> não funciona. Para SSHv2 a chave tem de ter pelo menos 768 bits (usa 1024).</p></div>
+    <p class="tq">Teórica ligada: <b>19</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-comutacao" style="--c:var(--sky);--c-soft:var(--sky-soft)">
+  <header><span class="num">2</span><h3>Comutação e tabela MAC</h3><span class="src">Aula 2</span></header>
+  <div class="body">
+    <ul>
+      <li>O switch <b>aprende</b> o MAC de origem e a porta de entrada (tabela MAC/CAM, envelhece aos 300 s).</li>
+      <li>Destino conhecido: envia só para essa porta. Destino desconhecido, broadcast ou multicast: <b>inunda</b> todas as portas da mesma VLAN menos a de entrada.</li>
+      <li><b>Store-and-forward</b>: recebe a trama toda, verifica o FCS e descarta as erradas; mais latência, permite velocidades diferentes.</li>
+      <li><b>Cut-through</b>: começa logo após ler o MAC de destino. <i>Fast-forward</i> = só o destino (menor latência); <i>fragment-free</i> = lê os primeiros 64 bytes (apanha colisões).</li>
+      <li>Cada porta de switch é um <b>domínio de colisão</b>; cada VLAN é um <b>domínio de difusão</b>. Só um router (ou switch L3) separa domínios de difusão.</li>
+    </ul>
+    <div class="box tip"><h4>Conta rápida</h4><p>Switch de 24 portas, todas usadas, uma VLAN: 24 domínios de colisão e 1 de difusão. Com 3 VLANs: 24 e 3.</p></div>
+    <p class="tq">Teóricas ligadas: <b>2, 10, 16</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-vlans" style="--c:var(--mint);--c-soft:var(--mint-soft)">
+  <header><span class="num">3</span><h3>VLANs</h3><span class="src">Aula 2 · TP03</span></header>
+  <div class="body">
+    <ul>
+      <li>Gama normal <b>1–1005</b> (guardadas em <code>vlan.dat</code> na flash); gama estendida <b>1006–4094</b>. As 1002–1005 são reservadas.</li>
+      <li>Tipos: default (VLAN 1), dados, voz, gestão (943), nativa (999).</li>
+      <li>As VLANs dividem o domínio de difusão: hosts em VLANs diferentes só comunicam através de um equipamento de camada 3.</li>
+      <li>A gestão vai para uma VLAN própria (não a 1) para separar o acesso aos equipamentos do tráfego dos utilizadores.</li>
+      <li><b>VLAN de voz</b>: a porta de acesso leva os dados sem tag e a voz com tag 802.1Q (o telefone tem um mini-switch e o PC liga-se atrás).</li>
+    </ul>
+    <pre class="cmd">vlan 143
+ name ADMIN-43
+interface range fa0/1 - 8
+ switchport mode access
+ switchport access vlan 143
+<span class="c">! voz (exemplo genérico)</span>
+ switchport voice vlan 150
+show vlan brief</pre>
+    <div class="box trap"><h4>Pegadinha</h4><p>Portas trunk não aparecem no <code>show vlan brief</code>. Apagar uma VLAN deixa as portas dela inativas até as mudares.</p></div>
+    <p class="tq">Teóricas ligadas: <b>5, 7, 8, 17</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-trunks" style="--c:var(--butter);--c-soft:var(--butter-soft)">
+  <header><span class="num">4</span><h3>Trunks 802.1Q e DTP</h3><span class="src">Aula 2 · TP03</span></header>
+  <div class="body">
+    <ul>
+      <li>Trunk = uma ligação que transporta várias VLANs. O 802.1Q mete uma <b>tag de 4 bytes</b> (com o VLAN ID de 12 bits).</li>
+      <li>A <b>VLAN nativa</b> vai sem tag. No cenário é a <b>999</b>, igual nos dois lados (se for diferente: native VLAN mismatch, o CDP avisa e há fuga de tráfego entre VLANs).</li>
+      <li><code>switchport trunk allowed vlan 543</code> <b>substitui</b> a lista. Para acrescentar usa <code>allowed vlan add 543</code>.</li>
+      <li>DTP: <i>dynamic auto</i> + <i>dynamic auto</i> = acesso; <i>desirable</i> + auto/desirable/trunk = trunk. Desliga-se com <code>switchport nonegotiate</code> (evita switch spoofing).</li>
+      <li>No 3650 é preciso <code>switchport trunk encapsulation dot1q</code> antes de <code>switchport mode trunk</code>; no 2960 não.</li>
+    </ul>
+    <pre class="cmd">interface range gi0/1 - 2
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 143,243,343,443,943,999
+ switchport nonegotiate
+show interfaces trunk</pre>
+    <p class="tq">Teóricas ligadas: <b>1, 14, 15, 20</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-intervlan" style="--c:var(--peach);--c-soft:var(--peach-soft)">
+  <header><span class="num">5</span><h3>Encaminhamento inter-VLAN</h3><span class="src">Aula 3 · TP04</span></header>
+  <div class="body">
+    <ul>
+      <li><b>Router-on-a-stick</b>: um trunk até ao router e uma subinterface por VLAN com <code>encapsulation dot1Q</code>. Limitação: todo o tráfego entre VLANs sobe e desce o mesmo cabo.</li>
+      <li><b>Switch de camada 3</b>: uma SVI por VLAN + <code>ip routing</code>. Mais rápido (hardware) e escalável. É o que o cenário usa.</li>
+      <li>Uma SVI fica <b>up/up</b> se a VLAN existe, há pelo menos uma porta ativa nela (acesso ou trunk) e tem <code>no shutdown</code>.</li>
+      <li>Porta encaminhada no 3650: <code>no switchport</code> e um IP (ligação /30 ao router).</li>
+    </ul>
+    <pre class="cmd"><span class="c">! router-on-a-stick (fase A do TP04)</span>
+interface fa0/0.143
+ encapsulation dot1Q 143
+ ip address 10.43.1.1 255.255.255.0
+<span class="c">! switch L3 (DSW1)</span>
+ip routing
+interface vlan 143
+ ip address 10.43.1.2 255.255.255.0
+ no shutdown
+interface gi1/1/1
+ no switchport
+ ip address 10.43.0.2 255.255.255.252</pre>
+    <p class="tq">Teóricas ligadas: <b>4, 9, 13</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-dhcp" style="--c:var(--sky);--c-soft:var(--sky-soft)">
+  <header><span class="num">6</span><h3>DHCPv4 e relay</h3><span class="src">Aula 3 · TP04</span></header>
+  <div class="body">
+    <ul>
+      <li><b>DORA</b>: Discover (broadcast) → Offer → Request (broadcast) → Ack.</li>
+      <li>Concessão (lease): aos <b>50 % (T1)</b> o cliente pede renovação ao mesmo servidor (unicast); aos <b>87,5 % (T2)</b> pede a qualquer servidor (broadcast); no fim, perde o endereço.</li>
+      <li>Servidor noutra sub-rede: o router/SVI tem de fazer <b>relay</b> com <code>ip helper-address</code>, que transforma o broadcast em unicast e preenche o <b>giaddr</b> (assim o servidor escolhe o pool certo).</li>
+    </ul>
+    <pre class="cmd"><span class="c">! router Lisboa</span>
+ip dhcp excluded-address 10.43.2.1 10.43.2.20
+ip dhcp pool COMERCIAL-43
+ network 10.43.2.0 255.255.255.0
+ default-router 10.43.2.1
+ dns-server 10.43.4.10
+ domain-name minhaempresa.pt
+<span class="c">! DSW1 (no DSW2 o helper é 10.43.0.5)</span>
+interface vlan 243
+ ip helper-address 10.43.0.1
+show ip dhcp binding</pre>
+    <p class="tq">Teóricas ligadas: <b>3, 6</b> (o snooping está no tema 14)</p>
+  </div>
+</article>
+
+<article class="topic" id="r-ipv6" style="--c:var(--lilac);--c-soft:var(--lilac-soft)">
+  <header><span class="num">7</span><h3>IPv6: LLA, EUI-64, SLAAC e DHCPv6</h3><span class="src">Aula 1/3 · TP02</span></header>
+  <div class="body">
+    <ul>
+      <li><b>Link-local</b> (FE80::/10): criado sozinho em cada interface, só vale na ligação; é usado no NDP e como gateway (no cenário <code>fe80::1</code>).</li>
+      <li><b>EUI-64</b>: parte o MAC ao meio, mete <b>FFFE</b> no meio e inverte o <b>7.º bit</b>. 00:1A:2B:3C:4D:5E → 021A:2BFF:FE3C:4D5E. Muitos sistemas usam IDs aleatórios por privacidade (o MAC não fica exposto).</li>
+      <li>Flags do RA: <b>A=1</b> SLAAC; <b>O=1</b> DHCPv6 stateless (só DNS e afins); <b>M=1</b> DHCPv6 stateful (o endereço vem do servidor).</li>
+      <li>O router só envia RAs com <code>ipv6 unicast-routing</code>.</li>
+    </ul>
+    <div class="tbl"><table>
+      <tr><th>Método</th><th>A</th><th>O</th><th>M</th><th>Endereço vem de</th></tr>
+      <tr><td>SLAAC</td><td>1</td><td>0</td><td>0</td><td>prefixo do RA + ID próprio</td></tr>
+      <tr><td>SLAAC + DHCPv6 stateless</td><td>1</td><td>1</td><td>0</td><td>RA; DNS do DHCPv6</td></tr>
+      <tr><td>DHCPv6 stateful</td><td>0</td><td>0/1</td><td>1</td><td>servidor DHCPv6</td></tr>
+    </table></div>
+    <p class="tq">Teóricas ligadas: <b>11, 12, 18</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-stp" style="--c:var(--mint);--c-soft:var(--mint-soft)">
+  <header><span class="num">8</span><h3>STP: eleição, custos e papéis</h3><span class="src">Aula 4 · TP05</span></header>
+  <div class="body">
+    <ul>
+      <li>Sem STP, um ciclo dá <b>tempestade de broadcast</b>, tramas duplicadas e tabela MAC instável.</li>
+      <li><b>BID</b> = prioridade (múltiplo de <b>4096</b>, por omissão 32768) + VLAN ID (extended system ID) + MAC. Na VLAN 243: 32768 + 243 = 33011.</li>
+      <li><b>Root bridge</b> = menor BID (prioridades iguais → menor MAC).</li>
+      <li><b>Root port</b> (uma por switch não-raiz): menor custo até à raiz → menor BID do vizinho → menor port ID do vizinho.</li>
+      <li><b>Designated</b>: uma por segmento, a do lado com menor custo. <b>Alternate</b>: alternativa à root port, fica a bloquear.</li>
+      <li>Custos (curtos): 10 Mb/s = 100, 100 Mb/s = <b>19</b>, 1 Gb/s = <b>4</b>, 10 Gb/s = 2. Custo do caminho = soma dos custos das portas de entrada até à raiz.</li>
+    </ul>
+    <pre class="cmd"><span class="c">! DSW1 (o DSW2 faz o inverso)</span>
+spanning-tree vlan 143,343,943 root primary   <span class="c">! fica 24576</span>
+spanning-tree vlan 243,443 root secondary     <span class="c">! fica 28672</span>
+show spanning-tree vlan 243
+show spanning-tree root</pre>
+    <div class="box tip"><h4>Ler o show</h4><p>Num ASW1, na VLAN 243 (raiz DSW2): Gi0/2 = Root FWD; Gi0/1 = Altn BLK. Na VLAN 143 é ao contrário.</p></div>
+    <p class="tq">Teóricas ligadas: <b>26, 27, 34, 37, 40</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-rstp" style="--c:var(--butter);--c-soft:var(--butter-soft)">
+  <header><span class="num">9</span><h3>Temporizadores, RSTP, PVST+, PortFast</h3><span class="src">Aula 4 · TP05</span></header>
+  <div class="body">
+    <ul>
+      <li>802.1D: <b>hello 2 s</b>, <b>forward delay 15 s</b>, <b>max age 20 s</b>. Uma porta bloqueada que deixa de receber BPDU demora ≈ 20 + 15 + 15 = <b>50 s</b> a chegar a forwarding.</li>
+      <li>Estados 802.1D: blocking, listening, learning, forwarding (e disabled). <b>RSTP (802.1w)</b>: discarding, learning, forwarding; converge em poucos segundos com propostas e acordos.</li>
+      <li><b>PVST+</b> / <b>Rapid PVST+</b>: uma instância por VLAN, por isso cada VLAN pode ter uma raiz diferente e a carga divide-se entre DSW1 e DSW2.</li>
+      <li><b>PortFast</b>: a porta de acesso salta logo para forwarding. <b>BPDU Guard</b>: se chegar um BPDU nessa porta, passa a <b>err-disabled</b>. Usam-se juntos nas portas para hosts.</li>
+    </ul>
+    <pre class="cmd">spanning-tree mode rapid-pvst
+interface range fa0/1 - 16
+ spanning-tree portfast
+ spanning-tree bpduguard enable</pre>
+    <p class="tq">Teóricas ligadas: <b>28, 29, 33</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-ether" style="--c:var(--peach);--c-soft:var(--peach-soft)">
+  <header><span class="num">10</span><h3>EtherChannel</h3><span class="src">Aula 5 · TP05</span></header>
+  <div class="body">
+    <ul>
+      <li>Junta várias ligações físicas numa lógica (Po1): mais largura de banda, redundância, e o STP vê uma só porta (não bloqueia metade).</li>
+      <li><b>LACP</b> (802.3ad, norma): active / passive. <b>PAgP</b> (Cisco): desirable / auto. <b>on</b> = estático, sem negociação.</li>
+      <li>Forma canal: active+active, active+passive, desirable+desirable, desirable+auto, on+on. <b>Não forma</b>: passive+passive, auto+auto, ou misturar LACP com PAgP.</li>
+      <li>LACP: até 16 portas configuradas, <b>8 ativas</b>. As portas têm de ter a mesma velocidade, duplex, modo e VLANs.</li>
+    </ul>
+    <pre class="cmd">interface range gi1/0/23 - 24
+ channel-group 1 mode active
+interface port-channel 1
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 999
+show etherchannel summary     <span class="c">! bom: Po1(SU) e portas (P)</span></pre>
+    <div class="box trap"><h4>Flags</h4><p>S = camada 2, U = em uso, P = agregada. Mau sinal: D (down), I (stand-alone), s (suspensa).</p></div>
+    <p class="tq">Teóricas ligadas: <b>25, 38, 39</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-hsrp" style="--c:var(--pink);--c-soft:var(--pink-soft)">
+  <header><span class="num">11</span><h3>FHRP e HSRP</h3><span class="src">Aula 5 · TP06</span></header>
+  <div class="body">
+    <ul>
+      <li>Problema: os PCs só têm um gateway. Um <b>FHRP</b> dá um IP e um MAC virtuais partilhados por dois routers/switches L3.</li>
+      <li>HSRP: um <b>Active</b> responde ao IP virtual, um <b>Standby</b> espera. Estados: Initial → Learn → Listen → Speak → Standby → Active.</li>
+      <li>Prioridade por omissão <b>100</b>; ganha a maior; empate → maior IP. Sem <b>preempt</b>, quem volta não recupera o papel.</li>
+      <li>Hello 3 s, hold 10 s. MAC virtual: v1 <code>0000.0C07.ACxx</code> (grupo em hex, até 255); v2 <code>0000.0C9F.Fxxx</code> (até 4095).</li>
+      <li>HSRP e VRRP: um ativo de cada vez (VRRP é norma, "master/backup"). <b>GLBP</b> (Cisco) divide a carga por vários gateways ativos.</li>
+      <li>Active/Active nos dois DSW = não recebem os hellos um do outro (p. ex. a VLAN não passa no Po1).</li>
+    </ul>
+    <pre class="cmd"><span class="c">! DSW1, VLAN 143 (ativo)</span>
+interface vlan 143
+ ip address 10.43.1.2 255.255.255.0
+ standby version 2
+ standby 143 ip 10.43.1.1
+ standby 143 priority 110
+ standby 143 preempt
+show standby brief</pre>
+    <p class="tq">Teóricas ligadas: <b>21, 22, 32</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-show" style="--c:var(--sky);--c-soft:var(--sky-soft)">
+  <header><span class="num">12</span><h3>Comandos de verificação</h3><span class="src">todos os TPs</span></header>
+  <div class="body">
+    <div class="tbl"><table>
+      <tr><th>Quero ver…</th><th>Comando</th></tr>
+      <tr><td>Em que VLAN está cada porta de acesso</td><td><code>show vlan brief</code></td></tr>
+      <tr><td>Trunks, nativa e VLANs permitidas/ativas</td><td><code>show interfaces trunk</code></td></tr>
+      <tr><td>Modo administrativo/operacional de uma porta</td><td><code>show interfaces fa0/5 switchport</code></td></tr>
+      <tr><td>Estado e IP das interfaces e SVIs</td><td><code>show ip interface brief</code></td></tr>
+      <tr><td>Onde está um MAC</td><td><code>show mac address-table</code></td></tr>
+      <tr><td>Raiz, papéis e estados STP</td><td><code>show spanning-tree vlan 243</code> · <code>show spanning-tree root</code></td></tr>
+      <tr><td>EtherChannel</td><td><code>show etherchannel summary</code></td></tr>
+      <tr><td>HSRP</td><td><code>show standby brief</code></td></tr>
+      <tr><td>Port security</td><td><code>show port-security interface fa0/1</code></td></tr>
+      <tr><td>Portas err-disabled</td><td><code>show interfaces status</code></td></tr>
+      <tr><td>DHCP</td><td><code>show ip dhcp binding</code> · <code>show ip dhcp snooping binding</code></td></tr>
+      <tr><td>Rotas</td><td><code>show ip route</code></td></tr>
+      <tr><td>Wi-Fi no WLC</td><td><code>show wlan summary</code> · <code>show ap summary</code></td></tr>
+    </table></div>
+  </div>
+</article>
+
+<article class="topic" id="r-ataques" style="--c:var(--peach);--c-soft:var(--peach-soft)">
+  <header><span class="num">13</span><h3>Ataques à camada 2</h3><span class="src">Aula 6 · TP06</span></header>
+  <div class="body">
+    <div class="tbl"><table>
+      <tr><th>Ataque</th><th>O que faz</th><th>Defesa</th></tr>
+      <tr><td>MAC flooding</td><td>enche a tabela MAC; o switch passa a inundar e o atacante escuta</td><td>port security</td></tr>
+      <tr><td>DHCP starvation</td><td>pede endereços com MACs falsos até esgotar o pool</td><td>port security, DHCP snooping limit rate</td></tr>
+      <tr><td>DHCP spoofing</td><td>servidor DHCP falso dá gateway/DNS do atacante</td><td>DHCP snooping (trust só nos uplinks)</td></tr>
+      <tr><td>ARP spoofing</td><td>ARP falsos associam o MAC do atacante ao IP do gateway (man-in-the-middle)</td><td>DAI</td></tr>
+      <tr><td>Switch spoofing</td><td>o atacante negoceia um trunk por DTP</td><td>modo access fixo, nonegotiate</td></tr>
+      <tr><td>Double tagging</td><td>duas tags; funciona se a VLAN do atacante for a nativa</td><td>nativa não usada (999)</td></tr>
+      <tr><td>Ataque STP</td><td>envia BPDUs para ser raiz</td><td>BPDU Guard, Root Guard</td></tr>
+    </table></div>
+    <p class="tq">Teóricas ligadas: <b>23, 24, 31, 35, 36</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-portsec" style="--c:var(--lilac);--c-soft:var(--lilac-soft)">
+  <header><span class="num">14</span><h3>Port security, DHCP snooping e DAI</h3><span class="src">Aula 6 · TP06</span></header>
+  <div class="body">
+    <ul>
+      <li>Port security: <b>maximum</b> (por omissão 1), <b>sticky</b> (os MACs aprendidos vão para a running-config; guarda com copy run start).</li>
+      <li>Violação: <b>shutdown</b> (omissão, porta err-disabled), <b>restrict</b> (descarta, regista e conta), <b>protect</b> (descarta sem registar). O plano usa <b>restrict</b>, máximo 2.</li>
+      <li>Recuperar de err-disabled: <code>shutdown</code> e depois <code>no shutdown</code>.</li>
+      <li>DHCP snooping: portas <b>untrusted</b> por omissão; <b>trust</b> nos uplinks Gi0/1–2 (por onde vêm as respostas legítimas). Cria a tabela de bindings.</li>
+      <li>A DAI usa essa tabela para validar os ARP; também com <b>trust</b> nos uplinks.</li>
+    </ul>
+    <pre class="cmd">interface range fa0/1 - 16
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ ip dhcp snooping limit rate 10
+ip dhcp snooping
+ip dhcp snooping vlan 143,243,343
+ip arp inspection vlan 143,243,343
+interface range gi0/1 - 2
+ ip dhcp snooping trust
+ ip arp inspection trust</pre>
+    <p class="tq">Teóricas ligadas: <b>23, 24, 36</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-praticas" style="--c:var(--mint);--c-soft:var(--mint-soft)">
+  <header><span class="num">15</span><h3>Boas práticas nas portas</h3><span class="src">Aula 6 · TP05/06</span></header>
+  <div class="body">
+    <ul>
+      <li>Portas não usadas: <code>switchport mode access</code>, <code>switchport access vlan 999</code>, <code>shutdown</code>.</li>
+      <li>Portas de acesso: modo access fixo, PortFast + BPDU Guard, port security, <code>no cdp enable</code>.</li>
+      <li>Trunks: modo trunk fixo, <code>switchport nonegotiate</code>, nativa 999 (não usada por ninguém), só as VLANs precisas em allowed.</li>
+      <li>Nada na VLAN 1; gestão na 943 e acesso só por SSH.</li>
+    </ul>
+    <p class="tq">Teórica ligada: <b>30</b></p>
+  </div>
+</article>
+
+<article class="topic" id="r-wifi" style="--c:var(--sky);--c-soft:var(--sky-soft)">
+  <header><span class="num">16</span><h3>Wi-Fi com WLC</h3><span class="src">Aula 7 · TP07</span></header>
+  <div class="body">
+    <ul>
+      <li>AP <b>autónomo</b> configura-se um a um; AP <b>lightweight (LAP)</b> é gerido por um <b>WLC</b> através de um túnel <b>CAPWAP</b>.</li>
+      <li>O WLC liga-se por <b>trunk</b> (ASW3 Fa0/21, nativa 999); os LAP ligam-se a portas de acesso da VLAN 943.</li>
+      <li>Dois SSIDs: colaboradores → VLAN <b>343</b>; convidados → VLAN <b>543</b>. Ambos WPA2-PSK com AES. O WPA3 troca o PSK por SAE (mais seguro contra ataques de dicionário).</li>
+      <li>Bandas: 2,4 GHz (canais 1, 6 e 11 não se sobrepõem) e 5 GHz (mais canais, menos alcance).</li>
+    </ul>
+    <pre class="cmd">vlan 543
+ name WIFI-CONV-43
+interface range gi1/0/1 - 3
+ switchport trunk allowed vlan add 543
+interface vlan 543
+ ip address 10.43.5.2 255.255.255.0
+ standby version 2
+ standby 543 ip 10.43.5.1
+ standby 543 priority 110
+ standby 543 preempt</pre>
+    <div class="box trap"><h4>Atenção</h4><p>Na FUC o Wi-Fi é matéria do T2. Estuda a parte cablada (VLAN, trunk, SVI, HSRP) e confirma com o professor.</p></div>
+  </div>
+</article>
+
+<article class="topic" id="r-teoricas" style="--c:var(--butter);--c-soft:var(--butter-soft)">
+  <header><span class="num">17</span><h3>Como responder às teóricas</h3><span class="src">Lista de estudo</span></header>
+  <div class="body">
+    <p>Cada resposta vale 2 valores, em 4 tópicos de 0,5. Escreve 5–6 linhas com esta receita:</p>
+    <ul>
+      <li><b>1.</b> O que é e que problema resolve.</li>
+      <li><b>2.</b> Como funciona (as ideias essenciais).</li>
+      <li><b>3.</b> Os comandos, quando há.</li>
+      <li><b>4.</b> Um exemplo com o teu plano (VLAN 243, 10.43.2.0/24, DSW1/DSW2).</li>
+    </ul>
+    <div class="tbl"><table>
+      <tr><th>Bloco A (sai 1)</th><th>Perguntas</th><th>Bloco B (sai 1)</th><th>Perguntas</th></tr>
+      <tr><td>Comutação</td><td class="n">2, 10, 16</td><td>STP</td><td class="n">26, 27, 28, 29, 33, 34, 37, 40</td></tr>
+      <tr><td>VLANs e trunks</td><td class="n">1, 5, 7, 8, 14, 15, 17, 20</td><td>EtherChannel</td><td class="n">25, 38, 39</td></tr>
+      <tr><td>Inter-VLAN</td><td class="n">4, 9, 13</td><td>FHRP/HSRP</td><td class="n">21, 22, 32</td></tr>
+      <tr><td>DHCPv4</td><td class="n">3, 6</td><td>Segurança</td><td class="n">23, 24, 30, 31, 35, 36</td></tr>
+      <tr><td>IPv6</td><td class="n">11, 12, 18</td><td></td><td></td></tr>
+      <tr><td>Gestão segura</td><td class="n">19</td><td></td><td></td></tr>
+    </table></div>
+  </div>
+</article>
+
+    </div>
+  </div>
+</section>
+
+<section class="view" id="v-teste-a" hidden></section>
+<section class="view" id="v-teste-b" hidden></section>
+<section class="view" id="v-teste-c" hidden></section>
+
+<p class="foot">Feito a partir das aulas 1–7, dos TP02–TP07, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
+</main>
+
+<button class="back" id="backBtn" hidden>Voltar ao teste</button>
+
+<script>
+const TOPICS = {
+  "r-cenario":["O teu cenário","pink"], "r-gestao":["Gestão e SSH","lilac"], "r-comutacao":["Comutação","sky"],
+  "r-vlans":["VLANs","mint"], "r-trunks":["Trunks e DTP","butter"], "r-intervlan":["Inter-VLAN","peach"],
+  "r-dhcp":["DHCPv4","sky"], "r-ipv6":["IPv6","lilac"], "r-stp":["STP eleição","mint"], "r-rstp":["STP tempos e RSTP","butter"],
+  "r-ether":["EtherChannel","peach"], "r-hsrp":["HSRP","pink"], "r-show":["Comandos show","sky"], "r-ataques":["Ataques L2","peach"],
+  "r-portsec":["Port security","lilac"], "r-praticas":["Boas práticas","mint"], "r-wifi":["Wi-Fi WLC","sky"], "r-teoricas":["Teóricas","butter"]
+};
+const cvar = k => `--c:var(--${TOPICS[k][1]});--c-soft:var(--${TOPICS[k][1]}-soft)`;
+const chip = k => `<a class="chip" href="#${k}" style="${cvar(k)}">${TOPICS[k][0]}</a>`;
+
+const DAYS = [
+  {d:5, w:"qui", tag:"Bloco A", items:["Aula 1 e TP02: SSH, cópias, CDP","Decorar a tabela do cenário"], t:["r-cenario","r-gestao","r-ipv6"]},
+  {d:6, w:"sex", tag:"Bloco A", items:["Aula 2: comutação e VLANs","Teóricas 2, 10, 16"], t:["r-comutacao","r-vlans"]},
+  {d:7, w:"sáb", tag:"Bloco A", items:["TP03: VLANs, trunks, DTP","Teóricas 1, 7, 14, 15, 20"], t:["r-trunks","r-show"]},
+  {d:8, w:"dom", tag:"Bloco A", items:["Aula 3 e TP04: inter-VLAN, DHCP, IPv6","Teóricas 3, 4, 6, 13, 18"], t:["r-intervlan","r-dhcp","r-ipv6"]},
+  {d:9, w:"seg", tag:"Treino", items:["Fazer o Teste A","Rever o que falhou (segue os links)"], t:["r-teoricas"], test:["teste-a","Teste A"]},
+  {d:10, w:"ter", tag:"Bloco B", items:["Aula 4: STP, custos, papéis","TP05 parte STP","Teóricas 26, 27, 34, 40"], t:["r-stp","r-rstp"]},
+  {d:11, w:"qua", tag:"Bloco B", items:["Aula 5: EtherChannel e HSRP","TP05 Po1 e TP06 HSRP","Teóricas 21, 22, 25, 38"], t:["r-ether","r-hsrp"]},
+  {d:12, w:"qui", tag:"Bloco B", items:["Aula 6: segurança L2","TP06 port security, snooping, DAI","Teóricas 23, 24, 30, 31, 36"], t:["r-ataques","r-portsec","r-praticas"]},
+  {d:13, w:"sex", tag:"Treino", items:["Fazer o Teste B","Escrever 3 teóricas à mão"], t:["r-teoricas"], test:["teste-b","Teste B"]},
+  {d:14, w:"sáb", tag:"TP07", items:["Aula 7 e TP07: Wi-Fi e WLC","Rever todos os comandos show"], t:["r-wifi","r-show"]},
+  {d:15, w:"dom", tag:"Treino", items:["Teste C cronometrado: 45 min","Corrigir e rever os erros"], t:["r-cenario"], test:["teste-c","Teste C"]},
+  {d:16, w:"seg", tag:"Revisão", items:["Repetir o teste que correu pior","Ler as pegadinhas do resumo","Dormir cedo"], t:["r-trunks","r-hsrp","r-stp"]},
+  {d:17, w:"ter", tag:"Teste", items:["Teste 1 de RD2","Lembra-te: a errada desconta 1/3"], t:[], exam:true}
+];
+const store = {
+  get(k,f){try{const v=localStorage.getItem(k);return v===null?f:JSON.parse(v)}catch(e){return f}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+function renderCal(){
+  const done = store.get("rd2-done",{});
+  const now = new Date(); const todayD = (now.getFullYear()===2026 && now.getMonth()===10) ? now.getDate() : null;
+  document.getElementById("cal").innerHTML = DAYS.map(x=>`
+    <div class="day${x.exam?" exam":""}${x.d===todayD?" today":""}${done[x.d]?" done":""}">
+      <div class="dhead"><span class="dnum">${x.d}</span><span class="dwk">${x.w} · nov</span><span class="dtag">${x.d===todayD?"hoje":x.tag}</span></div>
+      <ul>${x.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      <div class="chips">${x.t.map(chip).join("")}${x.test?`<a class="chip" href="#${x.test[0]}" style="--c:var(--pink);--c-soft:var(--pink-soft)">${x.test[1]}</a>`:""}</div>
+      <label class="dcheck"><input type="checkbox" id="day-${x.d}" ${done[x.d]?"checked":""}> Feito</label>
+    </div>`).join("");
+  document.querySelectorAll(".dcheck input").forEach(cb=>cb.addEventListener("change",e=>{
+    const d=+e.target.id.split("-")[1]; const m=store.get("rd2-done",{}); m[d]=e.target.checked; store.set("rd2-done",m);
+    e.target.closest(".day").classList.toggle("done",e.target.checked);
+  }));
+  const exam = new Date(2026,10,17); const t0 = new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const left = Math.round((exam - t0)/86400000);
+  document.getElementById("daysLeft").textContent = left>0?left:(left===0?"Hoje":"✓");
+  document.getElementById("daysLabel").textContent = left>1?"dias para o teste":left===1?"dia para o teste":left===0?"é o dia do teste":"teste feito";
+}
+document.getElementById("toc").insertAdjacentHTML("beforeend", Object.keys(TOPICS).map(k=>`<a href="#${k}" style="${cvar(k)}">${TOPICS[k][0]}</a>`).join(""));
+
+const SUB = ["Gestão da configuração","Métodos de comutação","VLANs","Trunks 802.1Q","SVIs e inter-VLAN","DHCPv4","IPv6: SLAAC e DHCPv6","STP: eleição","STP: temporizadores e RSTP","EtherChannel","HSRP","Comandos de verificação","Ataques à camada 2","Port security","Boas práticas"];
+const SUBREF = ["r-gestao","r-comutacao","r-vlans","r-trunks","r-intervlan","r-dhcp","r-ipv6","r-stp","r-rstp","r-ether","r-hsrp","r-show","r-ataques","r-portsec","r-praticas"];
+const NONE = "Nenhuma das outras opções.";
+
+const TESTS = {
+"teste-a": {
+  title:"Teste A", sub:"Aulas 1–6, com foco em VLANs, trunks e STP",
+  mc:[
+    ["Antes de o comando crypto key generate rsa funcionar, o switch precisa de ter configurado:",["enable secret","Um hostname diferente de Switch e ip domain-name","username com privilege 15","transport input ssh nas linhas vty",NONE],1,"As chaves RSA são nomeadas com hostname + domínio. O transport input ssh vem depois, nas vty."],
+    ["Um switch recebe uma trama unicast cujo MAC de destino não está na tabela MAC. O que faz?",["Descarta a trama","Devolve-a pela porta de entrada","Inunda-a por todas as portas da mesma VLAN, exceto a de entrada","Envia-a ao gateway por omissão",NONE],2,"Unicast desconhecido é inundado na VLAN. Quando o destino responder, o switch aprende o MAC."],
+    ["Onde guarda um Catalyst 2960 as VLANs de gama normal?",["Na startup-config","Na running-config","No ficheiro vlan.dat na flash","Na NVRAM, em vlan.cfg",NONE],2,"As VLANs 1–1005 ficam no vlan.dat. Por isso apagar a startup-config não apaga as VLANs."],
+    ["[Cenário] Um trunk tem allowed vlan 143,243,343,443,943,999. Escreve-se switchport trunk allowed vlan 543. Qual é o resultado?",["A 543 é acrescentada à lista","A lista passa a ter só a VLAN 543","Dá erro porque a 543 não existe","A 543 passa a ser a nativa",NONE],1,"Sem add, a lista é substituída e o trunk deixa de levar as outras VLANs. O certo é allowed vlan add 543."],
+    ["No router-on-a-stick, que comando associa a subinterface Fa0/0.243 à VLAN 243?",["switchport access vlan 243","encapsulation dot1Q 243","vlan 243","standby 243",NONE],1,"Cada subinterface leva encapsulation dot1Q com o VLAN ID e depois o IP do gateway."],
+    ["[Cenário] Os PCs da VLAN 143 recebem endereço do router Lisboa, que está noutra sub-rede. O que tem de existir na interface vlan 143 do DSW1?",["ip dhcp pool ADMIN-43","ip helper-address 10.43.0.1","ip dhcp snooping trust","ip default-gateway 10.43.0.1",NONE],1,"O helper-address faz o relay para o router (10.43.0.1 no DSW1, 10.43.0.5 no DSW2)."],
+    ["Um Router Advertisement chega com A=1, O=1 e M=0. O que fazem os hosts?",["Pedem o endereço a um servidor DHCPv6 stateful","Criam o endereço por SLAAC e pedem o DNS e afins ao DHCPv6 (stateless)","Usam só SLAAC e não falam com DHCPv6","Ficam só com o link-local",NONE],1,"O = Other configuration = DHCPv6 stateless. M = stateful."],
+    ["Em PVST+, a prioridade STP que se configura tem de ser múltipla de:",["1","256","1024","4096",NONE],3,"Os 12 bits de baixo são o extended system ID (a VLAN), por isso a prioridade anda de 4096 em 4096."],
+    ["Quais são os estados de porta do RSTP (802.1w)?",["Blocking, listening, learning, forwarding","Discarding, learning, forwarding","Disabled, blocking, forwarding","Listening, forwarding",NONE],1,"O RSTP junta disabled, blocking e listening num só estado: discarding."],
+    ["Os dois lados de um EtherChannel LACP estão em mode passive. O que acontece?",["Forma-se o EtherChannel","Não se forma: nenhum lado inicia a negociação","Forma-se com PAgP","Só se forma com o STP desligado",NONE],1,"Pelo menos um lado tem de estar em active."],
+    ["[Cenário] O DSW1 (prioridade 110 na VLAN 143) reinicia e volta. Para voltar a ser Active precisa de:",["Nada, recupera sempre o papel","standby 143 preempt","standby 143 priority 255","standby version 2",NONE],1,"Sem preempt, o DSW2 continua Active até falhar."],
+    ["Que comando mostra os trunks, a VLAN nativa e as VLANs permitidas em cada um?",["show vlan brief","show interfaces trunk","show ip interface brief","show spanning-tree",NONE],1,"O show vlan brief não mostra trunks."],
+    ["No ataque de double tagging, o atacante:",["Envia BPDUs com prioridade 0","Está numa porta de acesso da VLAN nativa do trunk e envia tramas com duas tags","Negoceia um trunk por DTP","Enche a tabela MAC",NONE],1,"O primeiro switch tira a tag exterior (nativa) e o seguinte lê a interior. Defesa: nativa não usada (999)."],
+    ["Qual é o modo de violação de port security por omissão?",["protect","restrict","shutdown","drop",NONE],2,"O shutdown põe a porta em err-disabled."],
+    ["Onde se deve ativar o PortFast?",["Nos trunks entre DSW1 e DSW2","Nas portas de acesso ligadas a PCs e impressoras","No Po1","Nas portas encaminhadas para o router",NONE],1,"Só em portas para hosts. Num trunk pode criar ciclos temporários."]
+  ],
+  theory:[
+    {n:1, bloco:"A", ref:"r-trunks", q:"Um PC da VLAN 243 ligado ao ASW2 não comunica com a sua gateway no DSW1. Indique causas possíveis nas portas de acesso e no trunk e o comando show que revela cada uma.",
+     topics:["Porta de acesso na VLAN errada ou em dynamic auto → show vlan brief / show interfaces fa0/x switchport","VLAN 243 não permitida no trunk Gi0/1 (falta allowed vlan add) → show interfaces trunk","Native VLAN mismatch ou trunk não formado (DTP, nonegotiate de um lado só) → show interfaces trunk","Porta em shutdown ou err-disabled (port security, BPDU Guard) → show interfaces status / show port-security"],
+     model:"Primeiro vejo a porta de acesso: com show vlan brief confirmo se a Fa0/x do ASW2 está na VLAN 243 (Fa0/1–8) e com show interfaces fa0/x switchport se o modo operacional é static access. Depois o uplink Gi0/1 para o DSW1: show interfaces trunk mostra se está em trunking, se a nativa é 999 nos dois lados e se a 243 está na lista de permitidas e ativas. Se alguém escreveu allowed vlan sem add, a 243 desaparece. Por fim, show interfaces status revela portas err-disabled por port security ou BPDU Guard. Exemplo: PC 10.43.2.21, gateway 10.43.2.1."},
+    {n:26, bloco:"B", ref:"r-stp", q:"Descreva a eleição da root bridge e a escolha das root ports no STP.",
+     topics:["BPDUs com o BID = prioridade + VLAN (extended system ID) + MAC; ganha o menor","Prioridades iguais → menor MAC; por isso força-se com root primary","Root port: menor custo até à raiz; desempate por menor BID do vizinho e menor port ID","Exemplo: VLAN 243, raiz DSW2 (24576+243); no ASW1 a Gi0/2 é root port e a Gi0/1 alternate"],
+     model:"Os switches trocam BPDUs com o seu BID, que é a prioridade (32768 por omissão) mais o ID da VLAN mais o MAC. Ganha a raiz o menor BID; com prioridades iguais ganha o menor MAC, o que pode eleger um switch velho, por isso forçamos com spanning-tree vlan 243,443 root primary no DSW2. Cada switch não-raiz escolhe uma root port: a de menor custo até à raiz (1 Gb/s = 4), e em empate a ligada ao vizinho com menor BID e depois ao menor port ID. No ASW1, na VLAN 243, a Gi0/2 (para o DSW2) é root port e a Gi0/1 fica alternate."}
+  ],
+  partA:{ intro:"Respostas curtas: interfaces na forma Gi0/1; comandos completos, sem abreviaturas.",
+    exhibits:[
+      {t:"Excerto 1 — ASW2# show interfaces trunk", x:`Port        Mode         Encapsulation  Status        Native vlan
+Gi0/1       on           802.1q         trunking      999
+Gi0/2       on           802.1q         trunking      1
+
+Port        Vlans allowed on trunk
+Gi0/1       143,243,343,443,943,999
+Gi0/2       143,343,443,943,999`,
+       qs:[
+        ["Interface com a VLAN nativa errada:",["gi0/2"],"Gi0/2","r-trunks"],
+        ["Comando (em interface gi0/2) que a corrige:",["switchport trunk native vlan 999"],"switchport trunk native vlan 999","r-trunks"],
+        ["VLAN do plano que não passa na Gi0/2:",["243"],"243","r-trunks"],
+        ["Comando que a acrescenta sem apagar as outras:",["switchport trunk allowed vlan add 243"],"switchport trunk allowed vlan add 243","r-trunks"]
+       ]},
+      {t:"Excerto 2 — ASW1# show spanning-tree vlan 243 (abreviado)", x:`VLAN0243
+  Root ID    Priority    24819
+             Address     00d0.ba11.0002
+             Cost        4
+             Port        26 (GigabitEthernet0/2)
+  Bridge ID  Priority    33011  (priority 32768 sys-id-ext 243)
+
+Interface        Role Sts Cost
+---------------- ---- --- ----
+Fa0/9            Desg FWD 19
+Gi0/1            Altn BLK 4
+Gi0/2            Root FWD 4`,
+       qs:[
+        ["Switch que é a raiz da VLAN 243 (DSW1 ou DSW2):",["dsw2","lisboa-dsw2"],"DSW2 (a root port é a Gi0/2)","r-stp"],
+        ["Papel da Gi0/1 (em português ou inglês):",["alternate","altn","alternativa","alternativo"],"Alternate (bloqueada)","r-stp"],
+        ["Prioridade configurada na raiz, sem o ID da VLAN:",["24576"],"24576 (24819 − 243), o valor do root primary","r-stp"],
+        ["Comando (em interface fa0/9) que desliga a porta se lá ligarem um switch:",["spanning-tree bpduguard enable"],"spanning-tree bpduguard enable","r-rstp"]
+       ]}
+    ]},
+  partB:{ intro:"No DSW2, configure a SVI da VLAN 243 como gateway ativo HSRP e a raiz STP das VLANs pares.", start:"Lisboa-DSW2(config)# interface vlan 243",
+    lines:[
+      ["Endereço da SVI do DSW2 (config-if):",["ip address 10.43.2.3 255.255.255.0"],"r-cenario"],
+      ["HSRP versão 2 (config-if):",["standby version 2"],"r-hsrp"],
+      ["IP virtual do grupo 243 (config-if):",["standby 243 ip 10.43.2.1"],"r-hsrp"],
+      ["Prioridade do ativo segundo o plano (config-if):",["standby 243 priority 110"],"r-hsrp"],
+      ["Recuperar o papel quando volta (config-if):",["standby 243 preempt"],"r-hsrp"],
+      ["Relay DHCP para o router Lisboa (config-if):",["ip helper-address 10.43.0.5"],"r-dhcp"],
+      ["Ativar a interface (config-if):",["no shutdown"],"r-intervlan"],
+      ["Raiz principal das VLANs do Comercial e dos Servidores (config):",["spanning-tree vlan 243,443 root primary"],"r-stp"]
+    ]}
+},
+"teste-b": {
+  title:"Teste B", sub:"Aulas 1–6, com foco em DHCP, EtherChannel e segurança",
+  mc:[
+    ["Que comando guarda uma cópia da configuração ativa num servidor TFTP?",["copy running-config tftp","copy tftp running-config","write memory","show running-config",NONE],0,"Origem primeiro, destino depois. O copy tftp running-config é para repor."],
+    ["O método de comutação fragment-free:",["Recebe a trama toda e verifica o FCS","Lê os primeiros 64 bytes antes de reencaminhar","Lê só os 6 bytes do MAC de destino","É o mesmo que store-and-forward",NONE],1,"Os primeiros 64 bytes são onde aparecem os erros de colisão."],
+    ["Que VLAN leva o tráfego sem etiqueta num trunk 802.1Q?",["A VLAN de gestão","A VLAN de voz","A VLAN nativa","A VLAN de dados",NONE],2,"No cenário é a 999, que ninguém usa."],
+    ["Duas portas ligadas entre si, ambas em switchport mode dynamic auto. Qual é o resultado?",["Formam trunk","Ficam em modo acesso","Ficam err-disabled","Formam EtherChannel",NONE],1,"Nenhum lado pede trunk. É preciso pelo menos um desirable ou trunk."],
+    ["Para uma porta de um Catalyst 3650 ter IP e funcionar como porta encaminhada:",["switchport mode trunk","no switchport","Basta ip routing","encapsulation dot1q",NONE],1,"O no switchport tira a porta da camada 2. O ip routing é global e também é preciso para encaminhar."],
+    ["Quando tenta o cliente DHCPv4 renovar a concessão com o mesmo servidor, por unicast?",["Aos 87,5 % do tempo","Aos 50 % do tempo (T1)","Quando a concessão acaba","Aos 25 % do tempo",NONE],1,"T1 = 50 % (unicast ao mesmo servidor). T2 = 87,5 % (broadcast a qualquer servidor)."],
+    ["Qual é o identificador EUI-64 gerado a partir do MAC 00:1A:2B:3C:4D:5E?",["001A:2BFF:FE3C:4D5E","021A:2BFF:FE3C:4D5E","021A:2B3C:4D5E:FFFE","FE80:1A2B:3C4D:5E00",NONE],1,"Mete FFFE no meio e inverte o 7.º bit: 00 passa a 02."],
+    ["[Cenário] O DSW1 tem spanning-tree vlan 143 root primary. No ASW1, qual é normalmente a root port da VLAN 143?",["Gi0/2","Gi0/1","Fa0/1","Nenhuma: o ASW1 é a raiz",NONE],1,"A Gi0/1 vai diretamente ao DSW1, com custo 4."],
+    ["Qual é o custo STP (método curto) de uma ligação de 1 Gb/s?",["19","100","4","2",NONE],2,"100 Mb/s = 19, 1 Gb/s = 4, 10 Gb/s = 2."],
+    ["Qual destas NÃO tem de ser igual nas portas de um EtherChannel?",["Velocidade","Duplex","Modo (acesso/trunk) e VLANs permitidas","Descrição (description) da interface",NONE],3,"A descrição é só texto. Tudo o resto tem de coincidir."],
+    ["Qual é o MAC virtual do HSRP versão 1, grupo 10?",["0000.0C07.AC0A","0000.0C9F.F00A","0000.5E00.010A","0000.0C07.AC10",NONE],0,"v1: 0000.0C07.AC + grupo em hex (10 = 0A). O 0000.5E00.01xx é do VRRP."],
+    ["Que comando mostra se o Po1 está em uso e quais as portas agregadas?",["show interfaces trunk","show etherchannel summary","show spanning-tree","show vlan brief",NONE],1,"Procura Po1(SU) e as portas com (P)."],
+    ["Que ataque esgota o pool DHCP com pedidos de muitos MACs falsos?",["DHCP spoofing","DHCP starvation","ARP spoofing","MAC flooding",NONE],1,"Muitas vezes é o primeiro passo antes de um servidor DHCP falso (spoofing)."],
+    ["Com switchport port-security violation restrict, numa violação a porta:",["Passa a err-disabled","Descarta e não regista nada","Descarta, regista (syslog e contador) e continua ativa","Aceita o novo MAC",NONE],2,"O protect descarta sem registar; o shutdown desliga a porta."],
+    ["Para impedir o switch spoofing num uplink trunk deve-se:",["Fixar o modo trunk e usar switchport nonegotiate","Ativar PortFast","Usar mac-address sticky","Ativar ip routing",NONE],0,"Sem DTP, o atacante não consegue negociar um trunk."]
+  ],
+  theory:[
+    {n:6, bloco:"A", ref:"r-dhcp", q:"Descreva a troca DORA do DHCPv4 e o que é preciso quando o servidor está noutra sub-rede.",
+     topics:["Discover (broadcast) → Offer → Request (broadcast) → Ack, com o papel de cada mensagem","Os broadcasts não atravessam routers: o servidor noutra sub-rede não os ouve","Relay: ip helper-address na SVI/interface do gateway; converte em unicast e preenche o giaddr","Exemplo: interface vlan 243 do DSW1 com ip helper-address 10.43.0.1 e pool COMERCIAL-43 no router"],
+     model:"O cliente sem endereço envia um DHCPDISCOVER em broadcast; o servidor responde com um DHCPOFFER com um endereço proposto; o cliente aceita com um DHCPREQUEST (também em broadcast, para avisar os outros servidores) e o servidor confirma com DHCPACK. Como os broadcasts não passam o router, quando o servidor está noutra sub-rede o gateway da VLAN tem de fazer relay com ip helper-address. O relay envia o pedido em unicast e põe no giaddr o seu IP, para o servidor escolher o pool certo. Exemplo: interface vlan 243 do DSW1 com ip helper-address 10.43.0.1, e no router o pool COMERCIAL-43 com network 10.43.2.0 255.255.255.0 e default-router 10.43.2.1."},
+    {n:22, bloco:"B", ref:"r-hsrp", q:"Explique os estados do HSRP e o papel da prioridade e do preempt.",
+     topics:["Estados Initial, Learn, Listen, Speak, Standby, Active (o que acontece em cada)","Prioridade 0–255, por omissão 100; a maior ganha; empate → maior IP","Preempt: deixa o de maior prioridade retomar o papel de Active quando volta","Exemplo: VLAN 143, DSW1 priority 110 e preempt, DSW2 com 100; IP virtual 10.43.1.1"],
+     model:"Um router HSRP começa em Initial; em Learn ainda não conhece o IP virtual; em Listen ouve os hellos; em Speak troca hellos e participa na eleição; no fim um fica Active (responde ao IP e MAC virtuais) e outro Standby (pronto a assumir), e os restantes ficam em Listen. A eleição usa a prioridade (0–255, por omissão 100): ganha a maior e, em empate, o maior IP. O preempt permite que um router com maior prioridade tire o papel ao atual Active, por exemplo quando o DSW1 volta depois de reiniciar. No plano, na VLAN 143: DSW1 com standby 143 priority 110 e standby 143 preempt, DSW2 com 100, gateway virtual 10.43.1.1."}
+  ],
+  partA:{ intro:"Respostas curtas: interfaces na forma Gi0/1; comandos completos, sem abreviaturas.",
+    exhibits:[
+      {t:"Excerto 1 — DSW1# show etherchannel summary e configuração dos dois lados", x:`Flags:  D - down  P - bundled in port-channel  I - stand-alone
+        s - suspended  S - Layer2  U - in use
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+---------------------------
+1      Po1(SD)       LACP        Gi1/0/23(I) Gi1/0/24(I)
+
+DSW1: interface range gi1/0/23 - 24 / channel-group 1 mode passive
+DSW2: interface range gi1/0/23 - 24 / channel-group 1 mode passive`,
+       qs:[
+        ["O Po1 está em uso? (sim/não)",["nao","não","no"],"Não: SD = camada 2 mas down; as portas I estão stand-alone","r-ether"],
+        ["Comando (em interface range gi1/0/23 - 24 do DSW1) que resolve o problema seguindo o plano:",["channel-group 1 mode active"],"channel-group 1 mode active (passive + passive não negoceia)","r-ether"],
+        ["Flags que o Po1 deve mostrar quando estiver a funcionar:",["su","(su)","po1(su)"],"SU","r-ether"]
+       ]},
+      {t:"Excerto 2 — ASW1# show port-security interface fa0/3", x:`Port Security              : Enabled
+Port Status                : Secure-shutdown
+Violation Mode             : Shutdown
+Maximum MAC Addresses      : 1
+Total MAC Addresses        : 1
+Sticky MAC Addresses       : 1
+Last Source Address:Vlan   : 0050.7966.6801:143
+Security Violation Count   : 1`,
+       qs:[
+        ["Modo de violação configurado:",["shutdown"],"Shutdown","r-portsec"],
+        ["VLAN do equipamento que causou a violação:",["143"],"143 (ADMIN)","r-portsec"],
+        ["Estado da porta em show interfaces status:",["err-disabled","errdisabled","err-disable"],"err-disabled","r-portsec"],
+        ["Comando para ficar como no plano (descarta e regista sem desligar):",["switchport port-security violation restrict"],"switchport port-security violation restrict","r-portsec"],
+        ["Comando para aceitar 2 MACs (PC e telefone):",["switchport port-security maximum 2"],"switchport port-security maximum 2","r-portsec"]
+       ]}
+    ]},
+  partB:{ intro:"No router Lisboa, crie o pool DHCP do Comercial; depois configure o relay no DSW1 e o DHCP snooping no ASW1.", start:"Lisboa(config)#",
+    lines:[
+      ["Excluir os endereços .1 a .20 da rede do Comercial (config):",["ip dhcp excluded-address 10.43.2.1 10.43.2.20"],"r-dhcp"],
+      ["Criar o pool com o nome do plano (config):",["ip dhcp pool COMERCIAL-43"],"r-dhcp"],
+      ["Rede do pool (dhcp-config):",["network 10.43.2.0 255.255.255.0","network 10.43.2.0 /24"],"r-dhcp"],
+      ["Gateway entregue aos clientes (dhcp-config):",["default-router 10.43.2.1"],"r-dhcp"],
+      ["Servidor DNS (dhcp-config):",["dns-server 10.43.4.10"],"r-dhcp"],
+      ["Domínio (dhcp-config):",["domain-name minhaempresa.pt"],"r-dhcp"],
+      ["No DSW1, em interface vlan 243: relay para o router (config-if):",["ip helper-address 10.43.0.1"],"r-dhcp"],
+      ["No ASW1, em interface range gi0/1 - 2: portas por onde chegam as respostas legítimas (config-if-range):",["ip dhcp snooping trust"],"r-portsec"]
+    ]}
+},
+"teste-c": {
+  title:"Teste C", sub:"Aulas 1–7, com foco em HSRP, inter-VLAN e TP07",
+  mc:[
+    ["Que comando faz com que as palavras-passe em texto simples apareçam cifradas na configuração?",["enable secret","service password-encryption","crypto key generate rsa","login local",NONE],1,"Cifra fraca (tipo 7), mas evita que se leiam por cima do ombro."],
+    ["Um switch de 24 portas, todas ligadas, com uma só VLAN. Quantos domínios de colisão e de difusão tem?",["1 e 1","24 e 1","24 e 24","1 e 24",NONE],1,"Cada porta é um domínio de colisão; a VLAN é um domínio de difusão."],
+    ["Que comando põe a porta a servir também um telefone IP na VLAN 150?",["switchport voice vlan 150","switchport access voice 150","vlan voice 150","switchport trunk voice 150",NONE],0,"Os dados continuam em switchport access vlan; a voz vai com tag."],
+    ["O que acontece num native VLAN mismatch (999 de um lado, 1 do outro)?",["O trunk fica down","O tráfego nativo de uma VLAN sai na outra e o CDP avisa do erro","Nada, o DTP corrige","A porta passa a err-disabled",NONE],1,"O trunk continua a funcionar, mas mistura as duas VLANs nativas."],
+    ["Qual é a principal limitação do router-on-a-stick?",["Não suporta 802.1Q","Todo o tráfego entre VLANs sobe e desce o mesmo cabo","Precisa de uma porta física por VLAN","Não funciona com DHCP",NONE],1,"O trunk para o router fica um gargalo. O switch L3 resolve isso."],
+    ["Que campo da mensagem DHCP preenche o relay para o servidor saber de que sub-rede vem o pedido?",["chaddr","giaddr","yiaddr","siaddr",NONE],1,"giaddr = gateway IP address, o IP da interface que fez o relay."],
+    ["Qual é o prefixo dos endereços IPv6 link-local?",["2001::/16","FE80::/10","FF00::/8","FC00::/7",NONE],1,"FF00::/8 é multicast e FC00::/7 é unique local."],
+    ["Duas portas de um switch levam ao mesmo vizinho, com o mesmo custo até à raiz. Como se escolhe a root port?",["Pelo maior MAC do switch local","Pelo menor port ID anunciado pelo vizinho (prioridade + número da porta)","Pela porta com maior custo","Ao acaso",NONE],1,"Ordem: custo → BID do vizinho → port ID do vizinho."],
+    ["Qual é o hello time STP por omissão?",["1 s","2 s","10 s","15 s",NONE],1,"Forward delay 15 s, max age 20 s."],
+    ["Que combinação PAgP forma um EtherChannel?",["auto + auto","desirable + auto","on + desirable","active + desirable",NONE],1,"auto + auto não negoceia; on não fala PAgP; active é LACP."],
+    ["[Cenário] Que gateway deve estar configurado num PC da VLAN 243?",["10.43.2.2","10.43.2.3","10.43.2.1","10.43.0.1",NONE],2,"O .1 é o IP virtual HSRP. O .2 e o .3 são as SVIs reais."],
+    ["Que comando mostra no DSW1, por VLAN, quem é a raiz e o custo até ela?",["show spanning-tree root","show standby brief","show vlan brief","show etherchannel summary",NONE],0,"Custo 0 nas VLANs em que o próprio DSW1 é a raiz."],
+    ["O que permite o ARP spoofing?",["Tornar-se root bridge","Fazer man-in-the-middle associando o MAC do atacante ao IP do gateway","Esgotar o pool DHCP","Formar um trunk",NONE],1,"A defesa é a DAI, que valida os ARP contra a tabela do DHCP snooping."],
+    ["Uma porta ficou err-disabled por violação de port security. Como se recupera à mão?",["Só com no shutdown","shutdown e depois no shutdown na interface","Com reload","Com clear mac address-table",NONE],1,"Antes disso, retira a causa (o equipamento a mais)."],
+    ["Uma porta com PortFast e BPDU Guard recebe um BPDU. O que acontece?",["Ignora o BPDU","Passa a err-disabled","Torna-se root port","Perde só o PortFast e continua",NONE],1,"É para isso que o BPDU Guard existe: alguém ligou um switch."]
+  ],
+  theory:[
+    {n:13, bloco:"A", ref:"r-intervlan", q:"Descreva a configuração de um router-on-a-stick para três VLANs.",
+     topics:["Porta do switch para o router em trunk 802.1Q com as VLANs permitidas","Interface física do router sem IP e com no shutdown; uma subinterface por VLAN","Em cada subinterface: encapsulation dot1Q com a VLAN e ip address do gateway","Exemplo com 143, 243, 343: Fa0/0.143 10.43.1.1/24 … e verificação (show ip interface brief, ping entre VLANs)"],
+     model:"No switch, a porta para o router fica em trunk (switchport mode trunk, nativa 999, allowed 143,243,343). No router, a interface física fica sem IP e com no shutdown, e cria-se uma subinterface por VLAN. Em cada uma: encapsulation dot1Q com o ID da VLAN e o IP que é o gateway dessa VLAN. Exemplo: interface fa0/0.143, encapsulation dot1Q 143, ip address 10.43.1.1 255.255.255.0; igual para a .243 com 10.43.2.1 e a .343 com 10.43.3.1. Verifica-se com show ip interface brief (subinterfaces up/up), show ip route connected e um ping de um PC da 143 para um da 243."},
+    {n:25, bloco:"B", ref:"r-ether", q:"Descreva os passos para configurar e verificar um EtherChannel LACP entre o DSW1 e o DSW2.",
+     topics:["Portas físicas iguais (velocidade, duplex, modo, VLANs); interface range gi1/0/23 - 24","channel-group 1 mode active (pelo menos um lado active; o outro active ou passive)","Configurar o trunk na interface port-channel 1 (encapsulation dot1q, mode trunk, native 999)","Verificar com show etherchannel summary (Po1 SU, portas P) e show interfaces trunk"],
+     model:"Primeiro confirmo que as duas portas têm a mesma velocidade, duplex e configuração. No DSW1 e no DSW2: interface range gi1/0/23 - 24 e channel-group 1 mode active (LACP; com passive num dos lados também forma, mas passive nos dois não). Depois configuro a interface lógica, que passa a mandar nas físicas: interface port-channel 1, switchport trunk encapsulation dot1q, switchport mode trunk, switchport trunk native vlan 999 e a lista de VLANs 143,243,343,443,943,999. Verifico com show etherchannel summary, que deve mostrar Po1(SU) com Gi1/0/23(P) e Gi1/0/24(P), e com show interfaces trunk. O STP passa a ver só o Po1."}
+  ],
+  partA:{ intro:"Respostas curtas: interfaces na forma Fa0/1; comandos completos, sem abreviaturas.",
+    exhibits:[
+      {t:"Excerto 1 — DSW2# show standby brief", x:`Interface  Grp  Pri P State    Active      Standby     Virtual IP
+Vl143      143  100 P Standby  10.43.1.2   local       10.43.1.1
+Vl243      243  110 P Active   local       10.43.2.2   10.43.2.1
+Vl343      343  100 P Active   local       unknown     10.43.3.1
+Vl443      443  110 P Active   local       10.43.4.2   10.43.4.1
+Vl943      943  100 P Standby  10.43.9.2   local       10.43.9.1`,
+       qs:[
+        ["VLAN em que o HSRP está com problema:",["343"],"343 (DSW2 Active sem conhecer o standby)","r-hsrp"],
+        ["Segundo o plano, quem deve ser o Active da VLAN 343?",["dsw1","lisboa-dsw1"],"DSW1 (VLAN ímpar)","r-hsrp"],
+        ["Comando no DSW1 para ver se a VLAN 343 passa no Po1:",["show interfaces trunk"],"show interfaces trunk","r-show"],
+        ["Gateway que os PCs da VLAN 443 usam:",["10.43.4.1"],"10.43.4.1","r-cenario"]
+       ]},
+      {t:"Excerto 2 — ASW3# show vlan brief", x:`VLAN Name               Status    Ports
+---- ------------------ --------- -------------------------------
+1    default            active    Fa0/17, Fa0/18, Fa0/19, Fa0/24
+343  TECNICO-43         active    Fa0/1, Fa0/2, Fa0/3, Fa0/4
+                                  Fa0/5, Fa0/6, Fa0/7, Fa0/8
+                                  Fa0/16
+443  SERVIDORES-43      active    Fa0/9, Fa0/10, Fa0/11, Fa0/12
+                                  Fa0/13, Fa0/14, Fa0/15
+943  GESTAO-43          active    Fa0/20, Fa0/22, Fa0/23
+999  NATIVA-BLACKHOLE   active`,
+       qs:[
+        ["Porta dos servidores que está na VLAN errada:",["fa0/16"],"Fa0/16","r-vlans"],
+        ["Comando (em interface fa0/16) que a corrige:",["switchport access vlan 443"],"switchport access vlan 443","r-vlans"],
+        ["A Fa0/21 (WLC) não aparece. Em que modo está?",["trunk"],"Trunk (os trunks não aparecem no show vlan brief)","r-wifi"],
+        ["A Fa0/17 não é usada. Depois de switchport access vlan 999, que comando falta?",["shutdown"],"shutdown","r-praticas"]
+       ]}
+    ]},
+  partB:{ intro:"TP07: no DSW1, prepare a parte cablada da rede de convidados (VLAN 543).", start:"Lisboa-DSW1(config)# vlan 543",
+    lines:[
+      ["Nome da VLAN segundo o plano (config-vlan):",["name WIFI-CONV-43"],"r-wifi"],
+      ["Em interface range gi1/0/1 - 3: acrescentar a 543 aos trunks sem apagar as outras (config-if-range):",["switchport trunk allowed vlan add 543"],"r-trunks"],
+      ["Criar a SVI (config):",["interface vlan 543"],"r-intervlan"],
+      ["Endereço da SVI do DSW1 (config-if):",["ip address 10.43.5.2 255.255.255.0"],"r-cenario"],
+      ["HSRP versão 2 (config-if):",["standby version 2"],"r-hsrp"],
+      ["IP virtual do grupo 543 (config-if):",["standby 543 ip 10.43.5.1"],"r-hsrp"],
+      ["Prioridade do ativo (config-if):",["standby 543 priority 110"],"r-hsrp"],
+      ["Recuperar o papel quando volta (config-if):",["standby 543 preempt"],"r-hsrp"]
+    ]}
+}
+};
+
+const L = "ABCDE";
+const norm = s => s.toLowerCase().replace(/gigabitethernet/g,"gi").replace(/fastethernet/g,"fa").replace(/\s+/g," ").replace(/\s*,\s*/g,",").replace(/[.;]+$/,"").trim();
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const golink = r => `<a class="golink" href="#${r}" data-from="1" style="${cvar(r)}">Rever no resumo: ${TOPICS[r][0]}</a>`;
+const ACC = {};
+
+function fillHTML(id,key,label,acc,show,ref){
+  ACC[`${id}-${key}`] = acc.map(norm);
+  return `<div class="fill" data-key="${id}-${key}" data-ref="${ref}"><label for="${id}-${key}">${esc(label)}</label>
+    <input id="${id}-${key}" autocomplete="off" spellcheck="false" autocapitalize="off">
+    <span class="ans" hidden>Resposta: <code>${esc(show)}</code> · <a href="#${ref}" data-from="1">rever ${TOPICS[ref][0]}</a></span></div>`;
+}
+function renderTest(id){
+  const T = TESTS[id]; const el = document.getElementById("v-"+id);
+  let h = `<div class="test-head"><div><h2>${T.title}</h2><p>${T.sub}. Responde a tudo e carrega em Corrigir no fim. Cada solução tem um link para o tema no resumo.</p></div>
+    <div class="score"><div class="pill"><b id="${id}-mc">–</b><span>Escolha múltipla</span></div><div class="pill"><b id="${id}-f3">–</b><span>Folha 3</span></div><div class="pill"><b id="${id}-best">${store.get("rd2-best-"+id,"–")}</b><span>Melhor EM</span></div></div></div>
+    <div class="result" id="${id}-result" hidden></div>`;
+  h += `<div class="folha" style="--c-soft:var(--sky-soft)"><h3>Folha 1 · Escolha múltipla</h3><span class="tagf">certa +1 · errada −1/3 · branco 0</span></div>`;
+  T.mc.forEach((q,i)=>{
+    const r = SUBREF[i];
+    h += `<div class="q" id="${id}-q${i}" style="${cvar(r)}"><div class="qhead"><span class="qn">${i+1}</span><span class="qsub">Subgrupo ${i+1} · ${SUB[i]}</span></div>
+      <p class="qtext">${esc(q[0])}</p><div class="opts">${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="${id}-q${i}" id="${id}-q${i}-${j}" value="${j}"><span><b>${L[j]}.</b> ${esc(o)}</span></label>`).join("")}</div>
+      <div class="sol" hidden><span class="verdict"></span><span>${esc(q[3])}</span>${golink(r)}</div></div>`;
+  });
+  h += `<div class="folha" style="--c-soft:var(--butter-soft)"><h3>Folha 2 · Perguntas teóricas</h3><span class="tagf">2 valores cada · 4 tópicos de 0,5</span></div>`;
+  T.theory.forEach((t,i)=>{
+    h += `<div class="q" id="${id}-t${i}" style="${cvar(t.ref)}"><div class="qhead"><span class="qn">${t.bloco}</span><span class="qsub">Bloco ${t.bloco} · pergunta ${t.n} da lista</span></div>
+      <p class="qtext">${esc(t.q)}</p><textarea id="${id}-ta${i}" placeholder="Escreve 5–6 linhas: ideia, como funciona, comandos e um exemplo com 10.43.d.0/24."></textarea>
+      <div class="sol" hidden><span class="verdict">Auto-correção: marca os tópicos que a tua resposta tem.</span>
+        <div class="topics4">${t.topics.map((p,j)=>`<label><input type="checkbox" id="${id}-tp${i}-${j}"> <span>${esc(p)}</span></label>`).join("")}</div>
+        <span class="tpscore"><b>0,0</b> / 2 valores</span>
+        <details><summary><b>Ver resposta-modelo</b></summary><p>${esc(t.model)}</p></details>${golink(t.ref)}</div></div>`;
+  });
+  h += `<div class="folha" style="--c-soft:var(--mint-soft)"><h3>Folha 3 · Parte A — Diagnóstico</h3><span class="tagf">NN = 43</span></div><p class="legend">${T.partA.intro}</p>`;
+  let k=0;
+  T.partA.exhibits.forEach(ex=>{
+    h += `<div class="q" style="--c:var(--mint);--c-soft:var(--mint-soft)"><div class="exh-title">${esc(ex.t)}</div><div class="exhibit">${esc(ex.x)}</div>`;
+    ex.qs.forEach(q=>{ k++; h += fillHTML(id,"a"+k,`A.${k} ${q[0]}`,q[1],q[2],q[3]); });
+    h += `</div>`;
+  });
+  h += `<div class="folha" style="--c-soft:var(--mint-soft)"><h3>Folha 3 · Parte B — Configuração</h3><span class="tagf">um comando por linha</span></div><p class="legend">${T.partB.intro}</p>
+    <div class="q" style="--c:var(--mint);--c-soft:var(--mint-soft)"><div class="prompt-line">${esc(T.partB.start)}</div>`;
+  T.partB.lines.forEach((l,i)=>{ h += fillHTML(id,"b"+(i+1),`B.${i+1} ${l[0]}`,l[1],l[1][0],l[2]); });
+  h += `</div><div class="actions"><button class="btn" data-grade="${id}">Corrigir teste</button><button class="btn ghost" data-reset="${id}">Recomeçar</button></div>`;
+  el.innerHTML = h;
+  el.querySelector("[data-grade]").addEventListener("click",()=>grade(id));
+  el.querySelector("[data-reset]").addEventListener("click",()=>{renderTest(id); window.scrollTo(0,0)});
+  el.querySelectorAll(".topics4 input").forEach(cb=>cb.addEventListener("change",()=>{
+    const box = cb.closest(".q"); const n = box.querySelectorAll(".topics4 input:checked").length;
+    box.querySelector(".tpscore b").textContent = (n*0.5).toFixed(1).replace(".",",");
+  }));
+}
+function grade(id){
+  const T = TESTS[id]; let c=0,w=0,b=0; const weak={};
+  T.mc.forEach((q,i)=>{
+    const box = document.getElementById(`${id}-q${i}`); const sel = box.querySelector("input:checked");
+    box.classList.remove("right","wrong","blank");
+    box.querySelectorAll(".opt").forEach((o,j)=>{o.classList.toggle("is-correct",j===q[2]); o.classList.remove("is-wrong");});
+    const v = box.querySelector(".verdict");
+    if(!sel){b++; box.classList.add("blank"); v.textContent=`Em branco (0). A certa é a ${L[q[2]]}.`; weak[SUBREF[i]]=1;}
+    else if(+sel.value===q[2]){c++; box.classList.add("right"); v.textContent="Certa (+1).";}
+    else {w++; box.classList.add("wrong"); sel.closest(".opt").classList.add("is-wrong"); v.textContent=`Errada (−1/3). A certa é a ${L[q[2]]}.`; weak[SUBREF[i]]=1;}
+    box.querySelector(".sol").hidden=false;
+  });
+  const mc = Math.max(0, c - w/3);
+  const mcTxt = (Math.round(mc*100)/100).toString().replace(".",",");
+  document.getElementById(`${id}-mc`).textContent = `${mcTxt}/15`;
+  const best = store.get("rd2-best-"+id,null); const bestNum = best!==null?parseFloat(String(best).replace(",",".")):-1;
+  if(mc>bestNum){store.set("rd2-best-"+id,mcTxt); document.getElementById(`${id}-best`).textContent=mcTxt;}
+  T.theory.forEach((t,i)=>{document.getElementById(`${id}-t${i}`).querySelector(".sol").hidden=false;});
+  let fc=0,ft=0;
+  document.querySelectorAll(`#v-${id} .fill`).forEach(f=>{
+    ft++; const val = norm(f.querySelector("input").value);
+    const ok = !!val && ACC[f.dataset.key].includes(val);
+    f.classList.toggle("right",ok); f.classList.toggle("wrong",!ok);
+    if(ok) fc++; else weak[f.dataset.ref]=1;
+    f.querySelector(".ans").hidden=false;
+  });
+  document.getElementById(`${id}-f3`).textContent = `${fc}/${ft}`;
+  const res = document.getElementById(`${id}-result`);
+  const wk = Object.keys(weak);
+  res.innerHTML = `<h3>Resultado</h3><p>Escolha múltipla: <b>${c} certas, ${w} erradas, ${b} em branco</b>, o que dá ${mcTxt} em 15. Folha 3: <b>${fc} de ${ft}</b> respostas certas. Nas teóricas, marca os tópicos para veres a tua nota.</p>
+    ${wk.length?`<p>Temas para rever:</p><div class="chips">${wk.map(chip).join("")}</div>`:`<p>Tudo certo! Experimenta outro teste.</p>`}`;
+  res.hidden=false; res.scrollIntoView({block:"start"});
+}
+
+let lastTest = null;
+const backBtn = document.getElementById("backBtn");
+function show(view){
+  document.querySelectorAll(".view").forEach(v=>{ v.hidden = v.id!=="v-"+view; });
+  document.querySelectorAll("nav.tabs a").forEach(a=>{ if(a.dataset.view===view) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+}
+function route(){
+  const h = (location.hash||"#calendario").slice(1);
+  if(TOPICS[h]){ show("resumo"); const t=document.getElementById(h); if(t){ t.scrollIntoView({block:"start"}); t.classList.add("flash"); setTimeout(()=>t.classList.remove("flash"),1600);} backBtn.hidden = !lastTest; return; }
+  if(h==="resumo"){ show("resumo"); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
+  if(TESTS[h]){ show(h); backBtn.hidden=true; return; }
+  show("calendario"); backBtn.hidden=true;
+}
+document.addEventListener("click",e=>{
+  const a = e.target.closest("a[data-from]"); if(!a) return;
+  const v = a.closest(".view"); if(v && v.id.startsWith("v-teste")) lastTest = {id:v.id.slice(2), y:window.scrollY};
+});
+backBtn.addEventListener("click",()=>{ if(!lastTest) return; const t=lastTest; location.hash=t.id; setTimeout(()=>window.scrollTo(0,t.y),40); });
+window.addEventListener("hashchange",route);
+
+renderCal(); Object.keys(TESTS).forEach(renderTest); route();
+</script>
+</body>
+</html>
