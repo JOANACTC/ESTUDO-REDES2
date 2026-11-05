@@ -250,6 +250,22 @@ textarea:focus{border-color:var(--c);outline:none}
 .legend{font-size:.92rem;color:var(--muted);margin:0 0 12px}
 .back{position:fixed;right:calc(env(safe-area-inset-right,0px) + 16px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:6;border:none;border-radius:999px;padding:13px 20px;font-weight:800;background:var(--pink);color:var(--on-accent);box-shadow:0 8px 22px rgba(0,0,0,.2)}
 .foot{color:var(--muted);font-size:.85rem;margin-top:34px}
+/* bases */
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+.flow span{background:var(--c-soft);border:2px solid var(--c);border-radius:14px;padding:6px 12px;font-weight:700;font-size:.9rem;text-align:center}
+.flow i{font-style:normal;color:var(--muted);font-weight:800;font-size:.85rem}
+.bbody p,.bbody li{line-height:1.6}
+.bbody ul,.bbody ol{padding-left:22px;display:grid;gap:6px;margin:0}
+.bbody code{background:var(--code-bg);padding:1px 6px;border-radius:6px;font-family:var(--mono);font-size:.86em}
+.bt{border-collapse:collapse;width:100%;font-size:.9rem;display:block;overflow-x:auto}
+.bt th,.bt td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.bt th{background:var(--c-soft)}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin:0}
+.pal div{background:var(--paper2);border-radius:14px;padding:8px 12px}.pal dt{font-weight:800}.pal dd{margin:0;font-size:.9rem;color:var(--muted)}
+.bq{background:var(--c-soft);border-radius:18px;padding:14px 18px}.bq .opts{display:grid;gap:6px}.bfb{font-weight:700;margin-top:8px}
+.dic{display:grid;gap:6px}.dic div{display:grid;grid-template-columns:150px 1fr auto;gap:10px;padding:7px 10px;background:var(--paper2);border-radius:12px;align-items:baseline}
+@media (max-width:600px){.dic div{grid-template-columns:1fr auto}.dic span{grid-column:1/-1}}
+.note{background:var(--peach-soft);border-radius:12px;padding:8px 12px}
 </style>
 </head>
 <body>
@@ -258,6 +274,7 @@ textarea:focus{border-color:var(--c);outline:none}
   <a class="brand" href="#inicio"><span class="blob" aria-hidden="true"></span>RD2 · Teste 1</a>
   <nav class="tabs" aria-label="Secções">
     <a href="#inicio" data-view="inicio">Início</a>
+    <a href="#bases" data-view="bases">Bases do zero</a>
     <a href="#mapa" data-view="mapa">Mapa mental</a>
     <a href="#resumo" data-view="resumo">Resumo</a>
     <a href="#folha2" data-view="folha2">40 teóricas</a>
@@ -272,7 +289,7 @@ textarea:focus{border-color:var(--c);outline:none}
     <div>
       <p class="eyebrow">Redes de Dados II · NN = 43</p>
       <h1>Teste 1 a 17 de novembro</h1>
-      <p>Começa pelo mapa mental para veres a matéria toda. Depois estuda um tema de cada vez no resumo e treina com os testes. Cada correção leva-te ao tema que tens de rever.</p>
+      <p><a href="#bases"><b>Estás a zero? Começa pelas Bases do zero</b></a>: o que é um IP, um switch, uma VLAN, o DHCP… Depois vê o mapa mental para veres a matéria toda. Depois estuda um tema de cada vez no resumo e treina com os testes. Cada correção leva-te ao tema que tens de rever.</p>
     </div>
     <div class="count"><b id="daysLeft">12</b><span id="daysLabel">dias para o teste</span></div>
   </div>
@@ -284,6 +301,14 @@ textarea:focus{border-color:var(--c);outline:none}
   </div>
   <div class="sec-title"><h2>Plano dia a dia</h2><small>marca cada dia quando o acabares</small></div>
   <div class="cal" id="cal"></div>
+</section>
+
+<section class="view" id="v-bases" hidden>
+  <div class="pagehead"><p class="eyebrow">Começa aqui se estás a zero</p><h1>Bases do zero</h1><p class="lead">19 lições curtas, com exemplos do teu plano NN = 43. Cada uma explica as palavras novas, tem uma pergunta para te testares e no fim leva-te ao resumo do teste.</p></div>
+  <div class="res-layout">
+    <nav class="side card" id="bside" aria-label="Lições das bases"></nav>
+    <div id="bBox"></div>
+  </div>
 </section>
 
 <section class="view" id="v-mapa" hidden>
@@ -1000,6 +1025,304 @@ const VERSIONS = [
  {n:7, f2:[15,36], exh:[0,7], cfg:6, focus:"Trunks, MACs e segurança L2"},
  {n:8, f2:[18,33], exh:[1,10], cfg:7, focus:"STP, BPDU Guard e router-on-a-stick"}
 ];
+/* ======================= BASES DO ZERO ======================= */
+const BP = [
+ {name:"1 · O que é uma rede", ls:["b-rede","b-camadas","b-cli"]},
+ {name:"2 · Moradas", ls:["b-mac","b-ip","b-gateway","b-plano"]},
+ {name:"3 · Switches e VLANs", ls:["b-switch","b-vlan","b-trunk"]},
+ {name:"4 · Falar entre VLANs", ls:["b-router","b-intervlan","b-dhcp","b-ipv6"]},
+ {name:"5 · Redundância", ls:["b-stp","b-ether","b-hsrp"]},
+ {name:"6 · Segurança e Wi-Fi", ls:["b-seg","b-wifi"]},
+ {name:"Dicionário", ls:["b-dic"]}
+];
+const BL = {
+"b-rede":{t:"O que é uma rede", c:"pink", ideia:"Uma rede é um conjunto de equipamentos ligados para trocarem mensagens, como casas ligadas por estradas.",
+ body:`<p>Um computador, um telemóvel ou uma impressora são <b>hosts</b> (os que usam a rede). Para falarem uns com os outros ligam-se a equipamentos de rede:</p>
+ <ul><li><b>Switch</b>: liga os equipamentos <b>dentro do mesmo edifício ou piso</b>. Tem muitas portas (24 ou 48). É o "bairro".</li>
+ <li><b>Router</b>: liga <b>redes diferentes</b> entre si, por exemplo a rede da empresa à Internet. É a "rotunda" entre bairros.</li>
+ <li><b>Access point (AP)</b>: igual a uma porta do switch, mas sem fios (Wi-Fi).</li></ul>
+ <p>As mensagens não vão inteiras: são partidas em pedacinhos com a morada do destino escrita por fora, como cartas num envelope.</p>
+ <div class="flow"><span>PC</span><i>→</i><span>Switch</span><i>→</i><span>Router</span><i>→</i><span>Internet</span></div>
+ <p><b>LAN</b> é a rede local (o edifício da empresa). <b>WAN</b> é a rede que liga sítios longe (ligação ao ISP, Internet).</p>
+ <p>Na cadeira de RD2 trabalhas sempre na <b>LAN da sede de Lisboa</b>: muitos switches, um router e um pouco de Wi-Fi.</p>`,
+ pal:[["Host","Equipamento final que usa a rede: PC, servidor, telemóvel."],["Switch","Liga equipamentos na mesma rede local."],["Router","Liga redes diferentes."],["LAN","Rede local, num edifício."]],
+ q:["Que equipamento liga redes diferentes, por exemplo a empresa à Internet?",["Switch","Router","Access point","Cabo"],1,"O router liga redes diferentes. O switch liga equipamentos dentro da mesma rede."], liga:["r-cenario"]},
+"b-camadas":{t:"As camadas: cada coisa no seu andar", c:"lilac", ideia:"Enviar dados é como enviar uma encomenda: há o camião, a morada da rua, a morada da cidade e o nome da pessoa. Cada camada trata de uma destas coisas.",
+ body:`<p>Para não misturar tudo, a rede divide o trabalho em <b>camadas</b>. Para RD2 só precisas destas:</p>
+ <table class="bt"><tr><th>Camada</th><th>O que faz</th><th>Morada usada</th><th>Equipamento</th></tr>
+ <tr><td><b>1 · Física</b></td><td>Os bits a passar no cabo ou no ar</td><td>nenhuma</td><td>cabo, porta</td></tr>
+ <tr><td><b>2 · Ligação</b></td><td>Entregar dentro da mesma rede local</td><td>endereço <b>MAC</b></td><td><b>switch</b></td></tr>
+ <tr><td><b>3 · Rede</b></td><td>Entregar entre redes diferentes</td><td>endereço <b>IP</b></td><td><b>router</b> (ou switch multicamada)</td></tr>
+ <tr><td><b>4 · Transporte</b></td><td>Qual a aplicação (web, SSH…)</td><td>número de <b>porta</b> (ex.: 22 = SSH)</td><td>os PCs</td></tr></table>
+ <p>O pedaço de dados na camada 2 chama-se <b>trama</b> (frame). Na camada 3 chama-se <b>pacote</b>.</p>
+ <p>Quase tudo em RD2 é <b>camada 2</b>: switches, VLANs, trunks, STP, EtherChannel e ataques à camada 2. O routing inter-VLAN, o DHCP e o HSRP já são <b>camada 3</b>.</p>
+ <p>Um <b>switch multicamada</b> (no cenário, os 3650 DSW1 e DSW2) faz as duas coisas: comuta como um switch e encaminha como um router.</p>`,
+ pal:[["Trama","Dados na camada 2, com MAC de origem e destino."],["Pacote","Dados na camada 3, com IP de origem e destino."],["Multicamada","Switch que também faz routing (camada 3)."]],
+ q:["Em que camada trabalha um switch normal (2960)?",["Camada 1","Camada 2","Camada 3","Camada 4"],1,"O switch decide pelo endereço MAC, que é da camada 2."], liga:["r-comutacao"]},
+"b-cli":{t:"Como se fala com um switch: a CLI", c:"butter", ideia:"Configurar um switch Cisco é escrever comandos num terminal. O que aparece antes do # diz-te onde estás.",
+ body:`<p>Ligas-te ao switch (cabo de consola, Telnet ou SSH) e aparece um <b>prompt</b>. Há modos, como salas umas dentro das outras:</p>
+ <pre class="cmd">Switch&gt;                 <span class="c">modo utilizador: só ver um pouco</span>
+Switch&gt; enable
+Switch#                 <span class="c">modo privilegiado: ver tudo (show), guardar, reiniciar</span>
+Switch# configure terminal
+Switch(config)#         <span class="c">configuração global: hostname, vlan, ip routing…</span>
+Switch(config)# interface fa0/1
+Switch(config-if)#      <span class="c">configuração de UMA porta</span>
+Switch(config-if)# exit <span class="c">volta um nível</span>
+Switch(config)# end     <span class="c">volta logo ao #</span></pre>
+ <ul><li><b>show …</b> serve para <b>ver</b> (show vlan brief, show interfaces trunk). Usa-se no modo #.</li>
+ <li>Pôr <b>no</b> antes de um comando <b>desfaz</b> esse comando. Por exemplo, <code>no shutdown</code> liga uma porta.</li>
+ <li><b>running-config</b> é a configuração que está a funcionar agora, na RAM, e perde-se se o switch desligar. <b>startup-config</b> é a que está guardada. Para guardar: <code>copy running-config startup-config</code>.</li>
+ <li>Nomes das portas: <b>Fa0/1</b> = FastEthernet 0/1 (100 Mb/s) e <b>Gi0/1</b> = GigabitEthernet 0/1 (1 Gb/s). Nos 3650: Gi1/0/1.</li>
+ <li>O switch aceita abreviaturas (<code>sh vl br</code>), mas no teste no Moodle tens de escrever os comandos <b>completos</b>.</li></ul>`,
+ pal:[["Prompt","O texto antes do cursor, ex.: DSW1(config-if)#."],["running-config","Configuração ativa (RAM)."],["startup-config","Configuração guardada (NVRAM)."],["no","Desfaz um comando."]],
+ q:["Estás em Switch(config)#. Que modo é este?",["Utilizador","Privilegiado","Configuração global","Configuração de interface"],2,"(config)# é a configuração global. (config-if)# é dentro de uma porta."], liga:["r-gestao","r-show"]},
+"b-mac":{t:"Endereço MAC: a morada física", c:"sky", ideia:"O MAC é como o número de série gravado na placa de rede. Cada placa tem o seu e não muda.",
+ body:`<p>Cada placa de rede tem um <b>endereço MAC</b> de <b>48 bits</b>, escrito em hexadecimal (0–9 e A–F). A Cisco escreve-o assim: <code>0050.7966.6800</code>.</p>
+ <ul><li>Os primeiros 24 bits dizem o <b>fabricante</b>; os outros 24 são o número da placa.</li>
+ <li>O MAC serve para entregar <b>dentro da mesma rede local</b>. É a morada que o switch lê.</li>
+ <li><b>FFFF.FFFF.FFFF</b> é o MAC de <b>broadcast</b>, que quer dizer "para todos". O switch envia essa trama a todas as portas da mesma VLAN, menos àquela por onde ela entrou.</li></ul>
+ <p>Uma trama leva o <b>MAC de origem</b> (quem envia) e o <b>MAC de destino</b> (para quem é).</p>
+ <div class="flow"><span>MAC destino</span><span>MAC origem</span><span>(etiqueta VLAN)</span><span>dados</span><span>FCS</span></div>
+ <p>O <b>FCS</b> no fim é um código para detetar erros: se não bater certo, a trama está estragada.</p>`,
+ pal:[["MAC","Morada física de 48 bits da placa de rede."],["Broadcast","Mensagem para todos: FFFF.FFFF.FFFF."],["FCS","Verificação de erros no fim da trama."]],
+ q:["Um switch recebe uma trama para FFFF.FFFF.FFFF. O que faz?",["Descarta-a","Envia-a a todas as portas da mesma VLAN, menos à de entrada","Envia-a só ao router","Envia-a a todas as VLANs"],1,"Broadcast é inundado, mas só dentro da VLAN."], liga:["r-comutacao"]},
+"b-ip":{t:"Endereço IP e máscara", c:"mint", ideia:"O IP é como a morada postal: rua + número da porta. A máscara diz onde acaba a rua e começa o número.",
+ body:`<p>Um endereço <b>IPv4</b> tem 32 bits, escritos como 4 números de 0 a 255 separados por pontos: <code>10.43.2.25</code>.</p>
+ <p>Tem duas partes:</p>
+ <ul><li><b>Parte de rede</b>, a "rua", que é igual para todos os da mesma rede.</li><li><b>Parte de host</b>, o "número da porta", que é diferente para cada equipamento.</li></ul>
+ <p>A <b>máscara</b> diz quantos bits são de rede. Em RD2 usa-se quase sempre <b>255.255.255.0</b>, que também se escreve <b>/24</b>: os 3 primeiros números são a rede e o último é o host.</p>
+ <table class="bt"><tr><th>Endereço</th><th>Rede (/24)</th><th>Host</th></tr>
+ <tr><td>10.43.2.25</td><td>10.43.2.0</td><td>25</td></tr><tr><td>10.43.2.1</td><td>10.43.2.0</td><td>1</td></tr><tr><td>10.43.3.25</td><td>10.43.3.0</td><td>25 (outra rede!)</td></tr></table>
+ <ul><li>Numa rede /24 há 256 endereços: o <b>.0</b> é o nome da rede, o <b>.255</b> é o broadcast e do <b>.1 ao .254</b> são para equipamentos.</li>
+ <li>Dois PCs na <b>mesma rede</b> falam diretamente através do switch. Se estiverem em <b>redes diferentes</b>, precisam de um router.</li>
+ <li><b>169.254.x.x</b> quer dizer que o PC <b>não conseguiu</b> receber IP por DHCP e inventou um. É sinal de avaria!</li></ul>`,
+ pal:[["IPv4","Morada lógica de 32 bits, ex.: 10.43.2.25."],["Máscara","Diz qual parte é rede: 255.255.255.0 = /24."],["169.254.x.x","IP automático quando o DHCP falha (APIPA)."]],
+ q:["10.43.2.50/24 e 10.43.3.50/24 estão na mesma rede?",["Sim","Não"],1,"O 3.º número é diferente (2 e 3), por isso são redes diferentes e precisam de um router."], liga:["r-cenario"]},
+"b-gateway":{t:"Gateway e ARP", c:"peach", ideia:"O gateway é a porta de saída do bairro: tudo o que vai para fora da tua rede passa por ele.",
+ body:`<p>Quando um PC quer enviar algo, pergunta-se: <b>o destino está na minha rede?</b></p>
+ <ul><li><b>Sim</b>: envia diretamente ao destino.</li><li><b>Não</b>: envia ao <b>gateway</b> (default gateway), que é o router ou a SVI da sua VLAN. O gateway trata do resto.</li></ul>
+ <p>Mas o PC só sabe o <b>IP</b> do gateway, e o switch precisa do <b>MAC</b>. Para o descobrir usa o <b>ARP</b>: grita em broadcast "quem tem o 10.43.2.1? Diz-me o teu MAC", e o dono responde.</p>
+ <div class="flow"><span>PC 10.43.2.25</span><i>→ ARP "quem é 10.43.2.1?" →</i><span>gateway responde com o MAC</span></div>
+ <p>No plano, o gateway de cada VLAN é sempre o <b>.1</b>: 10.43.1.1, 10.43.2.1, etc. É um endereço <b>virtual</b> do HSRP (vês na lição 17).</p>
+ <p>Os switches de acesso (2960) só precisam de <code>ip default-gateway 10.43.9.1</code> para poderem ser geridos à distância.</p>`,
+ pal:[["Default gateway","Por onde sai o tráfego para outras redes."],["ARP","Descobre o MAC a partir do IP."]],
+ q:["Um PC em 10.43.2.25 quer falar com 10.43.4.10. Para onde envia primeiro?",["Diretamente para 10.43.4.10","Para o gateway 10.43.2.1","Para o broadcast","Para o DNS"],1,"O destino está noutra rede, por isso o PC envia para o gateway."], liga:["r-intervlan"]},
+"b-plano":{t:"Ler o teu plano NN = 43", c:"pink", ideia:"No teste tudo é escrito com o teu número 43. Se perceberes a regra, não precisas de decorar.",
+ body:`<p>Cada aluno tem um número <b>NN</b>. O teu é <b>43</b>. A regra é: <b>VLAN = d + NN</b> e <b>rede = 10.NN.d.0/24</b>, onde <b>d</b> é o dígito do departamento.</p>
+ <table class="bt"><tr><th>d</th><th>Departamento</th><th>VLAN</th><th>Rede</th><th>Gateway (HSRP)</th></tr>
+ <tr><td>1</td><td>ADMIN</td><td>143</td><td>10.43.1.0/24</td><td>10.43.1.1</td></tr>
+ <tr><td>2</td><td>COMERCIAL</td><td>243</td><td>10.43.2.0/24</td><td>10.43.2.1</td></tr>
+ <tr><td>3</td><td>TECNICO</td><td>343</td><td>10.43.3.0/24</td><td>10.43.3.1</td></tr>
+ <tr><td>4</td><td>SERVIDORES</td><td>443</td><td>10.43.4.0/24</td><td>10.43.4.1</td></tr>
+ <tr><td>5</td><td>WIFI-CONV</td><td>543</td><td>10.43.5.0/24</td><td>10.43.5.1</td></tr>
+ <tr><td>9</td><td>GESTAO</td><td>943</td><td>10.43.9.0/24</td><td>10.43.9.1</td></tr>
+ <tr><td>–</td><td>nativa (sem PCs)</td><td>999</td><td>–</td><td>–</td></tr></table>
+ <ul><li>Em cada rede: <b>.1</b> é o gateway virtual, <b>.2</b> é o DSW1 e <b>.3</b> é o DSW2.</li>
+ <li><b>DSW1</b> é o chefe (raiz STP e HSRP Active) das VLANs <b>ímpares</b> (143, 343, 543, 943); o <b>DSW2</b> é o chefe da <b>243 e da 443</b>.</li>
+ <li>Os switches de acesso <b>ASW1, ASW2 e ASW3</b> ligam aos dois DSW: a <b>Gi0/1 vai ao DSW1</b> e a <b>Gi0/2 vai ao DSW2</b>.</li>
+ <li>No teste modelo usam NN = 18 ou 45. Troca sempre pelo 43: 418 passa a 443 e 10.18.4.1 passa a 10.43.4.1.</li></ul>`,
+ pal:[["NN","O teu número: 43."],["DSW","Switch de distribuição (3650, multicamada)."],["ASW","Switch de acesso (2960), onde ligam os PCs."]],
+ q:["Qual é o gateway dos PCs do Técnico?",["10.43.3.2","10.43.3.1","10.43.1.3","10.3.43.1"],1,"Técnico tem d = 3, logo a rede é 10.43.3.0/24 e o gateway é o .1."], liga:["r-cenario"]},
+"b-switch":{t:"Como um switch aprende", c:"sky", ideia:"O switch é um carteiro que vai decorando em que porta mora cada pessoa.",
+ body:`<p>O switch tem uma <b>tabela MAC</b>, onde cada linha diz que um MAC está numa certa porta. Funciona assim:</p>
+ <ol><li><b>Aprender</b>: quando chega uma trama, o switch lê o <b>MAC de origem</b> e regista em que porta o viu.</li>
+ <li><b>Encaminhar</b>: lê o <b>MAC de destino</b>. Se o conhece, envia a trama <b>só para essa porta</b>.</li>
+ <li><b>Inundar</b> (flooding): se não conhece o destino, ou se é broadcast, envia por <b>todas as portas da VLAN</b>, menos a de entrada.</li></ol>
+ <pre class="cmd">ASW1# show mac address-table
+Vlan  Mac Address      Type     Ports
+143   0001.6411.a001   DYNAMIC  Fa0/1   <span class="c">este PC está na Fa0/1</span>
+143   0060.2f3a.0d01   DYNAMIC  Gi0/1   <span class="c">veio pelo uplink (está noutro switch)</span></pre>
+ <p>Há duas formas de reencaminhar: <b>store-and-forward</b> recebe a trama toda e verifica o FCS (é a dos Cisco); <b>cut-through</b> começa a enviar logo que lê o destino (mais rápido, mas não verifica erros).</p>`,
+ pal:[["Tabela MAC","Lista MAC → porta que o switch vai aprendendo."],["Flooding","Enviar por todas as portas da VLAN."],["Store-and-forward","Recebe tudo e verifica erros antes de enviar."]],
+ q:["Que endereço o switch usa para APRENDER onde está um equipamento?",["MAC de destino","MAC de origem","IP de destino","IP de origem"],1,"Aprende com o MAC de origem e decide com o MAC de destino."], liga:["r-comutacao"]},
+"b-vlan":{t:"VLANs: vários switches dentro de um", c:"lilac", ideia:"Uma VLAN é como pôr divisórias num open space: estão no mesmo edifício, mas cada departamento tem a sua sala.",
+ body:`<p>Sem VLANs, todos os PCs ligados aos switches ficam na mesma rede e recebem os broadcasts uns dos outros. Com <b>VLANs</b> divides o switch em grupos isolados:</p>
+ <ul><li>Cada VLAN é uma <b>rede separada</b> (um <b>domínio de broadcast</b>), com a sua rede IP.</li>
+ <li>PCs de VLANs diferentes <b>não falam</b> entre si sem um router ou switch multicamada.</li>
+ <li>Vantagens: mais <b>segurança</b> (os Comerciais não veem os Servidores), menos broadcasts e organização por departamento.</li></ul>
+ <pre class="cmd">ASW1(config)# vlan 143
+ASW1(config-vlan)# name ADMIN-43
+ASW1(config)# interface range fa0/1 - 8
+ASW1(config-if-range)# switchport mode access      <span class="c">porta de PC</span>
+ASW1(config-if-range)# switchport access vlan 143  <span class="c">pô-la na VLAN 143</span>
+ASW1# show vlan brief                               <span class="c">ver que portas estão em cada VLAN</span></pre>
+ <p>Uma <b>porta de acesso</b> pertence a <b>uma só VLAN</b>. Por omissão todas as portas estão na <b>VLAN 1</b>.</p>
+ <p>Se apagares uma VLAN (<code>no vlan 243</code>), as portas que lá estavam ficam <b>inativas</b>. Não vão para a VLAN 1!</p>`,
+ pal:[["VLAN","Rede local virtual: um grupo de portas isolado."],["Porta de acesso","Porta para um PC, numa só VLAN."],["Domínio de broadcast","Até onde chega um broadcast: a VLAN."]],
+ q:["Um PC na VLAN 143 e outro na VLAN 243, no mesmo switch, comunicam sem router?",["Sim","Não"],1,"São redes separadas; precisa de routing inter-VLAN."], liga:["r-vlans"]},
+"b-trunk":{t:"Trunks: um cabo para várias VLANs", c:"mint", ideia:"Um trunk é uma autoestrada com faixas: cada trama leva uma etiqueta a dizer em que VLAN anda.",
+ body:`<p>Entre dois switches passam PCs de várias VLANs. Em vez de um cabo por VLAN, usa-se um <b>trunk</b>: um só cabo onde cada trama leva uma <b>etiqueta 802.1Q</b> com o número da VLAN.</p>
+ <div class="flow"><span>ASW1</span><i>— trunk Gi0/1: 143 · 243 · 343 · 943 —</i><span>DSW1</span></div>
+ <pre class="cmd">ASW1(config)# interface gi0/1
+ASW1(config-if)# switchport mode trunk
+ASW1(config-if)# switchport trunk native vlan 999
+ASW1(config-if)# switchport trunk allowed vlan 143,243,343,443,543,943,999
+ASW1(config-if)# switchport nonegotiate          <span class="c">desliga o DTP</span>
+ASW1# show interfaces trunk</pre>
+ <ul><li><b>VLAN nativa</b>: é a única que passa <b>sem etiqueta</b>. Tem de ser <b>igual dos dois lados</b>. No plano é a <b>999</b>, uma VLAN sem PCs, por segurança.</li>
+ <li><b>allowed vlan</b>: só as VLANs desta lista passam. Atenção: <code>allowed vlan 343</code> <b>substitui</b> a lista toda; para acrescentar escreve <code>allowed vlan add 343</code>.</li>
+ <li><b>DTP</b>: protocolo que negoceia sozinho se a porta vira trunk. <b>auto + auto não dá trunk.</b> Boa prática: fixar o trunk e usar <code>nonegotiate</code>.</li></ul>`,
+ pal:[["Trunk","Ligação que leva várias VLANs."],["802.1Q","A etiqueta com o número da VLAN."],["Nativa","VLAN que passa sem etiqueta (999)."],["DTP","Negociação automática de trunk."]],
+ q:["Num trunk com allowed vlan 143,243 escreves allowed vlan 343. O que fica?",["143,243,343","Só 343","143,243","Dá erro"],1,"Sem add, o comando substitui a lista."], liga:["r-trunks"]},
+"b-router":{t:"Routers e routing", c:"peach", ideia:"O router é o GPS da rede: olha para o IP de destino e escolhe por onde seguir.",
+ body:`<p>Um router liga redes diferentes. Cada interface do router está numa rede e tem um IP dessa rede.</p>
+ <ul><li>Tem uma <b>tabela de routing</b>: uma lista de redes e por onde se chega a cada uma (<code>show ip route</code>).</li>
+ <li>As redes ligadas diretamente aparecem com <b>C</b> (connected). As outras são aprendidas por rotas estáticas ou por protocolos de routing.</li>
+ <li>Quando chega um pacote, o router lê o <b>IP de destino</b> e envia-o pela interface certa.</li></ul>
+ <p>No cenário, o router <b>Lisboa</b> liga ao DSW1 (10.43.0.1 ↔ 10.43.0.2) e ao DSW2 (10.43.0.5 ↔ 10.43.0.6). É também ele o <b>servidor DHCP</b> da rede.</p>
+ <pre class="cmd">Lisboa(config)# interface fa0/0
+Lisboa(config-if)# ip address 10.43.0.1 255.255.255.252
+Lisboa(config-if)# no shutdown        <span class="c">as portas dos routers vêm desligadas!</span></pre>`,
+ pal:[["Tabela de routing","Lista de redes e o caminho para cada uma."],["Connected (C)","Rede ligada diretamente a uma interface."]],
+ q:["O router decide para onde enviar um pacote olhando para…",["O MAC de destino","O IP de destino","A VLAN","A porta TCP"],1,"O router trabalha na camada 3, com IP."], liga:["r-intervlan"]},
+"b-intervlan":{t:"Routing entre VLANs", c:"sky", ideia:"As VLANs são salas fechadas. Para irem de uma sala a outra, alguém tem de abrir a porta entre elas: é o routing inter-VLAN.",
+ body:`<p>Há três maneiras, da pior para a melhor:</p>
+ <ol><li><b>Legacy</b>: um cabo do router por cada VLAN. Gasta portas e não escala.</li>
+ <li><b>Router-on-a-stick (ROAS)</b>: um só cabo em trunk até ao router, com uma <b>subinterface</b> por VLAN.</li>
+ <li><b>Switch multicamada com SVIs</b>: é o que o cenário usa nos DSW.</li></ol>
+ <p>Uma <b>SVI</b> (Switch Virtual Interface) é uma "interface de mentira" dentro do switch que representa uma VLAN e tem um IP, que é o gateway dessa VLAN.</p>
+ <pre class="cmd">DSW1(config)# ip routing                <span class="c">SEM ISTO o 3650 não encaminha entre VLANs</span>
+DSW1(config)# interface vlan 143
+DSW1(config-if)# ip address 10.43.1.2 255.255.255.0
+DSW1(config-if)# no shutdown
+
+<span class="c">ROAS no router (outra maneira):</span>
+R(config)# interface g0/0.143
+R(config-subif)# encapsulation dot1q 143
+R(config-subif)# ip address 10.43.1.1 255.255.255.0</pre>
+ <p>Uma SVI só fica <b>up/up</b> se a VLAN existir e tiver pelo menos uma porta ativa (ou um trunk) nessa VLAN.</p>`,
+ pal:[["SVI","Interface VLAN com IP dentro do switch."],["ip routing","Liga o encaminhamento num switch multicamada."],["ROAS","Router com subinterfaces num trunk."]],
+ q:["As SVIs 143 e 243 estão up/up mas os PCs não comunicam. O que falta?",["no shutdown","ip routing","switchport mode trunk","ip default-gateway"],1,"Sem ip routing o switch multicamada não encaminha."], liga:["r-intervlan"]},
+"b-dhcp":{t:"DHCP: dar IPs automaticamente", c:"butter", ideia:"O DHCP é a receção do hotel: chegas, pedes um quarto e dão-te a chave (IP), o mapa (gateway) e o número da receção (DNS).",
+ body:`<p>Configurar o IP à mão em 100 PCs é impossível. O <b>DHCP</b> faz isso sozinho em 4 passos, <b>DORA</b>:</p>
+ <div class="flow"><span><b>D</b>iscover<br><small>PC: "há algum servidor?"</small></span><i>→</i><span><b>O</b>ffer<br><small>servidor: "toma o .21"</small></span><i>→</i><span><b>R</b>equest<br><small>PC: "quero o .21"</small></span><i>→</i><span><b>A</b>ck<br><small>servidor: "é teu"</small></span></div>
+ <p>O PC recebe: <b>IP + máscara</b>, <b>gateway</b>, <b>DNS</b> e o <b>domínio</b>.</p>
+ <pre class="cmd">Lisboa(config)# ip dhcp excluded-address 10.43.2.1 10.43.2.20  <span class="c">não dar estes (gateway, switches…)</span>
+Lisboa(config)# ip dhcp pool COMERCIAL-43
+Lisboa(dhcp-config)# network 10.43.2.0 255.255.255.0
+Lisboa(dhcp-config)# default-router 10.43.2.1
+Lisboa(dhcp-config)# dns-server 10.43.4.10
+Lisboa(dhcp-config)# domain-name minhaempresa.pt</pre>
+ <p><b>Problema:</b> o Discover é um <b>broadcast</b>, e os broadcasts não passam de uma VLAN para outra. O servidor (o router Lisboa) está longe dos PCs. Solução: o <b>relay</b>, configurado na SVI da VLAN dos PCs:</p>
+ <pre class="cmd">DSW1(config)# interface vlan 243
+DSW1(config-if)# ip helper-address 10.43.0.1   <span class="c">reencaminha os pedidos DHCP para o router</span></pre>
+ <p>Se uma VLAN inteira recebe <b>169.254.x.x</b> e as outras não, quase sempre falta o <b>ip helper-address</b> nessa SVI.</p>`,
+ pal:[["DHCP","Dá IPs automaticamente."],["DORA","Discover, Offer, Request, Ack."],["Pool","Conjunto de endereços para dar."],["ip helper-address","Relay: leva o pedido DHCP a outra rede."]],
+ q:["Onde se configura o ip dhcp excluded-address?",["Dentro do pool","Em modo global","Na interface","No PC"],1,"É em modo global, fora do pool."], liga:["r-dhcp"]},
+"b-ipv6":{t:"IPv6 em 5 minutos", c:"lilac", ideia:"O IPv4 esgotou. O IPv6 tem moradas gigantes (128 bits) para nunca mais faltarem.",
+ body:`<p>Um endereço IPv6 tem <b>128 bits</b>, escritos em 8 grupos hexadecimais: <code>2001:db8:43:2::25/64</code>.</p>
+ <ul><li>Para encurtar: tiram-se os zeros à esquerda de cada grupo e uma sequência de grupos de zeros pode virar <b>::</b> (só uma vez).</li>
+ <li>Quase sempre o prefixo é <b>/64</b>: 64 bits para a rede e 64 para a interface.</li>
+ <li><b>fe80::</b> é o endereço <b>link-local</b>, que existe sempre e só funciona naquele cabo.</li></ul>
+ <p>Formas de um PC ganhar endereço:</p>
+ <ul><li><b>SLAAC</b>: o router anuncia o prefixo (mensagem RA) e o PC cria sozinho a sua parte. Não há servidor.</li>
+ <li><b>DHCPv6 stateless</b>: SLAAC para o endereço e DHCPv6 só para o DNS.</li><li><b>DHCPv6 stateful</b>: o servidor dá tudo, como no IPv4.</li></ul>
+ <p><b>EUI-64</b>: forma de criar a parte da interface a partir do MAC. Parte-se o MAC ao meio, mete-se <b>FFFE</b> no meio e inverte-se o 7.º bit. Exemplo: 0050.7966.6800 dá <b>0250:79FF:FE66:6800</b>.</p>
+ <pre class="cmd">R(config)# ipv6 unicast-routing   <span class="c">o equivalente ao ip routing</span></pre>`,
+ pal:[["IPv6","Endereço de 128 bits."],["SLAAC","O PC cria o seu endereço com o prefixo do router."],["EUI-64","Interface ID feita do MAC + FFFE."]],
+ q:["No EUI-64 o que se insere a meio do MAC?",["0000","FFFF","FFFE","FE80"],2,"Insere-se FFFE e inverte-se o 7.º bit."], liga:["r-ipv6"]},
+"b-stp":{t:"Loops e Spanning Tree (STP)", c:"pink", ideia:"Ligar switches em triângulo dá caminhos de reserva, mas os broadcasts ficariam às voltas para sempre. O STP corta o cabo a mais, sem o desligar.",
+ body:`<p>No cenário cada ASW liga ao DSW1 <b>e</b> ao DSW2, para haver reserva. Isto cria um <b>loop</b>. Sem proteção, um broadcast ficava a girar eternamente (uma <b>tempestade de broadcast</b>) e a rede parava.</p>
+ <p>O <b>STP</b> resolve isto: escolhe um switch chefe e <b>bloqueia</b> uma porta para não haver círculo. Se um cabo partir, desbloqueia a porta de reserva.</p>
+ <ol><li><b>Eleger a root bridge</b>: ganha o switch com o <b>Bridge ID mais baixo</b> (primeiro a prioridade, por omissão 32768, e em empate o MAC mais baixo).</li>
+ <li>Cada outro switch escolhe a sua <b>root port</b>, o caminho mais barato até à raiz.</li>
+ <li>Em cada ligação há uma <b>designated port</b>. A porta que sobra fica <b>bloqueada</b> (alternate).</li></ol>
+ <pre class="cmd">DSW1(config)# spanning-tree vlan 143,343,543,943 root primary  <span class="c">DSW1 chefe das ímpares</span>
+DSW2(config)# spanning-tree vlan 243,443 root primary
+ASW1(config-if)# spanning-tree portfast           <span class="c">porta de PC passa logo a forwarding</span>
+ASW1(config-if)# spanning-tree bpduguard enable   <span class="c">se ligarem um switch, desliga a porta</span></pre>
+ <ul><li><b>PVST+</b>: um STP por cada VLAN, o que deixa repartir a carga (DSW1 chefe de umas e DSW2 de outras).</li>
+ <li><b>RSTP</b> (Rapid PVST+): a versão rápida, que converge em segundos em vez de 30–50 s.</li>
+ <li>A prioridade aparece somada com o número da VLAN: 24576 + 243 = 24819.</li></ul>`,
+ pal:[["Loop","Caminho em círculo entre switches."],["Root bridge","Switch chefe do STP: menor Bridge ID."],["Bloqueada","Porta que o STP desliga para cortar o loop."],["PortFast","Porta de PC sem esperar pelo STP."]],
+ q:["Que switch ganha a eleição da root bridge?",["O de maior prioridade","O de menor Bridge ID","O com mais portas","O mais rápido"],1,"Ganha o Bridge ID mais baixo (prioridade e depois MAC)."], liga:["r-stp","r-rstp"]},
+"b-ether":{t:"EtherChannel: juntar cabos", c:"sky", ideia:"Dois cabos entre DSW1 e DSW2? O STP ia bloquear um. O EtherChannel cola-os num só cabo grosso.",
+ body:`<p>O EtherChannel junta várias portas físicas numa <b>Port-channel</b> lógica (Po1). Assim há mais velocidade, e se um cabo cair o outro continua. O STP vê-a como uma só ligação e não bloqueia nada.</p>
+ <p>No cenário: <b>Po1 = Gi1/0/23 e Gi1/0/24</b>, entre o DSW1 e o DSW2.</p>
+ <pre class="cmd">DSW1(config)# interface range gi1/0/23 - 24
+DSW1(config-if-range)# channel-group 1 mode active   <span class="c">LACP</span>
+DSW1# show etherchannel summary        <span class="c">Po1(SU) = está a funcionar; (P) = porta agregada</span></pre>
+ <table class="bt"><tr><th>Protocolo</th><th>Modos</th><th>Forma se…</th></tr>
+ <tr><td><b>LACP</b> (norma)</td><td>active / passive</td><td>pelo menos um lado active</td></tr>
+ <tr><td><b>PAgP</b> (Cisco)</td><td>desirable / auto</td><td>pelo menos um lado desirable</td></tr>
+ <tr><td>Estático</td><td>on</td><td>os dois lados em on</td></tr></table>
+ <ul><li><b>passive + passive</b> ou <b>auto + auto</b>: não forma!</li>
+ <li>As portas têm de ser <b>iguais</b>: velocidade, duplex, modo trunk/acesso, nativa e VLANs permitidas.</li>
+ <li>Nas flags: (P) = agregada, (I) = sozinha, (s) = suspensa, SU = em uso, SD = em baixo.</li></ul>`,
+ pal:[["Port-channel","A ligação lógica que junta as portas."],["LACP","Protocolo normalizado (active/passive)."],["PAgP","Protocolo Cisco (desirable/auto)."]],
+ q:["Os dois lados em mode passive. Forma o EtherChannel?",["Sim","Não"],1,"No LACP pelo menos um lado tem de estar em active."], liga:["r-ether"]},
+"b-hsrp":{t:"HSRP: um gateway de reserva", c:"mint", ideia:"Se o gateway avariar, os PCs ficam sem saída. O HSRP põe dois switches a fingir que são um só, com um IP partilhado.",
+ body:`<p>Os PCs só têm <b>um</b> gateway configurado. Se fosse o IP do DSW1 e o DSW1 avariasse, ficavam presos. Com o <b>HSRP</b>:</p>
+ <ul><li>O DSW1 (.2) e o DSW2 (.3) partilham um <b>IP virtual</b>, o <b>.1</b>. Os PCs usam o .1 como gateway.</li>
+ <li>Um deles é o <b>Active</b> (responde pelo .1) e o outro fica <b>Standby</b> (à espera).</li>
+ <li>Ganha o de <b>maior prioridade</b> (por omissão 100; no plano o chefe tem <b>110</b>).</li>
+ <li>O <b>preempt</b> faz com que, quando o chefe volta, recupere o papel de Active.</li></ul>
+ <pre class="cmd">DSW2(config)# interface vlan 443
+DSW2(config-if)# ip address 10.43.4.3 255.255.255.0
+DSW2(config-if)# standby version 2          <span class="c">precisa da v2 para grupos acima de 255, como o 443</span>
+DSW2(config-if)# standby 443 ip 10.43.4.1
+DSW2(config-if)# standby 443 priority 110
+DSW2(config-if)# standby 443 preempt
+DSW1# show standby brief</pre>
+ <p>Este é o mesmo tipo de exercício da Parte B do teste modelo!</p>`,
+ pal:[["HSRP","Gateway redundante da Cisco."],["IP virtual","O .1 partilhado que os PCs usam."],["Active / Standby","Quem responde agora / quem está de reserva."],["Preempt","Recuperar o papel de Active."]],
+ q:["Que IP os PCs usam como gateway com HSRP?",["O do Active","O do Standby","O IP virtual","O multicast"],2,"Usam o IP virtual (.1)."], liga:["r-hsrp"]},
+"b-seg":{t:"Ataques e defesas na camada 2", c:"peach", ideia:"Quem se liga a uma tomada da rede já está lá dentro. As defesas da camada 2 fecham as portas aos espertinhos.",
+ body:`<table class="bt"><tr><th>Ataque</th><th>O que faz</th><th>Defesa</th></tr>
+ <tr><td><b>MAC flooding</b></td><td>Enche a tabela MAC com MACs falsos e o switch passa a inundar tudo</td><td><b>Port security</b></td></tr>
+ <tr><td><b>Switch spoofing</b></td><td>Finge ser um switch para negociar um trunk (DTP)</td><td>Portas em <code>switchport mode access</code> e <code>nonegotiate</code></td></tr>
+ <tr><td><b>Double tagging</b></td><td>Na VLAN nativa, envia uma trama com 2 etiquetas para saltar para outra VLAN</td><td>Nativa sem utilizadores (<b>999</b>)</td></tr>
+ <tr><td><b>DHCP spoofing / starvation</b></td><td>Um servidor DHCP falso dá um gateway falso; ou esgota os IPs</td><td><b>DHCP snooping</b> (só os uplinks são trusted)</td></tr>
+ <tr><td><b>ARP spoofing</b></td><td>Mente sobre o MAC do gateway</td><td><b>DAI</b> (Dynamic ARP Inspection)</td></tr>
+ <tr><td><b>Ataque STP</b></td><td>Envia BPDUs para ser a raiz</td><td><b>BPDU Guard</b> nas portas de PC</td></tr></table>
+ <pre class="cmd">ASW1(config-if)# switchport port-security
+ASW1(config-if)# switchport port-security maximum 2
+ASW1(config-if)# switchport port-security mac-address sticky
+ASW1(config-if)# switchport port-security violation restrict
+ASW1(config)# ip dhcp snooping
+ASW1(config)# ip dhcp snooping vlan 143,243
+ASW1(config-if)# ip dhcp snooping trust      <span class="c">só nos uplinks Gi0/1 e Gi0/2</span></pre>
+ <p>Modos de violação do port security: <b>shutdown</b> (por omissão: a porta vai para <b>err-disabled</b>), <b>restrict</b> (descarta e regista) e <b>protect</b> (descarta em silêncio).</p>`,
+ pal:[["Port security","Limita os MACs por porta."],["err-disabled","Porta desligada por segurança."],["DHCP snooping","Bloqueia servidores DHCP falsos."],["Trusted","Porta de confiança (uplink)."]],
+ q:["Qual é o modo de violação por omissão do port security?",["protect","restrict","shutdown","drop"],2,"É shutdown: a porta vai para err-disabled."], liga:["r-ataques","r-portsec","r-praticas"]},
+"b-wifi":{t:"Wi-Fi básico (TP07)", c:"lilac", ideia:"O Wi-Fi é uma porta de switch pelo ar. O AP é a 'tomada' sem fios e o WLC é o chefe de todos os APs.",
+ body:`<ul><li><b>SSID</b>: o nome da rede Wi-Fi que aparece no telemóvel. Cada SSID liga a uma <b>VLAN</b> (no plano, convidados na 543).</li>
+ <li><b>AP autónomo</b>: configura-se um a um. <b>LAP</b> (lightweight AP): é gerido por um <b>WLC</b> (Wireless LAN Controller), através de um túnel <b>CAPWAP</b>.</li>
+ <li>Segurança: <b>WPA2/WPA3</b>. <b>Personal</b> (PSK) usa uma palavra-passe igual para todos; <b>Enterprise</b> usa um utilizador por pessoa, com um servidor <b>RADIUS</b>.</li>
+ <li>Bandas: 2,4 GHz (mais alcance) e 5 GHz (mais rápido, mais canais).</li></ul>
+ <p>No cenário: o <b>WLC</b> está na ASW3 Fa0/21 (em trunk, porque leva várias VLANs) e o <b>LAP</b> na ASW1 Fa0/20 (VLAN de gestão 943).</p>
+ <p class="note">Confirma com o professor se o Wi-Fi sai neste teste (a FUC põe-no no Teste 2).</p>`,
+ pal:[["SSID","Nome da rede Wi-Fi."],["WLC","Controlador que gere os APs."],["CAPWAP","Túnel entre o LAP e o WLC."],["RADIUS","Servidor de autenticação do WPA Enterprise."]],
+ q:["Que equipamento gere vários LAPs de forma centralizada?",["Router","WLC","DHCP","Switch de acesso"],1,"O WLC (Wireless LAN Controller)."], liga:["r-wifi"]},
+"b-dic":{t:"Dicionário rápido", c:"butter", ideia:"Quando vires uma palavra estranha num enunciado, procura-a aqui.", body:"", pal:[], q:null, liga:[]}
+};
+const BORDER = BP.flatMap(g=>g.ls);
+function renderBSide(){
+  document.getElementById("bside").innerHTML = BP.map(g=>`<div><h4>${esc(g.name)}</h4><div class="grp">${g.ls.map(id=>`<a href="#${id}" data-b="${id}" style="${cv(BL[id].c)}">${BORDER.indexOf(id)+1<BORDER.length?(BORDER.indexOf(id)+1)+". ":""}${esc(BL[id].t)}</a>`).join("")}</div></div>`).join("");
+}
+function dicHTML(){
+  const all=[]; BORDER.forEach(id=>BL[id].pal.forEach(p=>all.push([p[0],p[1],id])));
+  all.sort((a,b)=>a[0].localeCompare(b[0],"pt"));
+  return `<div class="dic">${all.map(p=>`<div><b>${esc(p[0])}</b><span>${esc(p[1])}</span><a href="#${p[2]}">lição</a></div>`).join("")}</div>`;
+}
+function showB(id){
+  const o=BL[id]; const i=BORDER.indexOf(id); const prev=BORDER[i-1], next=BORDER[i+1];
+  document.querySelectorAll("#bside a").forEach(a=>a.setAttribute("aria-current", a.dataset.b===id?"true":"false"));
+  const q=o.q? `<div class="blk bq"><h3>Testa-te</h3><p class="qtext">${esc(o.q[0])}</p><div class="opts">${o.q[1].map((x,j)=>`<label class="opt"><input type="radio" name="bq-${id}" value="${j}"><span>${esc(x)}</span></label>`).join("")}</div><p class="bfb" hidden></p></div>`:"";
+  document.getElementById("bBox").innerHTML = `<article class="topic card" style="${cv(o.c)}">
+   <div class="topic-head"><div class="meta"><span class="tag">${id==="b-dic"?"Glossário":"Lição "+(i+1)+" de "+(BORDER.length-1)}</span></div><h2>${esc(o.t)}</h2><p class="frase">💡 ${esc(o.ideia)}</p></div>
+   <div class="topic-body bbody">${id==="b-dic"?dicHTML():o.body}
+    ${o.pal.length?`<div class="blk"><h3>Palavras novas</h3><dl class="pal">${o.pal.map(p=>`<div><dt>${esc(p[0])}</dt><dd>${esc(p[1])}</dd></div>`).join("")}</dl></div>`:""}
+    ${q}
+    ${o.liga.length?`<div class="blk"><h3>Já percebeste? Agora a versão para o teste</h3><div class="chips">${o.liga.map(chip).join("")}</div></div>`:""}
+   </div>
+   <div class="pager">${prev?`<a class="btn soft small" href="#${prev}">← ${esc(BL[prev].t)}</a>`:"<span></span>"}${next?`<a class="btn small" href="#${next}">${esc(BL[next].t)} →</a>`:`<a class="btn small" href="#resumo">Ir para o resumo →</a>`}</div></article>`;
+  document.querySelectorAll(`#bBox input[name="bq-${id}"]`).forEach(r=>r.addEventListener("change",()=>{
+    const ok=+r.value===o.q[2]; const fb=document.querySelector("#bBox .bfb");
+    document.querySelectorAll("#bBox .opt").forEach((el,j)=>{el.classList.toggle("is-correct",j===o.q[2]); el.classList.toggle("is-wrong",j===+r.value&&!ok);});
+    fb.hidden=false; fb.textContent=(ok?"Certo! ":"Ainda não. ")+o.q[3]; }));
+}
 
 /* ======================= LÓGICA ======================= */
 const store = {
@@ -1019,8 +1342,8 @@ const F2BY = {}; F2.forEach(f=>F2BY[f[0]]=f);
 
 /* ---------- calendário ---------- */
 const DAYS = [
- {d:5,w:"qui",tag:"Bloco A",c:"sky",items:["Ver o mapa mental","Aula 1 e TP02: SSH e cópias","Decorar o plano NN = 43"],t:["r-cenario","r-gestao"]},
- {d:6,w:"sex",tag:"Bloco A",c:"sky",items:["Aula 2: comutação e VLANs","Teóricas 2, 7, 10, 16"],t:["r-comutacao","r-vlans"]},
+ {d:5,w:"qui",tag:"Bases",c:"sky",x:[["bases","Bases do zero"]],items:["Bases do zero: lições 1 a 10","Ver o mapa mental","Aula 1 e TP02: SSH e cópias","Decorar o plano NN = 43"],t:["r-cenario","r-gestao"]},
+ {d:6,w:"sex",tag:"Bases",c:"sky",x:[["b-router","Lições 11–19"]],items:["Bases do zero: lições 11 a 19","Aula 2: comutação e VLANs","Teóricas 2, 7, 10, 16"],t:["r-comutacao","r-vlans"]},
  {d:7,w:"sáb",tag:"Bloco A",c:"sky",items:["TP03: trunks e DTP","Teóricas 1, 14, 15, 20"],t:["r-trunks","r-show"]},
  {d:8,w:"dom",tag:"Bloco A",c:"sky",items:["Aula 3 e TP04: inter-VLAN, DHCP, IPv6","Teóricas 3, 4, 6, 13, 18"],t:["r-intervlan","r-dhcp","r-ipv6"]},
  {d:9,w:"seg",tag:"Treino",c:"pink",items:["Teste modelo oficial e Teste 1","Rever o que falhou"],t:[],x:[["teste-modelo","Teste modelo"],["teste-1","Teste 1"]]},
@@ -1248,6 +1571,8 @@ function show(view, tab){
 function route(){
   const h=(location.hash||"#inicio").slice(1);
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
+  if(BL[h]){ show("bases"); showB(h); window.scrollTo(0,0); backBtn.hidden=true; return; }
+  if(h==="bases"){ show("bases"); showB(BORDER[0]); window.scrollTo(0,0); backBtn.hidden=true; return; }
   if(h==="resumo"){ show("resumo"); showTopic(ORDER[0]); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(/^f2-\d+$/.test(h)){ show("folha2"); f2filter="all"; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"?"true":"false")); applyF2();
     const c=document.getElementById(h); const n=h.slice(3); const p=document.getElementById("pt-"+n); if(p){p.hidden=false; const b=c.querySelector("[data-open]"); if(b) b.textContent="Esconder";} if(c) c.scrollIntoView({block:"start"}); backBtn.hidden=!lastTest; return; }
@@ -1262,7 +1587,7 @@ document.addEventListener("click",e=>{ const a=e.target.closest("a[data-from]");
 backBtn.addEventListener("click",()=>{ if(lastTest) location.hash="teste-"+lastTest.key; });
 window.addEventListener("hashchange",route);
 
-renderCal(); renderMap(); renderSide(); renderF2(); renderVersions(); route();
+renderCal(); renderMap(); renderSide(); renderBSide(); renderF2(); renderVersions(); route();
 </script>
 </body>
 </html>
