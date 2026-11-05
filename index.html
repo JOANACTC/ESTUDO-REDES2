@@ -191,6 +191,8 @@ td.n{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.84rem;
 .vcard .vn{font-family:var(--display);font-weight:700;font-size:1.5rem}
 .vcard p{font-size:.9rem;color:var(--muted)}
 .vcard .best{font-weight:800;font-size:.85rem;color:var(--mint)}
+.vcard.oficial{background:linear-gradient(135deg,var(--sky-soft),var(--mint-soft));outline:3px solid var(--sky);outline-offset:-3px}
+.selone{font-size:.9rem;color:var(--muted);margin:2px 0 8px}
 .vcard.surprise{background:linear-gradient(135deg,var(--butter-soft),var(--pink-soft))}
 .thead{padding:18px 22px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
 .thead>div:first-child{flex:1 1 260px;min-width:0}
@@ -310,7 +312,7 @@ textarea:focus{border-color:var(--c);outline:none}
 </section>
 
 <section class="view" id="v-testes" hidden>
-  <div class="pagehead"><p class="eyebrow">Treino</p><h1>Testes modelo</h1><p class="lead">Oito versões, cada uma com as 3 folhas como no teste real, mais um teste surpresa que mistura tudo. Faz um de cada vez e corrige no fim.</p></div>
+  <div class="pagehead"><p class="eyebrow">Treino</p><h1>Testes modelo</h1><p class="lead">O teste modelo oficial passado para o NN = 43, oito versões com as 3 folhas como no teste real e um teste surpresa que mistura tudo. Faz um de cada vez e corrige no fim.</p></div>
   <div class="versions" id="versions"></div>
 </section>
 
@@ -620,93 +622,108 @@ const SUBS = [
   ["Antes de o comando crypto key generate rsa funcionar, o switch precisa de ter configurado:",["enable secret","Um hostname diferente de Switch e ip domain-name","username com privilege 15","transport input ssh nas linhas vty",N],1,"As chaves RSA são nomeadas com o hostname e o domínio."],
   ["Que comando guarda uma cópia da configuração ativa num servidor TFTP?",["copy running-config tftp","copy tftp running-config","write memory","show running-config",N],0,"Origem primeiro, destino depois. copy tftp running-config é para repor."],
   ["Que comando faz com que as palavras-passe em texto simples apareçam cifradas na configuração?",["enable secret","service password-encryption","crypto key generate rsa","login local",N],1,"É uma cifra fraca (tipo 7), mas evita que se leiam por cima do ombro."],
-  ["Que comando, nas linhas vty, só deixa entrar por SSH?",["login local","transport input ssh","ip ssh version 2","exec-timeout 5",N],1,"login local obriga a usar o utilizador local; transport input ssh recusa o Telnet."]]},
+  ["Que comando, nas linhas vty, só deixa entrar por SSH?",["login local","transport input ssh","ip ssh version 2","exec-timeout 5",N],1,"login local obriga a usar o utilizador local; transport input ssh recusa o Telnet."],
+  ["Num 2960 configuraram-se hostname, ip domain-name, utilizador local e transport input ssh nas vty, mas show ip ssh mostra «SSH Disabled». Qual é a causa mais provável?",["Falta o enable secret","A SVI de gestão está em shutdown","Não foram geradas as chaves RSA (crypto key generate rsa)","Falta login local na consola",N],2,"Sem chaves RSA o servidor SSH não arranca. Depois de crypto key generate rsa (1024 bits ou mais) passa a «SSH Enabled»."]]},
  {name:"Métodos de comutação", ref:"r-comutacao", q:[
   ["Que afirmação sobre a comutação store-and-forward é correta?",["Começa a reencaminhar logo após ler o MAC de destino","Tem latência menor do que o cut-through","Verifica o FCS e descarta as tramas com erro","Só funciona entre portas da mesma velocidade",N],2,"Recebe a trama completa e valida o FCS; tem mais latência."],
   ["Um switch recebe uma trama unicast cujo MAC de destino não está na tabela MAC. O que faz?",["Descarta a trama","Devolve-a pela porta de entrada","Inunda-a por todas as portas da mesma VLAN, exceto a de entrada","Envia-a ao gateway por omissão",N],2,"Unicast desconhecido é inundado na VLAN."],
   ["O método de comutação fragment-free:",["Recebe a trama toda e verifica o FCS","Lê os primeiros 64 bytes antes de reencaminhar","Lê só os 6 bytes do MAC de destino","É o mesmo que store-and-forward",N],1,"Os primeiros 64 bytes são onde aparecem os restos de colisões."],
   ["Um switch de 24 portas, todas ligadas, com uma só VLAN. Quantos domínios de colisão e de difusão tem?",["1 e 1","24 e 1","24 e 24","1 e 24",N],1,"Cada porta é um domínio de colisão; a VLAN é um domínio de difusão."],
-  ["Em que campo da tabela MAC se baseia o switch para aprender a localização de um equipamento?",["No MAC de destino das tramas recebidas","No MAC de origem das tramas recebidas","No endereço IP de origem","No FCS",N],1,"Aprende sempre pelo MAC de origem e a porta por onde a trama entrou."]]},
+  ["Em que campo da tabela MAC se baseia o switch para aprender a localização de um equipamento?",["No MAC de destino das tramas recebidas","No MAC de origem das tramas recebidas","No endereço IP de origem","No FCS",N],1,"Aprende sempre pelo MAC de origem e a porta por onde a trama entrou."],
+  ["Um switch recebe, numa porta da VLAN 143, uma trama com destino FFFF.FFFF.FFFF. O que faz?",["Envia-a por todas as portas da VLAN 143, exceto a de entrada","Envia-a por todas as portas do switch","Envia-a só pelos trunks","Descarta-a",N],0,"Broadcast é inundado, mas só dentro da VLAN (incluindo os trunks que a deixam passar)."]]},
  {name:"VLANs", ref:"r-vlans", q:[
   ["Qual é o intervalo das VLANs de gama normal (normal range)?",["1–4094","1006–4094","1–1005","2–1001",N],2,"A gama estendida é 1006–4094."],
   ["Onde guarda um Catalyst 2960 as VLANs de gama normal?",["Na startup-config","Na running-config","No ficheiro vlan.dat na flash","Na NVRAM, em vlan.cfg",N],2,"Por isso apagar a startup-config não apaga as VLANs."],
   ["Que VLAN leva o tráfego sem etiqueta num trunk 802.1Q?",["A VLAN de gestão","A VLAN de voz","A VLAN nativa","A VLAN de dados",N],2,"No cenário é a 999, que ninguém usa."],
   ["Que comando põe a porta a servir também um telefone IP na VLAN 150?",["switchport voice vlan 150","switchport access voice 150","vlan voice 150","switchport trunk voice 150",N],0,"Os dados continuam em switchport access vlan; a voz vai com tag."],
-  ["Dentro de vlan 343, que comando lhe dá o nome TECNICO-43?",["vlan name TECNICO-43","name TECNICO-43","description TECNICO-43","switchport name TECNICO-43",N],1,"No modo config-vlan o comando é só name."]]},
+  ["Dentro de vlan 343, que comando lhe dá o nome TECNICO-43?",["vlan name TECNICO-43","name TECNICO-43","description TECNICO-43","switchport name TECNICO-43",N],1,"No modo config-vlan o comando é só name."],
+  ["O que acontece às portas de acesso de uma VLAN quando essa VLAN é apagada (no vlan 243)?",["Passam automaticamente para a VLAN 1","Ficam inativas até serem atribuídas a outra VLAN ou a VLAN ser recriada","Passam a err-disabled","Passam a trunk",N],1,"As portas continuam associadas à VLAN 243, que já não existe, e deixam de passar tráfego."]]},
  {name:"Trunks 802.1Q", ref:"r-trunks", q:[
   ["Qual é a função de uma ligação trunk?",["Ligar um PC a várias VLANs","Transportar tramas de várias VLANs numa só ligação","Aumentar a largura de banda juntando portas","Encaminhar pacotes entre VLANs",N],1,"Juntar portas é EtherChannel; encaminhar entre VLANs é inter-VLAN."],
   ["[Cenário] Um trunk tem allowed vlan 143,243,343,443,943,999. Escreve-se switchport trunk allowed vlan 543. Qual é o resultado?",["A 543 é acrescentada à lista","A lista passa a ter só a VLAN 543","Dá erro porque a 543 não existe","A 543 passa a ser a nativa",N],1,"Sem add a lista é substituída. O certo é allowed vlan add 543."],
   ["Duas portas ligadas entre si, ambas em switchport mode dynamic auto. Qual é o resultado?",["Formam trunk","Ficam em modo acesso","Ficam err-disabled","Formam EtherChannel",N],1,"Nenhum lado pede trunk."],
   ["O que acontece num native VLAN mismatch (999 de um lado, 1 do outro)?",["O trunk fica down","O tráfego nativo de uma VLAN sai na outra e o CDP avisa do erro","Nada, o DTP corrige","A porta passa a err-disabled",N],1,"O trunk continua a funcionar, mas mistura as duas nativas."],
-  ["Quantos bytes acrescenta a tag 802.1Q a uma trama?",["2","4","8","12",N],1,"A tag tem 4 bytes e leva o VLAN ID de 12 bits."]]},
+  ["Quantos bytes acrescenta a tag 802.1Q a uma trama?",["2","4","8","12",N],1,"A tag tem 4 bytes e leva o VLAN ID de 12 bits."],
+  ["Num trunk com switchport trunk allowed vlan 143,243 aplica-se switchport trunk allowed vlan 343. Qual é o resultado?",["A lista passa a 143,243,343","O comando é rejeitado por já existir uma lista","A lista passa a ser só 343","A VLAN 343 é retirada da lista",N],2,"Sem add, o comando substitui a lista. Para acrescentar usa-se switchport trunk allowed vlan add 343."]]},
  {name:"SVIs e routing inter-VLAN", ref:"r-intervlan", q:[
   ["Em que condições fica uma SVI (interface vlan 243) no estado up/up?",["Basta ter um endereço IP configurado","A VLAN 243 existe e há pelo menos uma porta ativa (acesso ou trunk) nessa VLAN","O switch tem ip routing","Está configurada como gateway nos PCs",N],1,"Também precisa de no shutdown."],
   ["No router-on-a-stick, que comando associa a subinterface Fa0/0.243 à VLAN 243?",["switchport access vlan 243","encapsulation dot1Q 243","vlan 243","standby 243",N],1,"Depois vem o IP do gateway da VLAN."],
   ["Para uma porta de um Catalyst 3650 ter IP e funcionar como porta encaminhada:",["switchport mode trunk","no switchport","Basta ip routing","encapsulation dot1q",N],1,"no switchport tira a porta da camada 2."],
   ["Qual é a principal limitação do router-on-a-stick?",["Não suporta 802.1Q","Todo o tráfego entre VLANs sobe e desce o mesmo cabo","Precisa de uma porta física por VLAN","Não funciona com DHCP",N],1,"O trunk para o router fica um gargalo."],
-  ["Num 3650 com SVIs configuradas, que comando global é preciso para encaminhar entre elas?",["ip routing","ipv6 unicast-routing","router rip","no switchport",N],0,"Sem ip routing as SVIs só servem para gestão."]]},
+  ["Num 3650 com SVIs configuradas, que comando global é preciso para encaminhar entre elas?",["ip routing","ipv6 unicast-routing","router rip","no switchport",N],0,"Sem ip routing as SVIs só servem para gestão."],
+  ["Num 3650 criaram-se SVIs com IP para as VLANs 143 e 243, ambas up/up, mas os PCs das duas VLANs não comunicam entre si. Que comando falta?",["no switchport nas SVIs","switchport mode trunk nas portas dos PCs","ip default-gateway","ip routing",N],3,"Um switch multicamada só encaminha entre VLANs depois de ip routing em modo global."]]},
  {name:"DHCPv4 e DHCP snooping", ref:"r-dhcp", q:[
   ["Que mensagem DHCPv4 envia primeiro um cliente que ainda não tem endereço?",["DHCPREQUEST","DHCPOFFER","DHCPDISCOVER","DHCPACK",N],2,"Sequência DORA."],
   ["[Cenário] Em que portas dos ASW se configura ip dhcp snooping trust?",["Em nenhuma: o trust é só no router Lisboa","Na interface Vlan943","Em todas as portas de acesso","Nos uplinks para os DSW, por onde chegam as respostas do servidor legítimo",N],3,"As portas de acesso ficam untrusted."],
   ["[Cenário] Os PCs da VLAN 143 recebem endereço do router Lisboa, que está noutra sub-rede. O que tem de existir na interface vlan 143 do DSW1?",["ip dhcp pool ADMIN-43","ip helper-address 10.43.0.1","ip dhcp snooping trust","ip default-gateway 10.43.0.1",N],1,"O helper-address faz o relay até ao router."],
   ["Quando tenta o cliente DHCPv4 renovar a concessão com o mesmo servidor, por unicast?",["Aos 87,5 % do tempo","Aos 50 % do tempo (T1)","Quando a concessão acaba","Aos 25 % do tempo",N],1,"T2 = 87,5 %, em broadcast a qualquer servidor."],
-  ["Que campo da mensagem DHCP preenche o relay para o servidor saber de que sub-rede vem o pedido?",["chaddr","giaddr","yiaddr","siaddr",N],1,"giaddr = gateway IP address."]]},
+  ["Que campo da mensagem DHCP preenche o relay para o servidor saber de que sub-rede vem o pedido?",["chaddr","giaddr","yiaddr","siaddr",N],1,"giaddr = gateway IP address."],
+  ["Um router IOS serve DHCP para 10.43.2.0/24 e não deve atribuir os endereços .1 a .10. Que comando o garante?",["network 10.43.2.11 255.255.255.0 no pool","default-router 10.43.2.10 no pool","exclude 10.43.2.1 10.43.2.10 no pool","ip dhcp excluded-address 10.43.2.1 10.43.2.10 em modo global",N],3,"As exclusões configuram-se em modo global, fora do pool."]]},
  {name:"IPv6: SLAAC e DHCPv6", ref:"r-ipv6", q:[
   ["Que flag do Router Advertisement indica aos hosts que devem obter o endereço num servidor DHCPv6 stateful?",["O (Other configuration)","M (Managed address configuration)","A (Autonomous)","L (On-link)",N],1,"O = stateless (só DNS e afins); A = SLAAC."],
   ["Um Router Advertisement chega com A=1, O=1 e M=0. O que fazem os hosts?",["Pedem o endereço a um servidor DHCPv6 stateful","Criam o endereço por SLAAC e pedem o DNS ao DHCPv6 (stateless)","Usam só SLAAC e não falam com DHCPv6","Ficam só com o link-local",N],1,"Isto é DHCPv6 stateless."],
   ["Qual é o identificador EUI-64 gerado a partir do MAC 00:1A:2B:3C:4D:5E?",["001A:2BFF:FE3C:4D5E","021A:2BFF:FE3C:4D5E","021A:2B3C:4D5E:FFFE","FE80:1A2B:3C4D:5E00",N],1,"FFFE no meio e o 7.º bit invertido: 00 passa a 02."],
   ["Qual é o prefixo dos endereços IPv6 link-local?",["2001::/16","FE80::/10","FF00::/8","FC00::/7",N],1,"FF00::/8 é multicast; FC00::/7 é unique local."],
-  ["Que comando é preciso para um router enviar Router Advertisements?",["ipv6 enable","ipv6 unicast-routing","ipv6 nd ra","ipv6 address autoconfig",N],1,"Sem ele o router não age como router IPv6."]]},
+  ["Que comando é preciso para um router enviar Router Advertisements?",["ipv6 enable","ipv6 unicast-routing","ipv6 nd ra","ipv6 address autoconfig",N],1,"Sem ele o router não age como router IPv6."],
+  ["Com SLAAC e EUI-64, como se obtém o identificador de interface a partir do MAC 0050.7966.6800?",["Copia-se o MAC e acrescentam-se 16 zeros","Usa-se um número aleatório de 64 bits","Insere-se FFFE a meio e inverte-se o 7.º bit: 0250:79FF:FE66:6800","Insere-se FFFE a meio sem mais alterações: 0050:79FF:FE66:6800",N],2,"Parte-se o MAC ao meio, mete-se FFFE e inverte-se o bit U/L (00 passa a 02)."]]},
  {name:"STP: eleição da root bridge", ref:"r-stp", q:[
   ["Três switches com prioridade 32768 + VLAN e MACs SW1 0001.aaaa.0001, SW2 0001.aaaa.0002 e SW3 0000.bbbb.0003. Quem é a root bridge?",["SW1","SW2","SW3","Nenhum: com prioridades iguais não há eleição",N],2,"Prioridades iguais: ganha o menor MAC (0000… é o menor)."],
   ["Em PVST+, a prioridade STP que se configura tem de ser múltipla de:",["1","256","1024","4096",N],3,"Os 12 bits de baixo são a VLAN (extended system ID)."],
   ["[Cenário] O DSW1 tem spanning-tree vlan 143 root primary. No ASW1, qual é normalmente a root port da VLAN 143?",["Gi0/2","Gi0/1","Fa0/1","Nenhuma: o ASW1 é a raiz",N],1,"A Gi0/1 vai diretamente ao DSW1."],
   ["Duas portas de um switch levam ao mesmo vizinho, com o mesmo custo até à raiz. Como se escolhe a root port?",["Pelo maior MAC do switch local","Pelo menor port ID anunciado pelo vizinho","Pela porta com maior custo","Ao acaso",N],1,"Ordem: custo, BID do vizinho, port ID do vizinho."],
-  ["Depois de spanning-tree vlan 143 root primary num switch com prioridade 32768, que prioridade base fica?",["32768","24576","28672","4096",N],1,"root secondary dá 28672."]]},
- {name:"STP: temporizadores e RSTP", ref:"r-rstp", q:[
+  ["Depois de spanning-tree vlan 143 root primary num switch com prioridade 32768, que prioridade base fica?",["32768","24576","28672","4096",N],1,"root secondary dá 28672."],
+  ["Que switch é eleito root bridge no STP?",["O de maior prioridade","O que tem mais portas ativas","O de maior MAC","O de menor Bridge ID (prioridade e depois MAC)",N],3,"Ganha o Bridge ID mais baixo: compara-se a prioridade e, em empate, o MAC."]]},
+ {name:"STP: PVST+, RSTP e temporizadores", ref:"r-rstp", q:[
   ["No STP 802.1D com temporizadores por omissão, uma porta bloqueada que deixa de receber BPDU passa a forwarding ao fim de cerca de:",["2 s","15 s","50 s","300 s",N],2,"Max age 20 + listening 15 + learning 15."],
   ["Quais são os estados de porta do RSTP (802.1w)?",["Blocking, listening, learning, forwarding","Discarding, learning, forwarding","Disabled, blocking, forwarding","Listening, forwarding",N],1,"Disabled, blocking e listening juntam-se em discarding."],
   ["Qual é o custo STP (método curto) de uma ligação de 1 Gb/s?",["19","100","4","2",N],2,"100 Mb/s = 19; 10 Gb/s = 2."],
   ["Qual é o hello time STP por omissão?",["1 s","2 s","10 s","15 s",N],1,"Forward delay 15 s, max age 20 s."],
-  ["O que permite o PVST+ que o STP clássico (uma só instância) não permite?",["Usar EtherChannel","Ter uma raiz diferente em cada VLAN e repartir a carga","Desligar o BPDU Guard","Convergir sem BPDUs",N],1,"Uma instância por VLAN."]]},
+  ["O que permite o PVST+ que o STP clássico (uma só instância) não permite?",["Usar EtherChannel","Ter uma raiz diferente em cada VLAN e repartir a carga","Desligar o BPDU Guard","Convergir sem BPDUs",N],1,"Uma instância por VLAN."],
+  ["O que significa, no PVST+, haver uma instância de STP por VLAN?",["Cada VLAN pode ter raiz e portas bloqueadas diferentes, o que permite repartir a carga","Todas as VLANs partilham a mesma raiz e as mesmas portas bloqueadas","O STP só corre na VLAN 1","Cada porta tem a sua própria raiz",N],0,"É isso que o plano usa: DSW1 raiz das VLANs ímpares, DSW2 da 243 e da 443."]]},
  {name:"EtherChannel", ref:"r-ether", q:[
   ["Quantas ligações ativas pode ter, no máximo, um EtherChannel LACP?",["2","4","6","16",N],4,"Máximo 8 ativas (16 configuradas, 8 em standby)."],
   ["Os dois lados de um EtherChannel LACP estão em mode passive. O que acontece?",["Forma-se o EtherChannel","Não se forma: nenhum lado inicia a negociação","Forma-se com PAgP","Só se forma com o STP desligado",N],1,"Pelo menos um lado tem de estar em active."],
   ["Qual destas NÃO tem de ser igual nas portas de um EtherChannel?",["Velocidade","Duplex","Modo (acesso/trunk) e VLANs permitidas","Descrição (description) da interface",N],3,"A descrição é só texto."],
   ["Que combinação PAgP forma um EtherChannel?",["auto + auto","desirable + auto","on + desirable","active + desirable",N],1,"active é LACP; on não negoceia."],
-  ["Depois de criar o EtherChannel, onde se configura o modo trunk?",["Só na Gi1/0/23","Na interface port-channel 1","Na interface vlan 999","Em nenhum lado: é automático",N],1,"O port-channel passa as definições às portas físicas."]]},
+  ["Depois de criar o EtherChannel, onde se configura o modo trunk?",["Só na Gi1/0/23","Na interface port-channel 1","Na interface vlan 999","Em nenhum lado: é automático",N],1,"O port-channel passa as definições às portas físicas."],
+  ["Qual destas diferenças entre as portas membros impede a formação do EtherChannel?",["Terem description diferentes","Os números de porta não serem consecutivos","Estarem em módulos diferentes do mesmo switch","Terem listas de VLANs permitidas ou VLAN nativa diferentes",N],3,"Os membros têm de ter a mesma velocidade, duplex, modo, nativa e lista de VLANs."]]},
  {name:"HSRP", ref:"r-hsrp", q:[
   ["Qual é o MAC virtual do grupo 143 em HSRP versão 2?",["0000.0C07.AC8F","0000.0C9F.F08F","0000.5E00.018F","0000.0C9F.F143",N],1,"v2: 0000.0C9F.F + grupo em hex (143 = 0x08F)."],
   ["[Cenário] No grupo da VLAN 343, DSW1 e DSW2 ficaram ambos com prioridade 100. Quem é o ativo?",["O DSW1, por ser o primeiro","O que tiver o menor MAC","O que tiver o maior endereço IP na SVI Vlan343","Os dois partilham o papel",N],2,"Desempate HSRP: maior IP (o DSW2, com .3)."],
   ["[Cenário] show standby brief mostra Active para a Vlan143 no DSW1 e no DSW2. Causa mais provável?",["Falta o ip helper-address","Os DSW não recebem os hellos um do outro na VLAN 143 (p. ex. a VLAN não passa no Po1)","É o funcionamento normal com preempt","As prioridades são iguais",N],1,"Sem hellos, cada um julga-se sozinho."],
   ["[Cenário] O DSW1 (prioridade 110 na VLAN 143) reinicia e volta. Para voltar a ser Active precisa de:",["Nada, recupera sempre o papel","standby 143 preempt","standby 143 priority 255","standby version 2",N],1,"Sem preempt o DSW2 continua Active."],
   ["[Cenário] Que gateway deve estar configurado num PC da VLAN 243?",["10.43.2.2","10.43.2.3","10.43.2.1","10.43.0.1",N],2,"O .1 é o IP virtual; .2 e .3 são as SVIs."],
-  ["Qual é o MAC virtual do HSRP versão 1, grupo 10?",["0000.0C07.AC0A","0000.0C9F.F00A","0000.5E00.010A","0000.0C07.AC10",N],0,"0000.5E00.01xx é do VRRP."]]},
- {name:"Comandos de verificação", ref:"r-show", q:[
+  ["Qual é o MAC virtual do HSRP versão 1, grupo 10?",["0000.0C07.AC0A","0000.0C9F.F00A","0000.5E00.010A","0000.0C07.AC10",N],0,"0000.5E00.01xx é do VRRP."],
+  ["Com HSRP, que endereço configuram os hosts como gateway?",["O endereço IP virtual do grupo","O IP real do router Active","O IP real do router Standby","O endereço de multicast do HSRP",N],0,"No plano é o .1 de cada VLAN (por exemplo 10.43.2.1); o .2 e o .3 são os IPs reais."]]},
+ {name:"Diagnóstico: relay DHCP e verificação", ref:"r-show", q:[
   ["Que comando mostra rapidamente em que VLAN está cada porta de acesso?",["show interfaces trunk","show ip interface brief","show mac address-table","show vlan brief",N],3,"Lista cada VLAN com as suas portas de acesso."],
   ["Que comando mostra os trunks, a VLAN nativa e as VLANs permitidas em cada um?",["show vlan brief","show interfaces trunk","show ip interface brief","show spanning-tree",N],1,"show vlan brief não mostra trunks."],
   ["Que comando mostra se o Po1 está em uso e quais as portas agregadas?",["show interfaces trunk","show etherchannel summary","show spanning-tree","show vlan brief",N],1,"Procura Po1(SU) e portas (P)."],
   ["Que comando mostra no DSW1, por VLAN, quem é a raiz e o custo até ela?",["show spanning-tree root","show standby brief","show vlan brief","show etherchannel summary",N],0,"Custo 0 onde o próprio DSW1 é a raiz."],
-  ["Que comando mostra os pares MAC–IP que o DHCP snooping aprendeu?",["show ip dhcp binding","show ip dhcp snooping binding","show ip arp inspection","show mac address-table",N],1,"show ip dhcp binding é a tabela do servidor, no router."]]},
+  ["Que comando mostra os pares MAC–IP que o DHCP snooping aprendeu?",["show ip dhcp binding","show ip dhcp snooping binding","show ip arp inspection","show mac address-table",N],1,"show ip dhcp binding é a tabela do servidor, no router."],
+  ["Todos os PCs da VLAN 243 recebem 169.254.x.x; os da VLAN 143 obtêm endereço sem problemas. O servidor DHCP central tem pools para as duas. Qual é a causa mais provável?",["Falta o ip helper-address na SVI da VLAN 243","O servidor DHCP está desligado","O STP bloqueou a VLAN 143","Os PCs têm o gateway errado",N],0,"Se a 143 funciona, o servidor está bem. Falta o relay na SVI da 243."]]},
  {name:"Ataques à camada 2", ref:"r-ataques", q:[
   ["Que ataque enche a tabela MAC do switch para que este passe a inundar o tráfego?",["ARP spoofing","MAC flooding (CAM overflow)","DHCP spoofing","STP manipulation",N],1,"Defesa: port security."],
   ["Qual o efeito de um ataque de MAC flooding bem-sucedido?",["A porta do atacante passa a trunk","A tabela MAC enche e o switch passa a inundar as tramas unicast, permitindo escutá-las","Os PCs recebem um gateway falso","O atacante torna-se root bridge",N],1,"O switch comporta-se como um hub."],
   ["No ataque de double tagging, o atacante:",["Envia BPDUs com prioridade 0","Está numa porta de acesso da VLAN nativa do trunk e envia tramas com duas tags","Negoceia um trunk por DTP","Enche a tabela MAC",N],1,"Defesa: nativa não usada (999)."],
   ["Que ataque esgota o pool DHCP com pedidos de muitos MACs falsos?",["DHCP spoofing","DHCP starvation","ARP spoofing","MAC flooding",N],1,"Costuma vir antes de um DHCP spoofing."],
   ["O que permite o ARP spoofing?",["Tornar-se root bridge","Fazer man-in-the-middle associando o MAC do atacante ao IP do gateway","Esgotar o pool DHCP","Formar um trunk",N],1,"Defesa: DAI."],
-  ["Que defesa trava um servidor DHCP falso ligado a uma porta de acesso?",["Port security","DHCP snooping","PortFast","HSRP",N],1,"A porta de acesso é untrusted e as mensagens de servidor são descartadas."]]},
+  ["Que defesa trava um servidor DHCP falso ligado a uma porta de acesso?",["Port security","DHCP snooping","PortFast","HSRP",N],1,"A porta de acesso é untrusted e as mensagens de servidor são descartadas."],
+  ["Em que consiste o ataque de double tagging?",["O atacante negoceia um trunk por DTP","O atacante envia BPDU com prioridade 0 para ser a raiz","O atacante responde a pedidos DHCP com um gateway falso","Na VLAN nativa, o atacante envia uma trama com duas etiquetas; o 1.º switch retira a exterior e a interior leva-a a outra VLAN",N],3,"Por isso a nativa é uma VLAN sem utilizadores (999). A é switch spoofing, B ataque STP, C DHCP spoofing."]]},
  {name:"Port security", ref:"r-portsec", q:[
   ["Com switchport port-security mac-address sticky, o que acontece aos MAC aprendidos?",["Ficam só na tabela MAC e perdem-se ao fim de 300 s","São acrescentados à running-config; só se mantêm após reinício se a configuração for guardada","São gravados automaticamente na startup-config","São enviados ao servidor DHCP",N],1,"É preciso copy running-config startup-config."],
   ["[Cenário] Em que portas do seu cenário se aplica port security?",["No Po1 entre DSW1 e DSW2","Nos uplinks entre ASW e DSW","Na ligação DSW1–Lisboa","Nas portas de acesso dos ASW ligadas a utilizadores",N],3,"Nunca em trunks."],
   ["Qual é o modo de violação de port security por omissão?",["protect","restrict","shutdown","drop",N],2,"Shutdown põe a porta em err-disabled."],
   ["Com switchport port-security violation restrict, numa violação a porta:",["Passa a err-disabled","Descarta e não regista nada","Descarta, regista (syslog e contador) e continua ativa","Aceita o novo MAC",N],2,"Protect descarta sem registar."],
-  ["Uma porta ficou err-disabled por violação de port security. Como se recupera à mão?",["Só com no shutdown","shutdown e depois no shutdown na interface","Com reload","Com clear mac address-table",N],1,"Primeiro retira a causa."]]},
- {name:"Boas práticas: portas", ref:"r-praticas", q:[
+  ["Uma porta ficou err-disabled por violação de port security. Como se recupera à mão?",["Só com no shutdown","shutdown e depois no shutdown na interface","Com reload","Com clear mac address-table",N],1,"Primeiro retira a causa."],
+  ["Qual é o modo de violação da port security por omissão?",["protect","restrict","shutdown","drop",N],2,"Por omissão é shutdown: a porta vai para err-disabled."]]},
+ {name:"DHCP snooping e boas práticas", ref:"r-praticas", q:[
   ["Que configuração segue as boas práticas para as portas de acesso não usadas de um ASW?",["Deixá-las na VLAN 1, ativas, para ligar novos postos depressa","switchport mode access, switchport access vlan 999 e shutdown","Configurá-las como trunk com a nativa 999","Ativar PortFast e deixá-las em no shutdown",N],1,"VLAN que ninguém usa e porta desligada."],
   ["Onde se deve ativar o PortFast?",["Nos trunks entre DSW1 e DSW2","Nas portas de acesso ligadas a PCs e impressoras","No Po1","Nas portas encaminhadas para o router",N],1,"Só em portas para hosts."],
   ["Para impedir o switch spoofing num uplink trunk deve-se:",["Fixar o modo trunk e usar switchport nonegotiate","Ativar PortFast","Usar mac-address sticky","Ativar ip routing",N],0,"Sem DTP não há negociação."],
   ["Uma porta com PortFast e BPDU Guard recebe um BPDU. O que acontece?",["Ignora o BPDU","Passa a err-disabled","Torna-se root port","Perde só o PortFast e continua",N],1,"Alguém ligou um switch."],
-  ["Porque é que a VLAN nativa do cenário é a 999 e não a 1?",["Porque a 1 não pode ser nativa","Para usar uma VLAN sem utilizadores, o que trava o double tagging","Porque o 2960 não aceita a VLAN 1 em trunks","Para o HSRP funcionar",N],1,"Ninguém está na 999, por isso não há onde saltar."]]}
+  ["Porque é que a VLAN nativa do cenário é a 999 e não a 1?",["Porque a 1 não pode ser nativa","Para usar uma VLAN sem utilizadores, o que trava o double tagging","Porque o 2960 não aceita a VLAN 1 em trunks","Para o HSRP funcionar",N],1,"Ninguém está na 999, por isso não há onde saltar."],
+  ["No DHCP snooping, que portas devem ser configuradas como trusted?",["As que levam ao servidor DHCP legítimo (uplinks)","Todas as portas de acesso","As portas dos PCs da VLAN de gestão","Nenhuma: o snooping confia em todas",N],0,"Só os uplinks ficam trusted; as portas de acesso ficam untrusted e não podem enviar OFFER/ACK."]]}
 ];
 
 /* ======================= FOLHA 3: PARTE A (EXCERTOS) ======================= */
@@ -794,7 +811,8 @@ Vlan443    10.43.4.2   YES manual up                    up
 Vlan943    10.43.9.2   YES manual up                    up`, qs:[
   ["SVI do DSW1 que não está a funcionar:",["vlan343","vlan 343","interface vlan 343"],"Vlan343","r-intervlan"],
   ["Comando que a ativa (em interface vlan 343):",["no shutdown"],"no shutdown","r-intervlan"],
-  ["Com o DSW2 a funcionar, os PCs do Técnico ficam sem a gateway 10.43.3.1? (sim/não)",["nao","não","no"],"Não: o DSW2 assume o HSRP","r-hsrp"]]},
+  ["Com o DSW2 a funcionar, os PCs do Técnico ficam sem a gateway 10.43.3.1? (sim/não)",["nao","não","no"],"Não: o DSW2 assume o HSRP","r-hsrp"],
+  ["Comando que mostra qual dos dois é o Active do HSRP:",["show standby brief","show standby"],"show standby brief","r-show"]]},
  {t:"ASW3# show mac address-table dynamic", x:`Vlan      Mac Address       Type        Ports
 ----      -----------       --------    -----
  343      0001.6411.a001    DYNAMIC     Fa0/1
@@ -803,7 +821,8 @@ Vlan943    10.43.9.2   YES manual up                    up`, qs:[
  443      0060.2f3a.0d01    DYNAMIC     Gi0/2`, qs:[
   ["Porta onde está o equipamento com o MAC 0001.6411.b010:",["fa0/9"],"Fa0/9","r-comutacao"],
   ["O MAC 0001.6411.c0aa está ligado a uma porta de acesso do ASW3? (sim/não)",["nao","não","no"],"Não: foi aprendido no uplink Gi0/1","r-comutacao"],
-  ["Uma trama da VLAN 443 para um MAC desconhecido chega à Fa0/9. Por que uplink é inundada?",["gi0/2"],"Gi0/2 (o DSW2 é a raiz da 443; a Gi0/1 está bloqueada)","r-stp"]]},
+  ["Uma trama da VLAN 443 para um MAC desconhecido chega à Fa0/9. Por que uplink é inundada?",["gi0/2"],"Gi0/2 (o DSW2 é a raiz da 443; a Gi0/1 está bloqueada)","r-stp"],
+  ["Comando que apaga as entradas dinâmicas desta tabela:",["clear mac address-table dynamic"],"clear mac address-table dynamic","r-show"]]},
  {t:"ASW2# show interfaces fa0/5 switchport (abreviado)", x:`Name: Fa0/5
 Switchport: Enabled
 Administrative Mode: dynamic auto
@@ -812,7 +831,8 @@ Access Mode VLAN: 1 (default)
 Trunking Native Mode VLAN: 1 (default)`, qs:[
   ["VLAN em que está o PC ligado à Fa0/5:",["1"],"1","r-vlans"],
   ["Comando que fixa a porta em modo de acesso:",["switchport mode access"],"switchport mode access","r-trunks"],
-  ["Comando que a põe na VLAN do plano (Comercial, ASW2 Fa0/1–8):",["switchport access vlan 243"],"switchport access vlan 243","r-cenario"]]},
+  ["Comando que a põe na VLAN do plano (Comercial, ASW2 Fa0/1–8):",["switchport access vlan 243"],"switchport access vlan 243","r-cenario"],
+  ["Comando que acelera a passagem a forwarding desta porta de PC:",["spanning-tree portfast"],"spanning-tree portfast","r-rstp"]]},
  {t:"PC-COM3> ipconfig  e  DSW1# show running-config interface vlan 243", x:`PC-COM3> ipconfig
    IPv4 Address......: 169.254.12.7
    Default Gateway...: 0.0.0.0
@@ -825,7 +845,8 @@ interface Vlan243
  standby 243 preempt`, qs:[
   ["O PC recebeu endereço por DHCP? (sim/não)",["nao","não","no"],"Não: 169.254.x.x é um endereço automático (APIPA)","r-dhcp"],
   ["Comando que falta na SVI do DSW1 (relay para o router):",["ip helper-address 10.43.0.1"],"ip helper-address 10.43.0.1","r-dhcp"],
-  ["Primeira mensagem DHCP que o PC envia:",["dhcpdiscover","discover","dhcp discover"],"DHCPDISCOVER","r-dhcp"]]},
+  ["Primeira mensagem DHCP que o PC envia:",["dhcpdiscover","discover","dhcp discover"],"DHCPDISCOVER","r-dhcp"],
+  ["Endereço que o PC deve receber como gateway:",["10.43.2.1"],"10.43.2.1 (IP virtual HSRP)","r-hsrp"]]},
  {t:"Mensagens no ASW1  e  ASW1# show interfaces status", x:`%SPANTREE-2-BLOCK_BPDUGUARD: Received BPDU on port Fa0/5 with BPDU Guard
  enabled. Disabling port.
 %PM-4-ERR_DISABLE: bpduguard error detected on Fa0/5, putting Fa0/5 in
@@ -850,7 +871,37 @@ Access Mode VLAN: 1 (default)
   ["Modo em que a ligação está a funcionar (acesso ou trunk):",["acesso","access","static access"],"Acesso: auto + auto não forma trunk","r-trunks"],
   ["Comando no ASW1 (em interface gi0/1) que fixa o trunk:",["switchport mode trunk"],"switchport mode trunk","r-trunks"],
   ["Comando que desliga o DTP:",["switchport nonegotiate"],"switchport nonegotiate","r-praticas"],
-  ["Comando para a nativa do plano:",["switchport trunk native vlan 999"],"switchport trunk native vlan 999","r-trunks"]]}
+  ["Comando para a nativa do plano:",["switchport trunk native vlan 999"],"switchport trunk native vlan 999","r-trunks"]]},
+ {t:"DSW1# show etherchannel summary (saída abreviada)", x:`Flags:  D - down        P - bundled in port-channel
+        I - stand-alone s - suspended
+        S - Layer2      U - in use
+
+Group  Port-channel  Protocol    Ports
+------+-------------+-----------+---------------------------
+1      Po1(SU)        LACP      Gi1/0/23(P) Gi1/0/24(I)`, qs:[
+  ["Protocolo de agregação usado no Po1:",["lacp"],"LACP","r-ether"],
+  ["Porta física do DSW1 que não está agregada no Po1:",["gi1/0/24"],"Gi1/0/24 (flag I = stand-alone)","r-ether"],
+  ["Quantas ligações físicas transportam tráfego entre o DSW1 e o DSW2 com esta avaria? (algarismo)",["1","um","uma"],"1 (a Gi1/0/24 sozinha fica bloqueada pelo STP)","r-stp"]]},
+ {t:"ASW2# show vlan brief (saída abreviada)", x:`VLAN Name                 Status    Ports
+---- -------------------- --------- -------------------------------
+243  COMERCIAL-43         active    Fa0/1, Fa0/2, Fa0/3, Fa0/4
+                                    Fa0/5, Fa0/6, Fa0/7, Fa0/8
+                                    Fa0/9
+343  TECNICO-43           active    Fa0/10, Fa0/11, Fa0/12, Fa0/13
+                                    Fa0/14, Fa0/15, Fa0/16`, qs:[
+  ["Porta do ASW2 que está na VLAN errada:",["fa0/9"],"Fa0/9 (no plano Fa0/9–16 = 343)","r-cenario"],
+  ["Comando que a corrige (em interface fa0/9):",["switchport access vlan 343"],"switchport access vlan 343","r-vlans"],
+  ["Um PC na Fa0/9 com o IP 10.43.3.20/24 consegue fazer ping à gateway 10.43.3.1? (sim/não)",["nao","não","no"],"Não: a porta está na VLAN 243","r-vlans"]]},
+ {t:"ASW1# show port-security interface fa0/3 (saída abreviada)", x:`Port Security              : Enabled
+Port Status                : Secure-shutdown
+Violation Mode             : Shutdown
+Maximum MAC Addresses      : 2
+Total MAC Addresses        : 2
+Sticky MAC Addresses       : 2
+Last Source Address:Vlan   : 0001.97A2.3C10:143
+Security Violation Count   : 1`, qs:[
+  ["Estado em que fica a Fa0/3, como aparece entre parêntesis em show interfaces fa0/3 (uma palavra):",["err-disabled","errdisabled","err-disable"],"err-disabled","r-portsec"],
+  ["Modo de violação que manteria a porta ativa, descartando e registando o tráfego do MAC a mais:",["restrict","switchport port-security violation restrict"],"restrict","r-portsec"]]}
 ];
 
 /* ======================= FOLHA 3: PARTE B (CONFIGURAÇÃO) ======================= */
@@ -926,7 +977,16 @@ const CFG = [
   ["Criar a subinterface do Comercial (config-subif):",["interface fa0/0.243","interface fastethernet0/0.243"],"r-intervlan"],
   ["Associá-la à VLAN (config-subif):",["encapsulation dot1q 243"],"r-intervlan"],
   ["Gateway do Comercial (config-subif):",["ip address 10.43.2.1 255.255.255.0"],"r-cenario"],
-  ["Comando para confirmar as subinterfaces up/up (#):",["show ip interface brief"],"r-show"]]}
+  ["Comando para confirmar as subinterfaces up/up (#):",["show ip interface brief"],"r-show"]]},
+ {intro:"Configure no DSW2 a SVI e o HSRP da VLAN dos Servidores (443), em que o DSW2 deve ser o Active. Complete cada linha com um único comando (valores com o teu 43).", start:"Lisboa-DSW2(config)#", lines:[
+  ["Ativar o encaminhamento IP entre VLANs (config):",["ip routing"],"r-intervlan"],
+  ["Entrar na SVI dos Servidores (config):",["interface vlan 443"],"r-intervlan"],
+  ["Endereço real do DSW2 nesta VLAN (config-if):",["ip address 10.43.4.3 255.255.255.0"],"r-cenario"],
+  ["Versão do HSRP necessária para grupos acima de 255, como o 443 (config-if):",["standby version 2"],"r-hsrp"],
+  ["Gateway virtual, grupo = número da VLAN (config-if):",["standby 443 ip 10.43.4.1"],"r-hsrp"],
+  ["Prioridade do plano para ser Active (config-if):",["standby 443 priority 110"],"r-hsrp"],
+  ["Retomar o papel de Active quando recupera (config-if):",["standby 443 preempt"],"r-hsrp"],
+  ["Ativar a interface (config-if):",["no shutdown"],"r-intervlan"]]}
 ];
 
 /* ======================= VERSÕES ======================= */
@@ -963,7 +1023,7 @@ const DAYS = [
  {d:6,w:"sex",tag:"Bloco A",c:"sky",items:["Aula 2: comutação e VLANs","Teóricas 2, 7, 10, 16"],t:["r-comutacao","r-vlans"]},
  {d:7,w:"sáb",tag:"Bloco A",c:"sky",items:["TP03: trunks e DTP","Teóricas 1, 14, 15, 20"],t:["r-trunks","r-show"]},
  {d:8,w:"dom",tag:"Bloco A",c:"sky",items:["Aula 3 e TP04: inter-VLAN, DHCP, IPv6","Teóricas 3, 4, 6, 13, 18"],t:["r-intervlan","r-dhcp","r-ipv6"]},
- {d:9,w:"seg",tag:"Treino",c:"pink",items:["Testes 1 e 2","Rever o que falhou"],t:[],x:[["teste-1","Teste 1"],["teste-2","Teste 2"]]},
+ {d:9,w:"seg",tag:"Treino",c:"pink",items:["Teste modelo oficial e Teste 1","Rever o que falhou"],t:[],x:[["teste-modelo","Teste modelo"],["teste-1","Teste 1"]]},
  {d:10,w:"ter",tag:"Bloco B",c:"mint",items:["Aula 4 e TP05: STP","Teóricas 26, 27, 34, 37, 40"],t:["r-stp","r-rstp"]},
  {d:11,w:"qua",tag:"Bloco B",c:"mint",items:["Aula 5: EtherChannel e HSRP","Teóricas 21, 22, 25, 32, 38, 39"],t:["r-ether","r-hsrp"]},
  {d:12,w:"qui",tag:"Bloco B",c:"mint",items:["Aula 6 e TP06: segurança L2","Teóricas 23, 24, 30, 31, 35, 36"],t:["r-ataques","r-portsec","r-praticas"]},
@@ -1065,18 +1125,22 @@ document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",(
 
 /* ---------- testes ---------- */
 function renderVersions(){
-  document.getElementById("versions").innerHTML = VERSIONS.map(v=>{const b=store.get("rd2-best-teste-"+v.n,null);
+  const bm=store.get("rd2-best-teste-modelo",null);
+  document.getElementById("versions").innerHTML = `<a class="vcard card oficial" href="#teste-modelo"><span class="eyebrow">Começa por aqui</span><span class="vn">Teste modelo oficial</span><p>As 15 perguntas, os 3 excertos e a configuração do teste modelo do professor, passados para o NN = 43.</p><span class="best">${bm!==null?`Melhor Folha 1: ${bm}/15`:"Ainda não feito"}</span></a>` + VERSIONS.map(v=>{const b=store.get("rd2-best-teste-"+v.n,null);
     return `<a class="vcard card" href="#teste-${v.n}"><span class="eyebrow">Versão ${v.n}</span><span class="vn">Teste ${v.n}</span><p>${esc(v.focus)}</p><span class="best">${b!==null?`Melhor Folha 1: ${b}/15`:"Ainda não feito"}</span></a>`;}).join("")
    + `<a class="vcard card surprise" href="#teste-surpresa"><span class="eyebrow">Sempre diferente</span><span class="vn">Teste surpresa</span><p>Uma pergunta ao calhas de cada subgrupo, teóricas e prática sorteadas.</p><span class="best">Gera um novo sempre que quiseres</span></a>`;
 }
 const pick = a => a[Math.floor(Math.random()*a.length)];
 function buildTest(key){
   if(key==="surpresa"){
-    const e1 = Math.floor(Math.random()*EXH.length); let e2; do{e2=Math.floor(Math.random()*EXH.length)}while(e2===e1);
+    const NX=EXH.length-3; const e1 = Math.floor(Math.random()*NX); let e2; do{e2=Math.floor(Math.random()*NX)}while(e2===e1);
     return {key, title:"Teste surpresa", focus:"Sorteado agora", mc:SUBS.map((s,i)=>({s:i, q:pick(s.q)})), f2:[1+Math.floor(Math.random()*20), 21+Math.floor(Math.random()*20)], exh:[e1,e2], cfg:Math.floor(Math.random()*CFG.length)};
   }
+  if(key==="modelo"){
+    return {key, title:"Teste modelo oficial", focus:"As perguntas do teste modelo, com o teu NN = 43", mc:SUBS.map((s,i)=>({s:i, q:s.q[s.q.length-1]})), f2:[3,24], exh:[EXH.length-3,EXH.length-2,EXH.length-1], cfg:CFG.length-1};
+  }
   const v = VERSIONS[+key-1];
-  return {key, title:"Teste "+v.n, focus:v.focus, mc:SUBS.map((s,i)=>{const L=s.q.length; const idx=((v.n-1) + i*Math.floor((v.n-1)/L)) % L; return {s:i, q:s.q[idx]};}), f2:v.f2, exh:v.exh, cfg:v.cfg};
+  return {key, title:"Teste "+v.n, focus:v.focus, mc:SUBS.map((s,i)=>{const L=s.q.length-1; const idx=((v.n-1) + i*Math.floor((v.n-1)/L)) % L; return {s:i, q:s.q[idx]};}), f2:v.f2, exh:v.exh, cfg:v.cfg};
 }
 const LET="ABCDE"; const ACC={}; const LIVE={};
 function fill(tid,key,label,acc,show,ref){
@@ -1102,7 +1166,7 @@ function renderTest(key){
   h += `<div class="panel" data-panel="1"><div class="fhead" style="${cv("sky")}"><h3>Folha 1 · Escolha múltipla</h3><span class="tagf">certa +1 · errada −1/3 · branco 0</span></div>`;
   D.mc.forEach((m,i)=>{ const S=SUBS[m.s]; const q=m.q;
     h += `<div class="q" id="${tid}-q${i}" style="${tcv(S.ref)}"><div class="qhead"><span class="qn">${i+1}</span><span class="qsub">Subgrupo ${i+1} · ${esc(S.name)}</span></div>
-     <p class="qtext">${esc(q[0])}</p><div class="opts">${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="${tid}-q${i}" value="${j}"><span><b>${LET[j]}.</b> ${esc(o)}</span></label>`).join("")}</div>
+     <p class="qtext">${esc(q[0])}</p><p class="selone">Selecione uma opção:</p><div class="opts">${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="${tid}-q${i}" value="${j}"><span><b>${LET[j]}.</b> ${esc(o)}</span></label>`).join("")}</div>
      <div class="sol" hidden><span class="verdict"></span><span>${esc(q[3])}</span><a class="golink" href="#${S.ref}" data-from="1" style="${tcv(S.ref)}">Rever no resumo: ${esc(T[S.ref].short)}</a></div></div>`; });
   h += `<div class="tnav"><span></span><button class="btn" data-go="2">Folha 2 →</button></div></div>`;
   // folha 2
@@ -1116,13 +1180,13 @@ function renderTest(key){
       <div class="chips"><a class="golink" href="#${ref}" data-from="1" style="${tcv(ref)}">Rever no resumo: ${esc(T[ref].short)}</a><a class="golink" href="#f2-${num}" data-from="1" style="${cv("butter")}">Ver na lista das 40</a></div></div></div>`; });
   h += `<div class="tnav"><button class="btn soft" data-go="1">← Folha 1</button><button class="btn" data-go="3">Folha 3 →</button></div></div>`;
   // folha 3
-  h += `<div class="panel" data-panel="3" hidden><div class="fhead" style="${cv("mint")}"><h3>Folha 3 · Parte A — Diagnóstico</h3><span class="tagf">respostas curtas</span></div><p class="legend">Interfaces na forma Gi0/1; comandos completos, sem abreviaturas.</p>`;
+  h += `<div class="panel" data-panel="3" hidden><div class="fhead" style="${cv("mint")}"><h3>Folha 3 · Parte A — Diagnóstico</h3><span class="tagf">4 valores · 0,5 por resposta</span></div><p class="legend">Usa o NN = 43. Respostas curtas, sem frases: interfaces na forma <code>Gi0/1</code>; comandos <b>completos, sem abreviaturas</b> e com um espaço entre palavras. No Moodle só a forma completa conta.</p>`;
   let k=0;
   D.exh.forEach((ei,e)=>{ const ex=EXH[ei];
     h += `<div class="q" style="${cv("mint")}"><div class="exh-title">Excerto ${e+1} — ${esc(ex.t)}</div><div class="exhibit">${esc(ex.x)}</div>`;
     ex.qs.forEach(q=>{k++; h += fill(tid,"a"+k,`A.${k} ${q[0]}`,q[1],q[2],q[3]);}); h += `</div>`; });
   const C = CFG[D.cfg];
-  h += `<div class="fhead" style="${cv("mint")}"><h3>Folha 3 · Parte B — Configuração</h3><span class="tagf">um comando por linha</span></div><p class="legend">${esc(C.intro)}</p>
+  h += `<div class="fhead" style="${cv("mint")}"><h3>Folha 3 (verso) · Parte B — Configuração</h3><span class="tagf">4 valores · 0,5 por linha</span></div><p class="legend">${esc(C.intro)}</p>
    <div class="q" style="${cv("mint")}"><span class="prompt-line">${esc(C.start)}</span>`;
   C.lines.forEach((l,i)=>{ h += fill(tid,"b"+(i+1),`B.${i+1} ${l[0]}`,l[1],l[3]||l[1][0],l[2]); });
   h += `</div><div class="tnav"><button class="btn soft" data-go="2">← Folha 2</button><button class="btn pink" data-grade="1">Corrigir teste</button></div></div>`;
@@ -1169,7 +1233,7 @@ function grade(key){
   stopTimer(key);
   const res=document.getElementById(tid+"-res");
   res.innerHTML = `<h3>${c>=12?"Muito bem!":c>=8?"Vais no bom caminho":"Ainda há trabalho, mas já sabes o quê"}</h3>
-   <div class="scores"><div class="pill"><b>${mcT}/15</b><span>Folha 1 · ${c} certas, ${w} erradas</span></div><div class="pill"><b id="${tid}-f2p">0,0/4</b><span>Folha 2 · marca os pontos</span></div><div class="pill"><b>${fc}/${ft}</b><span>Folha 3 · respostas certas</span></div></div>
+   <div class="scores"><div class="pill"><b>${mcT}/15</b><span>Folha 1 · ${c} certas, ${w} erradas</span></div><div class="pill"><b id="${tid}-f2p">0,0/4</b><span>Folha 2 · marca os pontos</span></div><div class="pill"><b>${(fc*0.5).toFixed(1).replace(".",",")}/${(ft*0.5).toFixed(0)}</b><span>Folha 3 · ${fc} de ${ft} certas (0,5 cada)</span></div></div>
    ${weak.size?`<p>Temas para rever:</p><div class="chips">${[...weak].map(chip).join("")}</div>`:"<p>Tudo certo. Experimenta outra versão!</p>"}
    <p class="legend">Volta a cada folha para veres as soluções. Cada pergunta tem um botão para o tema no resumo.</p>`;
   res.hidden=false; updateF2Pill(key); goStep(key,1); window.scrollTo(0, host.offsetTop-80);
@@ -1187,8 +1251,8 @@ function route(){
   if(h==="resumo"){ show("resumo"); showTopic(ORDER[0]); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(/^f2-\d+$/.test(h)){ show("folha2"); f2filter="all"; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"?"true":"false")); applyF2();
     const c=document.getElementById(h); const n=h.slice(3); const p=document.getElementById("pt-"+n); if(p){p.hidden=false; const b=c.querySelector("[data-open]"); if(b) b.textContent="Esconder";} if(c) c.scrollIntoView({block:"start"}); backBtn.hidden=!lastTest; return; }
-  const m=h.match(/^teste-(\d|surpresa)$/);
-  if(m && (m[1]==="surpresa" || VERSIONS[+m[1]-1])){ const key=m[1]; show("teste","testes"); if(!document.getElementById("t-"+key)) renderTest(key);
+  const m=h.match(/^teste-(\d|surpresa|modelo)$/);
+  if(m && (m[1]==="surpresa" || m[1]==="modelo" || VERSIONS[+m[1]-1])){ const key=m[1]; show("teste","testes"); if(!document.getElementById("t-"+key)) renderTest(key);
     document.querySelectorAll(".tbox").forEach(t=>t.hidden = t.id!=="t-"+key); backBtn.hidden=true;
     if(lastTest && lastTest.key===key){ goStep(key,lastTest.step); const y=lastTest.y; setTimeout(()=>window.scrollTo(0,y),30); lastTest=null; } else window.scrollTo(0,0);
     return; }
