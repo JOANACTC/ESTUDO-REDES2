@@ -266,6 +266,29 @@ textarea:focus{border-color:var(--c);outline:none}
 .dic{display:grid;gap:6px}.dic div{display:grid;grid-template-columns:150px 1fr auto;gap:10px;padding:7px 10px;background:var(--paper2);border-radius:12px;align-items:baseline}
 @media (max-width:600px){.dic div{grid-template-columns:1fr auto}.dic span{grid-column:1/-1}}
 .note{background:var(--peach-soft);border-radius:12px;padding:8px 12px}
+/* painel */
+.sync{display:grid;gap:2px;padding:12px 18px;margin-bottom:18px;border-left:6px solid var(--muted)}
+.sync[data-s="nuvem"]{border-color:var(--ok)}.sync[data-s="erro"]{border-color:var(--bad)}.sync span{color:var(--muted);font-size:.9rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.kpi{padding:16px 18px;display:grid;gap:2px;border-top:6px solid var(--c)}
+.kpi b{font-family:var(--display);font-size:2rem;line-height:1.1}.kpi span{font-weight:800}.kpi small{color:var(--muted)}
+.pgrid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:16px;margin-bottom:16px;align-items:start}
+@media (max-width:900px){.pgrid{grid-template-columns:1fr}}
+.chartc{padding:18px 20px;margin-bottom:16px}.pgrid .chartc{margin-bottom:0}.chartc h3{margin-bottom:4px}
+.chartwrap{position:relative}.chartwrap svg{width:100%;height:auto;display:block}
+.chartwrap .gl{stroke:var(--line);stroke-width:1}.chartwrap .goal{stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4}
+.chartwrap .ax{fill:var(--muted);font-size:12px;font-family:var(--body)}
+.chartwrap .ln{fill:none;stroke:var(--sky);stroke-width:2;stroke-linejoin:round}
+.chartwrap .dot{fill:var(--sky);stroke:var(--paper);stroke-width:2}.chartwrap .hit{fill:transparent}.chartwrap .pt{cursor:pointer;outline:none}
+.chartwrap .pt:hover .dot,.chartwrap .pt:focus .dot{r:7}
+.tip{position:absolute;width:220px;background:var(--ink);color:var(--paper);font-size:.82rem;padding:7px 10px;border-radius:10px;pointer-events:none}
+.bars{display:grid;gap:5px}
+.barrow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 44px;gap:8px;align-items:center;text-decoration:none;color:var(--ink);font-size:.84rem;padding:2px 4px;border-radius:8px}
+.barrow:hover{background:var(--paper2)}.bn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt2{height:10px;background:var(--paper2);border-radius:5px;overflow:hidden}.bt2 i{display:block;height:100%;background:var(--mint);border-radius:0 4px 4px 0}
+.barrow.weak .bt2 i{background:var(--peach)}.barrow.weak .bn{font-weight:800}
+.bv{text-align:right;font-weight:800}
+.tblw{overflow-x:auto}.empty{padding:22px;display:grid;gap:10px;justify-items:start}
 </style>
 </head>
 <body>
@@ -279,6 +302,7 @@ textarea:focus{border-color:var(--c);outline:none}
     <a href="#resumo" data-view="resumo">Resumo</a>
     <a href="#folha2" data-view="folha2">40 teóricas</a>
     <a href="#testes" data-view="testes">Testes</a>
+    <a href="#painel" data-view="painel">O meu painel</a>
   </nav>
 </div></header>
 
@@ -340,6 +364,12 @@ textarea:focus{border-color:var(--c);outline:none}
 <section class="view" id="v-testes" hidden>
   <div class="pagehead"><p class="eyebrow">Treino</p><h1>Testes modelo</h1><p class="lead">O teste modelo oficial passado para o NN = 43, oito versões com as 3 folhas como no teste real e um teste surpresa que mistura tudo. Faz um de cada vez e corrige no fim.</p></div>
   <div class="versions" id="versions"></div>
+</section>
+
+<section class="view" id="v-painel" hidden>
+  <div class="pagehead"><p class="eyebrow">O teu progresso</p><h1>O meu painel</h1><p class="lead">Cada teste que corriges fica guardado aqui, com a evolução da nota e os temas onde falhas mais.</p></div>
+  <div class="sync card" id="syncPill" data-s="local"></div>
+  <div id="painelBox"></div>
 </section>
 
 <section class="view" id="v-teste" hidden></section>
@@ -1322,7 +1352,7 @@ function showB(id){
   document.querySelectorAll(`#bBox input[name="bq-${id}"]`).forEach(r=>r.addEventListener("change",()=>{
     const ok=+r.value===o.q[2]; const fb=document.querySelector("#bBox .bfb");
     document.querySelectorAll("#bBox .opt").forEach((el,j)=>{el.classList.toggle("is-correct",j===o.q[2]); el.classList.toggle("is-wrong",j===+r.value&&!ok);});
-    fb.hidden=false; fb.textContent=(ok?"Certo! ":"Ainda não. ")+o.q[3]; }));
+    if(ok){const s=store.get("rd2-bases",{}); s[id]=1; store.set("rd2-bases",s);} fb.hidden=false; fb.textContent=(ok?"Certo! ":"Ainda não. ")+o.q[3]; }));
 }
 
 const BMAP = [
@@ -1569,7 +1599,7 @@ function grade(key){
    <div class="scores"><div class="pill"><b>${mcT}/15</b><span>Folha 1 · ${c} certas, ${w} erradas</span></div><div class="pill"><b id="${tid}-f2p">0,0/4</b><span>Folha 2 · marca os pontos</span></div><div class="pill"><b>${(fc*0.5).toFixed(1).replace(".",",")}/${(ft*0.5).toFixed(0)}</b><span>Folha 3 · ${fc} de ${ft} certas (0,5 cada)</span></div></div>
    ${weak.size?`<p>Temas para rever:</p><div class="chips">${[...weak].map(chip).join("")}</div>`:"<p>Tudo certo. Experimenta outra versão!</p>"}
    <p class="legend">Volta a cada folha para veres as soluções. Cada pergunta tem um botão para o tema no resumo.</p>`;
-  res.hidden=false; updateF2Pill(key); goStep(key,1); window.scrollTo(0, host.offsetTop-80);
+  res.hidden=false; recordAttempt(key); updateF2Pill(key); goStep(key,1); window.scrollTo(0, host.offsetTop-80);
 }
 
 /* ---------- navegação ---------- */
@@ -1583,6 +1613,7 @@ function route(){
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(BL[h]){ show("bases"); showB(h); window.scrollTo(0, document.getElementById("bBox").getBoundingClientRect().top + window.scrollY - 84); backBtn.hidden=true; return; }
   if(h==="bases"){ show("bases"); showB(BORDER[0]); window.scrollTo(0,0); backBtn.hidden=true; return; }
+  if(h==="painel"){ show("painel"); renderPainel(); window.scrollTo(0,0); backBtn.hidden=true; return; }
   if(h==="resumo"){ show("resumo"); showTopic(ORDER[0]); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(/^f2-\d+$/.test(h)){ show("folha2"); f2filter="all"; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"?"true":"false")); applyF2();
     const c=document.getElementById(h); const n=h.slice(3); const p=document.getElementById("pt-"+n); if(p){p.hidden=false; const b=c.querySelector("[data-open]"); if(b) b.textContent="Esconder";} if(c) c.scrollIntoView({block:"start"}); backBtn.hidden=!lastTest; return; }
@@ -1597,7 +1628,93 @@ document.addEventListener("click",e=>{ const a=e.target.closest("a[data-from]");
 backBtn.addEventListener("click",()=>{ if(lastTest) location.hash="teste-"+lastTest.key; });
 window.addEventListener("hashchange",route);
 
-renderCal(); renderMap(); renderSide(); renderBSide(); renderMap(BMAP,"bmap","Bases do zero","as ideias de base"); renderF2(); renderVersions(); route();
+
+/* ======================= PROGRESSO E PAINEL ======================= */
+const SYNC = {db:null, uid:null, owner:false, state:"local", ready:false};
+function hist(){ return store.get("rd2-hist",[]); }
+function setHist(h){ try{localStorage.setItem("rd2-hist",JSON.stringify(h.slice(-300)))}catch(e){} }
+function recordAttempt(key){
+  const D=LIVE[key]; const tid="t-"+key; if(!D) return;
+  const subs=D.mc.map((m,i)=>{const b=document.getElementById(`${tid}-q${i}`); return b.classList.contains("right")?1:b.classList.contains("wrong")?-1:0;});
+  const c=subs.filter(x=>x===1).length, w=subs.filter(x=>x===-1).length;
+  const fills=[...document.querySelectorAll(`#${tid} .fill`)]; const fc=fills.filter(f=>f.classList.contains("right")).length;
+  const weak=[...new Set([...D.mc.filter((m,i)=>subs[i]!==1).map(m=>SUBS[m.s].ref), ...fills.filter(f=>!f.classList.contains("right")).map(f=>f.dataset.ref)])];
+  const rec={id:"t"+Date.now(), tipo:"tentativa", at:new Date().toISOString(), key, title:D.title, f1:Math.round(Math.max(0,c-w/3)*100)/100, c, w, f3:fc, f3t:fills.length, subs, weak};
+  const h=hist(); h.push(rec); setHist(h);
+  if(SYNC.db) SYNC.db.collection("data/users/"+SYNC.uid).doc(rec.id).set(rec).catch(()=>setSyncState("erro"));
+  if(document.getElementById("v-painel") && !document.getElementById("v-painel").hidden) renderPainel();
+}
+let estadoT=null;
+function queueEstado(){ if(!SYNC.db) return; clearTimeout(estadoT); estadoT=setTimeout(()=>{
+  SYNC.db.collection("data/users/"+SYNC.uid).doc("estado").set({tipo:"estado", known:store.get("rd2-known",{}), bases:store.get("rd2-bases",{}), at:new Date().toISOString()}).catch(()=>setSyncState("erro")); },800); }
+(function(){ const _set=store.set; store.set=function(k,v){ _set.call(store,k,v); if(k==="rd2-known"||k==="rd2-bases") queueEstado(); }; })();
+function setSyncState(s){ SYNC.state=s; const el=document.getElementById("syncPill"); if(!el) return;
+  const T2={local:["Guardado só neste browser","Abre o site no Claude com a tua conta para guardar na base de dados."],
+    nuvem:["Guardado na tua conta","As tuas respostas ficam na base de dados, privadas. Quem abrir o site sem ser tu usa-o normalmente, sem guardar."],
+    erro:["Falhou a gravação na conta","Ficou guardado neste browser; volta a tentar mais tarde."], aguarda:["A ligar à tua conta…",""]}[s];
+  el.dataset.s=s; el.innerHTML=`<b>${T2[0]}</b><span>${T2[1]}</span>`; }
+async function initSync(){
+  if(!window.claude || !window.claude.use){ setSyncState("local"); return; }
+  setSyncState("aguarda");
+  try{
+    const user=await claude.use("user"); const owner = user ? await user.isOwner() : false;
+    if(!owner){ setSyncState("local"); return; }
+    const db=await claude.use("db"); const uid=db ? await user.id() : null;
+    if(!db||!uid){ setSyncState("local"); return; }
+    const col=db.collection("data/users/"+uid); const snap=await Promise.race([col.limit(1000).get(), new Promise((_,r)=>setTimeout(()=>r("timeout"),10000))]);
+    const remote={}; let est=null; snap.docs.forEach(d=>{const v=d.data(); if(!v) return; if(v.tipo==="tentativa") remote[d.id]=v; else if(d.id==="estado") est=v;});
+    const local=hist(); const merged={...remote}; local.forEach(r=>{ if(!merged[r.id]){ merged[r.id]=r; col.doc(r.id).set(r).catch(()=>{}); } });
+    setHist(Object.values(merged).sort((a,b)=>a.at.localeCompare(b.at)));
+    if(est){ const k=store.get("rd2-known",{}); Object.entries(est.known||{}).forEach(([n,v])=>{if(v)k[n]=true;}); try{localStorage.setItem("rd2-known",JSON.stringify(k))}catch(e){}
+      const bs=store.get("rd2-bases",{}); Object.assign(bs, est.bases||{}); try{localStorage.setItem("rd2-bases",JSON.stringify(bs))}catch(e){} }
+    SYNC.db=db; SYNC.uid=uid; SYNC.owner=true; setSyncState("nuvem"); queueEstado();
+    renderF2(); f2progress(); renderVersions(); if(!document.getElementById("v-painel").hidden) renderPainel();
+  }catch(e){ setSyncState(SYNC.db?"erro":"local"); }
+}
+const fmt = n => String(Math.round(n*100)/100).replace(".",",");
+function renderPainel(){
+  const h=hist(); const box=document.getElementById("painelBox");
+  const known=Object.values(store.get("rd2-known",{})).filter(Boolean).length; const bases=Object.keys(store.get("rd2-bases",{})).length;
+  const days=Math.max(0,Math.ceil((new Date("2026-11-17T09:00:00")-new Date())/864e5));
+  const best=h.length?Math.max(...h.map(r=>r.f1)):null; const last5=h.slice(-5); const avg5=last5.length?last5.reduce((s,r)=>s+r.f1,0)/last5.length:null;
+  const f3=h.filter(r=>r.f3t); const f3p=f3.length?Math.round(f3.slice(-5).reduce((s,r)=>s+r.f3/r.f3t,0)/Math.min(5,f3.length)*100):null;
+  const tile=(v,l,s,c)=>`<div class="kpi card" style="${cv(c)}"><b>${v}</b><span>${l}</span>${s?`<small>${s}</small>`:""}</div>`;
+  let html=`<div class="kpis">
+   ${tile(days,"dias para o teste","17 de novembro","pink")}
+   ${tile(h.length,"testes corrigidos",h.length?`último a ${new Date(h[h.length-1].at).toLocaleDateString("pt-PT")}`:"ainda nenhum","sky")}
+   ${tile(best===null?"–":fmt(best)+"/15","melhor Folha 1",avg5===null?"":`média dos últimos ${last5.length}: ${fmt(avg5)}`,"mint")}
+   ${tile(f3p===null?"–":f3p+"%","certas na Folha 3","últimos testes","butter")}
+   ${tile(known+"/40","teóricas que já sabes",`<a href="#folha2">rever as 40</a>`,"lilac")}
+   ${tile(bases+"/19","lições das bases certas",`<a href="#bases">continuar</a>`,"peach")}
+  </div>`;
+  if(!h.length){ box.innerHTML=html+`<div class="card empty"><h3>Ainda não há resultados</h3><p>Faz um teste e carrega em <b>Corrigir teste</b>. O teu progresso aparece aqui.</p><a class="btn" href="#teste-modelo">Fazer o teste modelo oficial</a></div>`; return; }
+  // evolução Folha 1
+  const W=760,H=240,pl=40,pr=16,pt=16,pb=30; const pts=h.slice(-30); const n=pts.length;
+  const X=i=> n===1? pl+(W-pl-pr)/2 : pl+i*(W-pl-pr)/(n-1); const Y=v=> pt+(15-v)/15*(H-pt-pb);
+  let grid=""; [0,5,10,15].forEach(v=>{grid+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(v)}" y2="${Y(v)}" class="gl"/><text x="${pl-8}" y="${Y(v)+4}" text-anchor="end" class="ax">${v}</text>`;});
+  grid+=`<line x1="${pl}" x2="${W-pr}" y1="${Y(9.5)}" y2="${Y(9.5)}" class="goal"/><text x="${W-pr}" y="${Y(9.5)-6}" text-anchor="end" class="ax">passagem (9,5)</text>`;
+  const path=pts.map((r,i)=>`${i?"L":"M"}${X(i).toFixed(1)} ${Y(r.f1).toFixed(1)}`).join(" ");
+  const dots=pts.map((r,i)=>`<g class="pt" tabindex="0" data-tip="${esc(r.title)} · ${new Date(r.at).toLocaleDateString("pt-PT")}: ${fmt(r.f1)}/15 (${r.c} certas, ${r.w} erradas)"><circle cx="${X(i)}" cy="${Y(r.f1)}" r="14" class="hit"/><circle cx="${X(i)}" cy="${Y(r.f1)}" r="5" class="dot"/></g>`).join("");
+  html+=`<div class="pgrid"><div class="card chartc"><h3>Folha 1 em cada teste</h3><p class="legend">Nota de 0 a 15, com o desconto de −1/3 pelas erradas. Passa o rato pelos pontos.</p>
+   <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Evolução da nota da Folha 1">${grid}<path d="${path}" class="ln"/>${dots}</svg><div class="tip" hidden></div></div></div>`;
+  // por subgrupo
+  const acc=SUBS.map((s,i)=>{let ok=0,t=0; h.forEach(r=>{ if(r.subs&&r.subs[i]!==undefined){t++; if(r.subs[i]===1) ok++;}}); return {i,name:s.name,ref:s.ref,p:t?ok/t:null,ok,t};});
+  html+=`<div class="card chartc"><h3>Acertos por subgrupo</h3><p class="legend">Percentagem de respostas certas em todos os testes. A laranja estão os que têm menos de 50%: carrega para rever o tema.</p><div class="bars">`;
+  const weakSet=new Set(acc.filter(a=>a.p!==null&&a.p<.5).map(a=>a.i));
+  acc.forEach(a=>{ html+=`<a class="barrow${weakSet.has(a.i)?" weak":""}" href="#${a.ref}" title="${a.ok} de ${a.t} certas"><span class="bn">${a.i+1}. ${esc(a.name)}</span><span class="bt2"><i style="width:${a.p===null?0:Math.max(2,a.p*100)}%"></i></span><span class="bv">${a.p===null?"–":Math.round(a.p*100)+"%"}</span></a>`; });
+  html+=`</div></div></div>`;
+  // temas a rever
+  const cnt={}; h.slice(-10).forEach(r=>(r.weak||[]).forEach(x=>cnt[x]=(cnt[x]||0)+1));
+  const top=Object.entries(cnt).filter(([x])=>T[x]).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  if(top.length) html+=`<div class="card chartc"><h3>O que rever primeiro</h3><p class="legend">Temas onde falhaste mais vezes nos últimos 10 testes.</p><div class="chips">${top.map(([x,k])=>`<a class="chip" href="#${x}" style="${tcv(x)}">${esc(T[x].short)} · ${k}×</a>`).join("")}</div></div>`;
+  // histórico
+  html+=`<div class="card chartc"><h3>Histórico</h3><div class="tblw"><table class="bt"><tr><th>Data</th><th>Teste</th><th>Folha 1</th><th>Folha 3</th><th></th></tr>${h.slice().reverse().slice(0,40).map(r=>`<tr><td>${new Date(r.at).toLocaleString("pt-PT",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})}</td><td>${esc(r.title)}</td><td>${fmt(r.f1)}/15</td><td>${r.f3t?fmt(r.f3*0.5)+"/"+(r.f3t*0.5):"–"}</td><td>${r.key==="surpresa"?"":`<a href="#teste-${esc(r.key)}">refazer</a>`}</td></tr>`).join("")}</table></div></div>`;
+  box.innerHTML=html;
+  const wrap=box.querySelector(".chartwrap"), tip=wrap.querySelector(".tip");
+  wrap.querySelectorAll(".pt").forEach(g=>{ const on=()=>{ const r=g.querySelector(".dot").getBoundingClientRect(), wr=wrap.getBoundingClientRect(); tip.textContent=g.dataset.tip; tip.hidden=false; tip.style.left=Math.min(wr.width-220,Math.max(0,r.left-wr.left-100))+"px"; tip.style.top=(r.top-wr.top-46)+"px"; };
+    g.addEventListener("mouseenter",on); g.addEventListener("focus",on); g.addEventListener("mouseleave",()=>tip.hidden=true); g.addEventListener("blur",()=>tip.hidden=true); });
+}
+renderCal(); renderMap(); renderSide(); renderBSide(); renderMap(BMAP,"bmap","Bases do zero","as ideias de base"); renderF2(); renderVersions(); route(); setSyncState("local"); initSync();
 </script>
 </body>
 </html>
