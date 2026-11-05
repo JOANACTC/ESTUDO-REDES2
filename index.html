@@ -267,8 +267,8 @@ textarea:focus{border-color:var(--c);outline:none}
 @media (max-width:600px){.dic div{grid-template-columns:1fr auto}.dic span{grid-column:1/-1}}
 .note{background:var(--peach-soft);border-radius:12px;padding:8px 12px}
 /* painel */
-.sync{display:grid;gap:2px;padding:12px 18px;margin-bottom:18px;border-left:6px solid var(--muted)}
-.sync[data-s="nuvem"]{border-color:var(--ok)}.sync[data-s="erro"]{border-color:var(--bad)}.sync span{color:var(--muted);font-size:.9rem}
+.sync{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 18px;margin-bottom:18px;border-left:6px solid var(--muted)}
+.sync>div{display:grid;gap:2px}.sync[data-s="nuvem"]{border-color:var(--ok)}.sync[data-s="erro"]{border-color:var(--bad)}.sync span{color:var(--muted);font-size:.9rem}
 .kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:18px}
 .kpi{padding:16px 18px;display:grid;gap:2px;border-top:6px solid var(--c)}
 .kpi b{font-family:var(--display);font-size:2rem;line-height:1.1}.kpi span{font-weight:800}.kpi small{color:var(--muted)}
@@ -304,6 +304,7 @@ textarea:focus{border-color:var(--c);outline:none}
     <a href="#testes" data-view="testes">Testes</a>
     <a href="#painel" data-view="painel">O meu painel</a>
   </nav>
+  <button class="btn small" id="loginBtn" hidden>Entrar</button>
 </div></header>
 
 <main class="wrap">
@@ -1630,7 +1631,7 @@ window.addEventListener("hashchange",route);
 
 
 /* ======================= PROGRESSO E PAINEL ======================= */
-const SYNC = {db:null, uid:null, owner:false, state:"local", ready:false};
+const SYNC = {remote:null, state:"local"};
 function hist(){ return store.get("rd2-hist",[]); }
 function setHist(h){ try{localStorage.setItem("rd2-hist",JSON.stringify(h.slice(-300)))}catch(e){} }
 function recordAttempt(key){
@@ -1641,35 +1642,54 @@ function recordAttempt(key){
   const weak=[...new Set([...D.mc.filter((m,i)=>subs[i]!==1).map(m=>SUBS[m.s].ref), ...fills.filter(f=>!f.classList.contains("right")).map(f=>f.dataset.ref)])];
   const rec={id:"t"+Date.now(), tipo:"tentativa", at:new Date().toISOString(), key, title:D.title, f1:Math.round(Math.max(0,c-w/3)*100)/100, c, w, f3:fc, f3t:fills.length, subs, weak};
   const h=hist(); h.push(rec); setHist(h);
-  if(SYNC.db) SYNC.db.collection("data/users/"+SYNC.uid).doc(rec.id).set(rec).catch(()=>setSyncState("erro"));
+  if(SYNC.remote) SYNC.remote.save(rec).catch(()=>setSyncState("erro"));
   if(document.getElementById("v-painel") && !document.getElementById("v-painel").hidden) renderPainel();
 }
 let estadoT=null;
-function queueEstado(){ if(!SYNC.db) return; clearTimeout(estadoT); estadoT=setTimeout(()=>{
-  SYNC.db.collection("data/users/"+SYNC.uid).doc("estado").set({tipo:"estado", known:store.get("rd2-known",{}), bases:store.get("rd2-bases",{}), at:new Date().toISOString()}).catch(()=>setSyncState("erro")); },800); }
+function queueEstado(){ if(!SYNC.remote) return; clearTimeout(estadoT); estadoT=setTimeout(()=>{
+  SYNC.remote.saveEstado({tipo:"estado", known:store.get("rd2-known",{}), bases:store.get("rd2-bases",{}), at:new Date().toISOString()}).catch(()=>setSyncState("erro")); },800); }
 (function(){ const _set=store.set; store.set=function(k,v){ _set.call(store,k,v); if(k==="rd2-known"||k==="rd2-bases") queueEstado(); }; })();
-function setSyncState(s){ SYNC.state=s; const el=document.getElementById("syncPill"); if(!el) return;
-  const T2={local:["Guardado só neste browser","Abre o site no Claude com a tua conta para guardar na base de dados."],
-    nuvem:["Guardado na tua conta","As tuas respostas ficam na base de dados, privadas. Quem abrir o site sem ser tu usa-o normalmente, sem guardar."],
+function setSyncState(s, who){ SYNC.state=s; const el=document.getElementById("syncPill"); if(!el) return;
+  const fb=!!window.RD2_FIREBASE;
+  const T2={local:["Guardado só neste browser", fb?"Entra com a tua conta Google para guardar as respostas na base de dados e as veres em qualquer aparelho.":"Abre o site no Claude com a tua conta para guardar na base de dados."],
+    nuvem:["Guardado na tua conta"+(who?" ("+who+")":""),"As tuas respostas ficam na base de dados, privadas. Quem abrir o site sem ser tu usa-o normalmente, sem ver as tuas."],
     erro:["Falhou a gravação na conta","Ficou guardado neste browser; volta a tentar mais tarde."], aguarda:["A ligar à tua conta…",""]}[s];
-  el.dataset.s=s; el.innerHTML=`<b>${T2[0]}</b><span>${T2[1]}</span>`; }
-async function initSync(){
-  if(!window.claude || !window.claude.use){ setSyncState("local"); return; }
+  el.dataset.s=s; el.innerHTML=`<div><b>${esc(T2[0])}</b><span>${esc(T2[1])}</span></div>`+(fb?(s==="nuvem"?`<button class="btn soft small" data-logout>Sair</button>`:`<button class="btn small" data-login>Entrar com Google</button>`):"");
+  const lb=document.getElementById("loginBtn"); if(lb){ lb.hidden=!fb; lb.textContent = s==="nuvem" ? "Sair" : "Entrar"; lb.dataset.mode = s==="nuvem"?"out":"in"; }
+  el.querySelectorAll("[data-login]").forEach(b=>b.onclick=()=>window.RD2_FIREBASE.login());
+  el.querySelectorAll("[data-logout]").forEach(b=>b.onclick=()=>window.RD2_FIREBASE.logout()); }
+/* remote = {save(rec), saveEstado(obj), load() -> {attempts:[...], estado}} */
+async function attachRemote(remote, who){
   setSyncState("aguarda");
+  try{
+    const {attempts, estado} = await Promise.race([remote.load(), new Promise((_,r)=>setTimeout(()=>r("timeout"),10000))]);
+    const merged={}; attempts.forEach(r=>merged[r.id]=r);
+    hist().forEach(r=>{ if(!merged[r.id]){ merged[r.id]=r; remote.save(r).catch(()=>{}); } });
+    setHist(Object.values(merged).sort((a,b)=>a.at.localeCompare(b.at)));
+    if(estado){ const k=store.get("rd2-known",{}); Object.entries(estado.known||{}).forEach(([n,v])=>{if(v)k[n]=true;}); try{localStorage.setItem("rd2-known",JSON.stringify(k))}catch(e){}
+      const bs=store.get("rd2-bases",{}); Object.assign(bs, estado.bases||{}); try{localStorage.setItem("rd2-bases",JSON.stringify(bs))}catch(e){} }
+    SYNC.remote=remote; setSyncState("nuvem", who); queueEstado();
+    renderF2(); f2progress(); renderVersions(); if(!document.getElementById("v-painel").hidden) renderPainel();
+  }catch(e){ SYNC.remote=null; setSyncState("erro"); }
+}
+function detachRemote(){ SYNC.remote=null; setSyncState("local"); }
+window.rd2Attach=attachRemote; window.rd2Detach=detachRemote;
+async function initSync(){
+  if(window.RD2_FIREBASE){ setSyncState("local"); return; }
+  if(!window.claude || !window.claude.use){ setSyncState("local"); return; }
   try{
     const user=await claude.use("user"); const owner = user ? await user.isOwner() : false;
     if(!owner){ setSyncState("local"); return; }
     const db=await claude.use("db"); const uid=db ? await user.id() : null;
     if(!db||!uid){ setSyncState("local"); return; }
-    const col=db.collection("data/users/"+uid); const snap=await Promise.race([col.limit(1000).get(), new Promise((_,r)=>setTimeout(()=>r("timeout"),10000))]);
-    const remote={}; let est=null; snap.docs.forEach(d=>{const v=d.data(); if(!v) return; if(v.tipo==="tentativa") remote[d.id]=v; else if(d.id==="estado") est=v;});
-    const local=hist(); const merged={...remote}; local.forEach(r=>{ if(!merged[r.id]){ merged[r.id]=r; col.doc(r.id).set(r).catch(()=>{}); } });
-    setHist(Object.values(merged).sort((a,b)=>a.at.localeCompare(b.at)));
-    if(est){ const k=store.get("rd2-known",{}); Object.entries(est.known||{}).forEach(([n,v])=>{if(v)k[n]=true;}); try{localStorage.setItem("rd2-known",JSON.stringify(k))}catch(e){}
-      const bs=store.get("rd2-bases",{}); Object.assign(bs, est.bases||{}); try{localStorage.setItem("rd2-bases",JSON.stringify(bs))}catch(e){} }
-    SYNC.db=db; SYNC.uid=uid; SYNC.owner=true; setSyncState("nuvem"); queueEstado();
-    renderF2(); f2progress(); renderVersions(); if(!document.getElementById("v-painel").hidden) renderPainel();
-  }catch(e){ setSyncState(SYNC.db?"erro":"local"); }
+    const col=db.collection("data/users/"+uid);
+    await attachRemote({
+      save: r=>col.doc(r.id).set(r),
+      saveEstado: e=>col.doc("estado").set(e),
+      load: async()=>{ const snap=await col.limit(1000).get(); const attempts=[]; let estado=null;
+        snap.docs.forEach(d=>{const v=d.data(); if(!v) return; if(v.tipo==="tentativa") attempts.push(v); else if(d.id==="estado") estado=v;}); return {attempts, estado}; }
+    }, "");
+  }catch(e){ setSyncState("local"); }
 }
 const fmt = n => String(Math.round(n*100)/100).replace(".",",");
 function renderPainel(){
@@ -1714,7 +1734,10 @@ function renderPainel(){
   wrap.querySelectorAll(".pt").forEach(g=>{ const on=()=>{ const r=g.querySelector(".dot").getBoundingClientRect(), wr=wrap.getBoundingClientRect(); tip.textContent=g.dataset.tip; tip.hidden=false; tip.style.left=Math.min(wr.width-220,Math.max(0,r.left-wr.left-100))+"px"; tip.style.top=(r.top-wr.top-46)+"px"; };
     g.addEventListener("mouseenter",on); g.addEventListener("focus",on); g.addEventListener("mouseleave",()=>tip.hidden=true); g.addEventListener("blur",()=>tip.hidden=true); });
 }
-renderCal(); renderMap(); renderSide(); renderBSide(); renderMap(BMAP,"bmap","Bases do zero","as ideias de base"); renderF2(); renderVersions(); route(); setSyncState("local"); initSync();
+renderCal(); renderMap(); renderSide(); renderBSide(); renderMap(BMAP,"bmap","Bases do zero","as ideias de base"); renderF2(); renderVersions(); document.getElementById("loginBtn").onclick=()=>{ const f=window.RD2_FIREBASE; if(!f) return; if(SYNC.state==="nuvem") f.logout(); else f.login(); };
+route(); setSyncState("local"); initSync();
+if(window.RD2_FIREBASE_READY) window.RD2_FIREBASE_READY();
 </script>
+<script type="module" src="firebase-login.js"></script>
 </body>
 </html>
