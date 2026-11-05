@@ -54,11 +54,11 @@ button{font-family:var(--body);cursor:pointer;color:inherit}
 
 /* topo */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);box-shadow:0 2px 0 var(--line)}
-header.top .wrap{display:flex;align-items:center;gap:14px;padding-block:10px;flex-wrap:wrap}
+header.top .wrap{display:flex;align-items:center;gap:14px;padding-block:10px;flex-wrap:nowrap}
 .brand{font-family:var(--display);font-weight:700;font-size:1.2rem;display:flex;align-items:center;gap:9px;white-space:nowrap;text-decoration:none}
 .blob{width:30px;height:30px;border-radius:46% 54% 50% 50%;background:conic-gradient(from 30deg,var(--pink),var(--butter),var(--mint),var(--sky),var(--lilac),var(--pink));flex:none}
-nav.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
-nav.tabs a{text-decoration:none;font-weight:800;font-size:.9rem;padding:7px 13px;border-radius:999px;color:var(--muted)}
+nav.tabs{display:flex;gap:2px;flex-wrap:nowrap;margin-left:auto;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 14px,#000 calc(100% - 14px),transparent 100%);padding-inline:10px}nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;white-space:nowrap;text-decoration:none;font-weight:800;font-size:.9rem;padding:7px 11px;border-radius:999px;color:var(--muted)}
 nav.tabs a:hover{background:var(--paper2);color:var(--ink)}
 nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--paper)}
 main{padding-block:26px 90px}
@@ -303,6 +303,65 @@ textarea:focus{border-color:var(--c);outline:none}
 .cenbox{border-left:4px solid var(--pink);background:var(--pink-soft);border-radius:12px;padding:10px 14px;display:grid;gap:6px}.cenbox pre.cmd{background:var(--paper)}
 .exa-g{margin-bottom:26px}.exa-g .sol pre.cmd{background:var(--paper)}.exa-g .sol p{margin:0}.exa-g .sol ul,.exa-g .sol ol{margin:0;padding-left:20px}
 #exaBox .q .btn{justify-self:start}.empty{padding:22px;display:grid;gap:10px;justify-items:start}
+/*AULAS-CSS*/
+#v-aulas{--surface:var(--paper);--accent:var(--sky);--accent-soft:var(--sky-soft);--exam:var(--warn);--exam-soft:var(--butter-soft);--term-bg:#13202a;--term-fg:#d6efe6;--term-prompt:#7fd1b9;--term-c:#8aa0ad;--f-display:var(--display);--f-body:var(--body);--f-mono:var(--mono)}
+#v-aulas .au-wrap{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+#v-aulas h1, #v-aulas h2, #v-aulas h3{font-family:var(--f-display);text-wrap:balance;line-height:1.15;margin:0}
+#v-aulas p{margin:0}
+#v-aulas code, #v-aulas .au-mono{font-family:var(--f-mono);font-size:.88em}
+#v-aulas :not(pre)>code{overflow-wrap:anywhere;background:var(--accent-soft);color:var(--ink);padding:1px 6px;border-radius:4px}
+#v-aulas .au-aulas{display:flex;gap:6px;overflow-x:auto;padding-block:14px 4px;scrollbar-width:thin}
+#v-aulas .au-aulas a, #v-aulas .au-aulas span{flex:none;font-family:var(--f-mono);font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--muted);text-decoration:none}
+#v-aulas .au-aulas a[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+#v-aulas .au-aulas span{opacity:.55}
+#v-aulas header.au-hero{display:flex;flex-direction:column;gap:10px;padding-top:8px}
+#v-aulas .au-eyebrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+#v-aulas h1{font-size:clamp(30px,6vw,46px);font-weight:700}
+#v-aulas .au-lede{color:var(--muted);max-width:62ch}
+#v-aulas .au-nn{display:inline-flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+#v-aulas .au-nn span{font-family:var(--f-mono);font-size:13px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+#v-aulas nav.au-toc{display:flex;flex-wrap:wrap;gap:8px}
+#v-aulas nav.au-toc a{text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-weight:600;font-size:15px;display:flex;gap:8px;align-items:baseline}
+#v-aulas nav.au-toc a b{font-family:var(--f-mono);color:var(--accent);font-weight:600;font-size:13px}
+#v-aulas nav.au-toc a:hover, #v-aulas nav.au-toc a:focus-visible{border-color:var(--accent);outline:none}
+#v-aulas section.au-topic{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:14px;scroll-margin-top:16px;min-width:0}
+#v-aulas .au-topic-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#v-aulas .au-topic-head h2{font-size:24px;font-weight:700;display:flex;gap:12px;align-items:baseline}
+#v-aulas .au-topic-head h2 .au-n{font-family:var(--f-mono);font-size:14px;color:var(--accent);font-weight:600}
+#v-aulas .au-tag{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--exam-soft);color:var(--exam)}
+#v-aulas .au-tag.au-low{background:var(--accent-soft);color:var(--accent)}
+#v-aulas ul.au-pts{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+#v-aulas ul.au-pts li::marker{color:var(--accent)}
+#v-aulas .au-key{border-left:3px solid var(--accent);padding:4px 0 4px 14px;font-weight:600}
+#v-aulas .au-tbl{overflow-x:auto}
+#v-aulas table{border-collapse:collapse;width:100%;font-size:15.5px}
+#v-aulas th, #v-aulas td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+#v-aulas th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+#v-aulas td code{white-space:nowrap}
+#v-aulas .au-num{font-variant-numeric:tabular-nums}
+#v-aulas pre.au-term{margin:0;background:var(--term-bg);color:var(--term-fg);font-family:var(--f-mono);font-size:14px;line-height:1.6;padding:14px 16px;border-radius:8px;overflow-x:auto}
+#v-aulas pre.au-term .au-p{color:var(--term-prompt)}
+#v-aulas pre.au-term .au-c{color:var(--term-c)}
+#v-aulas details.au-ex{border:1px dashed var(--accent);border-radius:10px;padding:12px 14px;background:var(--bg)}
+#v-aulas details.au-ex>summary{cursor:pointer;font-weight:700;list-style:none;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+#v-aulas details.au-ex>summary::-webkit-details-marker{display:none}
+#v-aulas details.au-ex>summary::before{content:"Exercício";font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}
+#v-aulas details.au-ex>summary .au-hint{margin-left:auto;font-weight:400;font-size:13.5px;color:var(--accent);white-space:nowrap}
+#v-aulas details.au-ex[open]>summary .au-hint{display:none}
+#v-aulas details.au-ex .au-ans{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+#v-aulas details.au-ex summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+#v-aulas .au-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+#v-aulas .au-box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+#v-aulas .au-box h3{font-size:16px;font-family:var(--f-body);font-weight:700}
+#v-aulas .au-bits{display:flex;font-family:var(--f-mono);font-size:13px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+#v-aulas .au-bits div{padding:6px 4px;text-align:center;white-space:nowrap;overflow:hidden}
+#v-aulas .au-bits .au-net{flex:26;background:var(--accent-soft);color:var(--accent)}
+#v-aulas .au-bits .au-host{flex:6;min-width:64px;background:var(--exam-soft);color:var(--exam)}
+#v-aulas article.au-aula{display:flex;flex-direction:column;gap:28px}
+#v-aulas footer{color:var(--muted);font-size:14px;text-align:center}
+/*/AULAS-CSS*/
+#v-aulas .au-host{display:flex;flex-direction:column;gap:22px}
+#v-aulas .au-topic{scroll-margin-top:84px}
 </style>
 </head>
 <body>
@@ -312,6 +371,7 @@ textarea:focus{border-color:var(--c);outline:none}
   <nav class="tabs" aria-label="Secções">
     <a href="#inicio" data-view="inicio">Início</a>
     <a href="#bases" data-view="bases">Bases do zero</a>
+    <a href="#aulas" data-view="aulas">Aulas</a>
     <a href="#mapa" data-view="mapa">Mapa mental</a>
     <a href="#resumo" data-view="resumo">Resumo</a>
     <a href="#folha2" data-view="folha2">40 teóricas</a>
@@ -350,6 +410,399 @@ textarea:focus{border-color:var(--c);outline:none}
     <nav class="side card" id="bside" aria-label="Lições das bases"></nav>
     <div id="bBox"></div>
   </div>
+</section>
+
+<section class="view" id="v-aulas" hidden>
+  <div class="pagehead"><p class="eyebrow">Matéria aula a aula</p><h1>Aulas</h1><p class="lead">O resumo de cada aula, com o que entra no teste marcado «No teste», comandos e exercícios com a resposta escondida. Vão sendo acrescentadas à medida que avanças.</p></div>
+  <div class="au-host"><!--AULAS-->
+  <div class="au-aulas" aria-label="Aulas">
+    <a href="#aula-1" data-a="1">Aula 1</a>
+    <a href="#aula-2" data-a="2">Aula 2</a><span>Aula 3</span><span>Aula 4</span><span>Aula 5</span><span>Aula 6</span><span>Aula 7</span><span>Aula 8</span>
+  </div>
+
+  <article class="au-aula" id="aula-1">
+  <header class="au-hero">
+    <div class="au-eyebrow">Aula 1 · 15 set · Revisões de RD1</div>
+    <h1>Apresentação da UC e revisões de RD1</h1>
+    <p class="au-lede">Metade da aula são regras e o cenário do semestre. A outra metade revê o que vem de RD1: IOS, endereçamento, tabela de rotas e RIP. Para o teste de 17 de novembro, o que pesa são os tópicos marcados «No teste».</p>
+    <div class="au-nn"><span>NN = 43</span><span>VLANs 143 · 243 · 343 · 443 · 943</span><span>nativa 999</span><span>10.43.d.0/24</span></div>
+  </header>
+
+  <nav class="au-toc" aria-label="Tópicos">
+    <a href="#a1-t1"><b>1</b>Avaliação</a>
+    <a href="#a1-t2"><b>2</b>Cenário e NN</a>
+    <a href="#a1-t3"><b>3</b>Modos do IOS</a>
+    <a href="#a1-t4"><b>4</b>IPv4 e VLSM</a>
+    <a href="#a1-t5"><b>5</b>IPv6</a>
+    <a href="#a1-t6"><b>6</b>Tabela de rotas</a>
+    <a href="#a1-t7"><b>7</b>RIP</a>
+  </nav>
+
+  <section class="au-topic" id="a1-t1">
+    <div class="au-topic-head"><h2><span class="au-n">1</span>Como é a avaliação</h2><span class="au-tag au-low">Saber</span></div>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Componente</th><th class="au-num">Peso</th><th>O quê</th></tr></thead>
+      <tbody>
+        <tr><td><b>T1</b></td><td class="au-num">30 %</td><td>Bloco Comutação. 45 min, sem consulta. <b>É o teste de 17 nov.</b></td></tr>
+        <tr><td>T2</td><td class="au-num">30 %</td><td>Bloco Encaminhamento (semana 14).</td></tr>
+        <tr><td>Entrevista prática</td><td class="au-num">30 %</td><td>Sobre a rede «A Minha Empresa», nas duas últimas semanas.</td></tr>
+        <tr><td>Mini-testes</td><td class="au-num">10 %</td><td>Nos 10 min iniciais da aula seguinte.</td></tr>
+      </tbody>
+    </table></div>
+    <ul class="au-pts">
+      <li>Escolha múltipla: certa <b>+1</b>, errada <b>−1/3</b>, em branco <b>0</b>. Só respondas quando conseguires eliminar opções.</li>
+      <li>Frequência: 70 % de presenças nas práticas <b>e</b> pelo menos 8 valores na componente prática.</li>
+      <li>IA permitida nos trabalhos práticos (com registo), proibida nas avaliações.</li>
+    </ul>
+  </section>
+
+  <section class="au-topic" id="a1-t2">
+    <div class="au-topic-head"><h2><span class="au-n">2</span>O cenário e a regra NN</h2><span class="au-tag au-low">Saber</span></div>
+    <p>A rede que fizeste em RD1 está em produção há um ano e a empresa cresceu. Tu és o engenheiro de rede. Cada TP parte do estado em que o anterior ficou.</p>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Antes (fim de RD1)</h3>
+        <ul class="au-pts"><li>Seis cidades, oito enlaces WAN</li><li>VLSM na sede de Lisboa</li><li>Porto–Braga em dual-stack</li><li>RIP em toda a rede</li></ul></div>
+      <div class="au-box"><h3>Depois (janeiro)</h3>
+        <ul class="au-pts"><li>VLANs por departamento</li><li>Dois switches de distribuição redundantes</li><li>Wi-Fi com controlador (WLC)</li><li>OSPF em vez de RIP</li><li>ACL e NAT na saída</li></ul></div>
+    </div>
+    <p class="au-key">NN são os dois últimos algarismos do teu número (43). Entra nos IDs das VLANs, nas sub-redes, nos nomes dos equipamentos e no router-id.</p>
+  </section>
+
+  <section class="au-topic" id="a1-t3">
+    <div class="au-topic-head"><h2><span class="au-n">3</span>Modos do IOS e navegação</h2><span class="au-tag">No teste</span></div>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Prompt</th><th>Modo</th><th>Entras com</th></tr></thead>
+      <tbody>
+        <tr><td><code>Router&gt;</code></td><td>EXEC de utilizador</td><td>ao ligar</td></tr>
+        <tr><td><code>Router#</code></td><td>EXEC privilegiado</td><td><code>enable</code></td></tr>
+        <tr><td><code>Router(config)#</code></td><td>Configuração global</td><td><code>configure terminal</code></td></tr>
+        <tr><td><code>Router(config-if)#</code></td><td>Interface</td><td><code>interface g0/0</code></td></tr>
+        <tr><td><code>Router(config-line)#</code></td><td>Linha (consola, vty)</td><td><code>line console 0</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>running-config</h3><p>Está na <b>RAM</b>. É a configuração ativa e perde-se se o equipamento desligar.</p></div>
+      <div class="au-box"><h3>startup-config</h3><p>Está na <b>NVRAM</b>. É carregada no arranque. Gravas com <code>copy running-config startup-config</code>.</p></div>
+    </div>
+    <p>Cabeçalho de todas as configurações do semestre:</p>
+<pre class="au-term"><span class="au-p">Router(config)#</span> no ip domain-lookup
+<span class="au-p">Router(config)#</span> line console 0
+<span class="au-p">Router(config-line)#</span> logging synchronous
+<span class="au-p">Router(config-line)#</span> do show ip interface brief   <span class="au-c">! show sem sair do modo config</span></pre>
+    <ul class="au-pts">
+      <li><code>no ip domain-lookup</code> evita que um comando mal escrito fique à espera de DNS.</li>
+      <li><code>logging synchronous</code> impede que as mensagens do sistema te partam o que estás a escrever.</li>
+      <li>No Moodle do teste os comandos têm de ir <b>completos</b>, sem abreviaturas.</li>
+    </ul>
+    <details class="au-ex"><summary>Que comando leva de <code>Router(config-if)#</code> a <code>Router#</code> num só passo? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans"><p><code>end</code> (ou Ctrl+Z). O <code>exit</code> só sobe um nível, para <code>(config)#</code>.</p></div></details>
+  </section>
+
+  <section class="au-topic" id="a1-t4">
+    <div class="au-topic-head"><h2><span class="au-n">4</span>Endereçamento IPv4 e VLSM</h2><span class="au-tag">No teste</span></div>
+    <p>Como ler um <b>/26</b>:</p>
+    <div class="au-bits" aria-label="26 bits de rede e 6 de host"><div class="au-net">26 bits de rede</div><div class="au-host">6 host</div></div>
+    <div class="au-tbl"><table><tbody>
+      <tr><td>Máscara</td><td class="au-num"><code>255.255.255.192</code></td></tr>
+      <tr><td>Bits de host</td><td class="au-num">32 − 26 = 6</td></tr>
+      <tr><td>Endereços totais</td><td class="au-num">2⁶ = 64</td></tr>
+      <tr><td>Utilizáveis</td><td class="au-num">64 − 2 = 62 (sai a rede e o broadcast)</td></tr>
+      <tr><td>Salto entre sub-redes</td><td class="au-num">64, ou seja .0, .64, .128, .192</td></tr>
+    </tbody></table></div>
+    <details class="au-ex"><summary>Sub-rede 192.168.10.128/26: primeiro, último e broadcast? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans">
+        <p>O bloco vai de .128 a .191 (128 + 64 − 1).</p>
+        <ul class="au-pts"><li>Rede: <code>192.168.10.128</code></li><li>Primeiro utilizável: <code>192.168.10.129</code></li><li>Último utilizável: <code>192.168.10.190</code></li><li>Broadcast: <code>192.168.10.191</code></li></ul>
+      </div></details>
+    <p class="au-key">VLSM: cada sub-rede é dimensionada ao número de hosts, em vez de dar /24 a tudo.</p>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Sub-rede (Lisboa, RD1)</th><th class="au-num">Hosts</th><th>Prefixo</th><th>Gateway</th></tr></thead>
+      <tbody class="au-num">
+        <tr><td>S0</td><td>500</td><td><code>123.12.20.0/23</code></td><td><code>123.12.20.1</code></td></tr>
+        <tr><td>S1</td><td>257</td><td><code>123.12.22.0/23</code></td><td><code>123.12.22.1</code></td></tr>
+        <tr><td>S2</td><td>129</td><td><code>123.12.24.0/24</code></td><td><code>123.12.24.1</code></td></tr>
+        <tr><td>S3</td><td>65</td><td><code>123.12.25.0/25</code></td><td><code>123.12.25.1</code></td></tr>
+        <tr><td>Wi-Fi (AP)</td><td>30</td><td><code>123.12.25.128/27</code></td><td><code>123.12.25.129</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Repara: 257 hosts já não cabem num /24 (254 úteis), por isso S1 leva um /23. Este plano volta no TP3, com VLANs.</p>
+  </section>
+
+  <section class="au-topic" id="a1-t5">
+    <div class="au-topic-head"><h2><span class="au-n">5</span>IPv6: formato e abreviação</h2><span class="au-tag">No teste · pergunta 11</span></div>
+    <ul class="au-pts">
+      <li>128 bits, escritos em 8 grupos de 4 dígitos hexadecimais.</li>
+      <li><b>Regra 1:</b> tiram-se os zeros à esquerda de cada grupo (<code>0db8</code> passa a <code>db8</code>).</li>
+      <li><b>Regra 2:</b> uma sequência de grupos só com zeros vira <code>::</code>, mas <b>só uma vez</b> por endereço.</li>
+    </ul>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Global unicast · <code>2000::/3</code></h3><p>Endereço público, encaminhável na Internet.</p></div>
+      <div class="au-box"><h3>Link-local · <code>fe80::/10</code></h3><p>Existe sempre em qualquer interface IPv6 e só vale na ligação local. É o endereço que os hosts usam como gateway.</p></div>
+    </div>
+    <details class="au-ex"><summary>Abrevia <code>2001:0db8:0000:0000:0045:0000:0000:0001</code> <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans">
+        <p>Tirar zeros à esquerda: <code>2001:db8:0:0:45:0:0:1</code></p>
+        <p>Há duas sequências de dois zeros. Só uma pode virar <code>::</code>; quando têm o mesmo tamanho, usa-se a primeira.</p>
+        <p>Resposta: <code>2001:db8::45:0:0:1</code></p>
+      </div></details>
+  </section>
+
+  <section class="au-topic" id="a1-t6">
+    <div class="au-topic-head"><h2><span class="au-n">6</span>Rotas e a tabela de encaminhamento</h2><span class="au-tag">No teste</span></div>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Código</th><th>Origem</th><th>Como aparece</th><th class="au-num">Dist. administrativa</th></tr></thead>
+      <tbody>
+        <tr><td><code>C</code> / <code>L</code></td><td>Conectada / local</td><td>interface up/up com endereço</td><td class="au-num">0</td></tr>
+        <tr><td><code>S</code></td><td>Estática</td><td>o administrador escreveu <code>ip route</code></td><td class="au-num">1</td></tr>
+        <tr><td><code>O</code></td><td>OSPF</td><td>aprendida de um vizinho</td><td class="au-num">110</td></tr>
+        <tr><td><code>R</code></td><td>RIP</td><td>aprendida de um vizinho</td><td class="au-num">120</td></tr>
+      </tbody>
+    </table></div>
+    <p class="au-key">Quanto menor a distância administrativa, mais o router confia na rota. Se OSPF e RIP conhecem a mesma rede, ganha o OSPF.</p>
+    <p>Decompor uma linha do <code>show ip route</code>:</p>
+<pre class="au-term">R    192.168.10.64/26 [120/2] via 10.0.0.2, 00:00:12, Serial0/0/0
+<span class="au-c">│    │                 │   │      │          │         └ interface de saída
+│    │                 │   │      │          └ idade da rota
+│    │                 │   │      └ próximo salto
+│    │                 │   └ métrica (2 saltos)
+│    │                 └ distância administrativa
+│    └ rede de destino
+└ origem: R = RIP</span></pre>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Rota por omissão <code>0.0.0.0/0</code></h3><p>Significa «tudo o que não conheço». Aparece no topo como <i>Gateway of last resort</i>.</p></div>
+      <div class="au-box"><h3>Se não existir</h3><p>O pacote sem rota é descartado. A partir da aula 8 é o OSPF que a propaga, com <code>default-information originate</code>.</p></div>
+    </div>
+  </section>
+
+  <section class="au-topic" id="a1-t7">
+    <div class="au-topic-head"><h2><span class="au-n">7</span>RIP e as suas limitações</h2><span class="au-tag au-low">Contexto</span></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Como funciona</h3>
+        <ul class="au-pts"><li>Vetor distância: cada router anuncia aos vizinhos o que conhece.</li><li>Anúncios periódicos a cada 30 s.</li><li>Métrica em saltos: máximo 15, 16 é inalcançável.</li></ul></div>
+      <div class="au-box"><h3>O que não resolve</h3>
+        <ul class="au-pts"><li>Ignora a largura de banda (prefere 2 saltos a 64 kbit/s a 3 saltos a 1 Gbit/s).</li><li>Converge em minutos.</li><li>Não escala.</li></ul></div>
+    </div>
+<pre class="au-term"><span class="au-p">Router(config)#</span> router rip
+<span class="au-p">Router(config-router)#</span> version 2
+<span class="au-p">Router(config-router)#</span> no auto-summary
+<span class="au-p">Router(config-router)#</span> network 192.168.10.0</pre>
+    <details class="au-ex"><summary>Porque é que Lisboa vê quatro /26 do Porto e não uma só 192.168.10.0/24? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans"><p>Porque o Porto usa <b>RIPv2</b> (sem classe, envia a máscara) com <code>no auto-summary</code>. Sem resumo automático, cada sub-rede /26 é anunciada à parte. Com auto-summary ligado, seria resumida à classe (/24).</p></div></details>
+    <p>Na semana 8 a empresa migra para OSPF (TP8), que entra no T2 e não no teste de 17 de novembro.</p>
+  </section>
+
+  </article>
+  <article class="au-aula" id="aula-2" hidden>
+  <header class="au-hero">
+    <div class="au-eyebrow">Aula 2 · 22 set · Comutação e VLANs · TP3</div>
+    <h1>Operações de comutação e VLANs</h1>
+    <p class="au-lede">Como um switch decide para onde manda cada trama, porque é que isso não chega, e como as VLANs e os troncos 802.1Q partem a rede da sede por departamentos. Quase tudo aqui entra no teste e na lista de estudo do Bloco A.</p>
+    <div class="au-nn"><span>Exemplos com NN = 43</span><span>Lista de estudo: 1, 2, 5, 7, 8, 10, 14, 15, 16, 17, 20</span></div>
+  </header>
+
+  <nav class="au-toc" aria-label="Tópicos da Aula 2">
+    <a href="#a2-t1"><b>1</b>O problema</a>
+    <a href="#a2-t2"><b>2</b>Tabela MAC</a>
+    <a href="#a2-t3"><b>3</b>Store-and-forward</a>
+    <a href="#a2-t4"><b>4</b>Colisão e difusão</a>
+    <a href="#a2-t5"><b>5</b>O que é uma VLAN</a>
+    <a href="#a2-t6"><b>6</b>Tipos de VLAN</a>
+    <a href="#a2-t7"><b>7</b>Configurar VLANs</a>
+    <a href="#a2-t8"><b>8</b>Troncos 802.1Q</a>
+    <a href="#a2-t9"><b>9</b>DTP</a>
+    <a href="#a2-t10"><b>10</b>Avarias e TP3</a>
+  </nav>
+
+  <section class="au-topic" id="a2-t1">
+    <div class="au-topic-head"><h2><span class="au-n">1</span>O problema da sede</h2><span class="au-tag au-low">Contexto</span></div>
+    <p>A sede de Lisboa está numa <b>rede plana</b>: toda a gente no mesmo domínio de difusão. A queixa do TP3 é «o estagiário do Comercial vê as pastas partilhadas da contabilidade».</p>
+    <p class="au-key">Não é um problema de permissões de ficheiros. É um problema de desenho de rede.</p>
+    <ul class="au-pts">
+      <li><b>Hoje (TP3):</b> separar os departamentos em domínios de difusão diferentes, com VLANs.</li>
+      <li><b>Próxima aula (TP4):</b> voltar a ligá-los de forma controlada, com encaminhamento inter-VLAN.</li>
+      <li>No fim do TP3 os departamentos ficam isolados e ninguém chega ao servidor. Parece erro, mas é o comportamento correto.</li>
+    </ul>
+  </section>
+
+  <section class="au-topic" id="a2-t2">
+    <div class="au-topic-head"><h2><span class="au-n">2</span>Como o switch decide: a tabela MAC</h2><span class="au-tag">No teste · pergunta 10</span></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Aprender pela origem</h3><p>Quando uma trama entra numa porta, o switch associa o <b>MAC de origem</b> a essa porta. Nunca aprende nada com o MAC de destino.</p></div>
+      <div class="au-box"><h3>Encaminhar pelo destino</h3><p>Se o <b>MAC de destino</b> está na tabela, a trama sai só por essa porta. É isto que distingue um switch de um hub.</p></div>
+      <div class="au-box"><h3>Inundar quando não conhece</h3><p>Destino desconhecido, broadcast ou multicast: sai por <b>todas as portas menos a de entrada</b>. É normal. Inundação constante já é sinal de MAC flooding (aula 6).</p></div>
+      <div class="au-box"><h3>Envelhecimento</h3><p>Cada entrada dura <b>300 s</b> desde a última trama daquele MAC. Um PC calado 5 minutos sai da tabela e a próxima trama para ele volta a ser inundada.</p></div>
+    </div>
+<pre class="au-term"><span class="au-p">ASW1#</span> show mac address-table
+          Mac Address Table
+-------------------------------------------
+Vlan    Mac Address       Type        Ports
+----    -----------       --------    -----
+ 143    0001.aaaa.aaaa    DYNAMIC     Fa0/1
+ 243    0001.bbbb.bbbb    DYNAMIC     Fa0/5
+<span class="au-c">! DYNAMIC = aprendido do tráfego · STATIC = posto à mão ou do próprio switch</span></pre>
+    <details class="au-ex"><summary>Tabela vazia, PC-A na porta 1, PC-B na 2, PC-C na 3. O que acontece em cada passo? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans">
+        <div class="au-tbl"><table>
+          <thead><tr><th>Passo</th><th>Aprende</th><th>O que faz à trama</th></tr></thead>
+          <tbody>
+            <tr><td>1. A → B</td><td>AAAA na porta 1</td><td>B é desconhecido: inunda para as portas 2 e 3</td></tr>
+            <tr><td>2. B → A</td><td>BBBB na porta 2</td><td>A é conhecido: sai só pela porta 1</td></tr>
+            <tr><td>3. C → A</td><td>CCCC na porta 3</td><td>sai só pela porta 1</td></tr>
+            <tr><td>4. B → C</td><td>nada de novo</td><td>sai só pela porta 3. O PC-A não vê nada.</td></tr>
+          </tbody>
+        </table></div>
+      </div></details>
+  </section>
+
+  <section class="au-topic" id="a2-t3">
+    <div class="au-topic-head"><h2><span class="au-n">3</span>Store-and-forward e cut-through</h2><span class="au-tag">No teste · pergunta 2</span></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Store-and-forward</h3>
+        <ul class="au-pts"><li>Recebe a trama <b>inteira</b>, verifica o <b>FCS</b> e só depois encaminha.</li><li>Mais latência, mas descarta tramas corrompidas e runts.</li><li>Necessário para <b>QoS</b> e para ligar portas de <b>velocidades diferentes</b> (precisa de buffer).</li><li>É o que usam os switches empresariais de hoje.</li></ul></div>
+      <div class="au-box"><h3>Cut-through</h3>
+        <ul class="au-pts"><li>Encaminha assim que lê o <b>MAC de destino</b> (os primeiros 6 bytes).</li><li><b>Fast-forward:</b> não espera nada.</li><li><b>Fragment-free:</b> espera 64 bytes para apanhar colisões.</li><li>Menos latência, mas propaga lixo: quando o FCS chega, a trama já saiu. Usa-se em nichos (HFT, HPC).</li></ul></div>
+    </div>
+  </section>
+
+  <section class="au-topic" id="a2-t4">
+    <div class="au-topic-head"><h2><span class="au-n">4</span>Domínios de colisão e de difusão</h2><span class="au-tag">No teste · pergunta 16</span></div>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Equipamento</th><th>Domínios de colisão</th><th>Domínios de difusão</th></tr></thead>
+      <tbody>
+        <tr><td>Hub</td><td>um só para todas as portas</td><td>um</td></tr>
+        <tr><td>Switch</td><td><b>um por porta</b> (em full-duplex nem há colisões)</td><td><b>um só</b> para o switch inteiro</td></tr>
+        <tr><td>Switch com VLANs</td><td>um por porta</td><td><b>um por VLAN</b></td></tr>
+        <tr><td>Router</td><td>um por interface</td><td><b>um por interface</b> (não passa broadcast)</td></tr>
+      </tbody>
+    </table></div>
+    <p>Com 32 postos numa rede plana, cada ARP request chega aos 32, e o mesmo acontece com o DHCP, o mDNS e a descoberta de impressoras. Com 100 postos é pior.</p>
+    <p class="au-key">O switch já microsegmentou a colisão. O que falta segmentar é a difusão, e é para isso que servem as VLANs.</p>
+  </section>
+
+  <section class="au-topic" id="a2-t5">
+    <div class="au-topic-head"><h2><span class="au-n">5</span>O que é uma VLAN</h2><span class="au-tag">No teste · pergunta 8</span></div>
+    <p class="au-key">Uma VLAN é um domínio de difusão criado por software.</p>
+    <p>Não se mudam cabos, PCs nem switch. Muda só a associação porta ↔ VLAN na configuração. Duas máquinas no mesmo switch podem deixar de se ver, e é isso que se quer.</p>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Benefícios</h3>
+        <ul class="au-pts"><li><b>Segurança:</b> o tráfego de um departamento não chega ao outro.</li><li><b>Contenção da difusão:</b> domínios mais pequenos, menos ruído.</li><li><b>Agrupamento lógico:</b> quem muda de piso continua no seu departamento.</li><li><b>Custo:</b> mover e acrescentar sem passar cabo.</li></ul></div>
+      <div class="au-box"><h3>Porque é preciso um router</h3><p>Cada VLAN é um domínio de difusão e, no plano, uma sub-rede IP. Para passar de uma sub-rede para outra é preciso um equipamento de <b>camada 3</b> (router ou switch L3). É o tema da Aula 3.</p></div>
+    </div>
+  </section>
+
+  <section class="au-topic" id="a2-t6">
+    <div class="au-topic-head"><h2><span class="au-n">6</span>Tipos de VLAN</h2><span class="au-tag">No teste · perguntas 5 e 17</span></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>Porta de acesso</h3><p>Pertence a <b>uma</b> VLAN e entrega ao PC tramas <b>sem etiqueta</b>. O PC não sabe que existem VLANs.</p></div>
+      <div class="au-box"><h3>VLAN de dados</h3><p>Tráfego dos utilizadores, uma por departamento: <code>143</code> Admin, <code>243</code> Comercial, <code>343</code> Técnico, <code>443</code> Servidores.</p></div>
+      <div class="au-box"><h3>VLAN de voz</h3><p>PC ligado ao telefone IP, telefone ligado ao switch. A mesma porta leva <b>voz etiquetada</b> e <b>dados sem etiqueta</b>. É a exceção à regra da porta de acesso.</p></div>
+      <div class="au-box"><h3>VLAN de gestão</h3><p>Onde vive a SVI para administrar o switch: <code>interface vlan 943</code>. Fica separada dos utilizadores para que ninguém numa tomada do escritório consiga sequer tentar SSH ao switch.</p></div>
+    </div>
+<pre class="au-term"><span class="au-p">ASW1(config)#</span> interface fa0/10
+<span class="au-p">ASW1(config-if)#</span> switchport mode access
+<span class="au-p">ASW1(config-if)#</span> switchport access vlan 243        <span class="au-c">! dados do PC, sem etiqueta</span>
+<span class="au-p">ASW1(config-if)#</span> switchport voice vlan &lt;voz&gt;       <span class="au-c">! voz do telefone, etiquetada</span></pre>
+    <p class="au-key">VLAN 1: todas as portas nascem lá e, por omissão, é a nativa e a de gestão. Regra: nada de utilizadores, gestão nem VLAN nativa na VLAN 1.</p>
+    <p>Para troncos só se usa <b>802.1Q</b>. O ISL (da Cisco) já não se usa.</p>
+  </section>
+
+  <section class="au-topic" id="a2-t7">
+    <div class="au-topic-head"><h2><span class="au-n">7</span>Criar, atribuir e verificar VLANs</h2><span class="au-tag">No teste · pergunta 7</span></div>
+<pre class="au-term"><span class="au-p">ASW1(config)#</span> vlan 143
+<span class="au-p">ASW1(config-vlan)#</span> name ADMIN
+<span class="au-p">ASW1(config-vlan)#</span> exit
+<span class="au-p">ASW1(config)#</span> interface range fa0/1 - 4
+<span class="au-p">ASW1(config-if-range)#</span> switchport mode access
+<span class="au-p">ASW1(config-if-range)#</span> switchport access vlan 143
+<span class="au-p">ASW1(config-if-range)#</span> end
+<span class="au-p">ASW1#</span> show vlan brief</pre>
+    <ul class="au-pts">
+      <li><b>Dá sempre nome</b> à VLAN: é o que lês no <code>show vlan brief</code> quando há uma avaria.</li>
+      <li><b>Fixa o modo</b> (<code>switchport mode access</code>) em vez de deixar o automático. É o mesmo argumento do DTP (tópico 9).</li>
+      <li><code>show vlan brief</code> mostra VLAN, nome, estado e portas. Erro mais frequente do TP3: uma porta que achavas atribuída ficou na VLAN 1 porque o <code>interface range</code> não a incluía.</li>
+    </ul>
+    <details class="au-ex"><summary>O que acontece às portas da VLAN 143 se fizeres <code>no vlan 143</code>? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans"><p>As portas <b>não voltam à VLAN 1</b>. Ficam órfãs numa VLAN que já não existe e deixam de comunicar. Corrige-se reatribuindo cada porta explicitamente. Esta armadilha aparece como avaria no Desafio 1.</p></div></details>
+  </section>
+
+  <section class="au-topic" id="a2-t8">
+    <div class="au-topic-head"><h2><span class="au-n">8</span>Troncos 802.1Q e VLAN nativa</h2><span class="au-tag">No teste · perguntas 14 e 15</span></div>
+    <p>A VLAN 143 existe em vários switches e um cabo por VLAN não escala. O <b>tronco</b> leva todas as VLANs num só cabo e marca cada trama com a sua VLAN.</p>
+    <p>A etiqueta 802.1Q tem <b>4 bytes</b> e é inserida entre o MAC de origem e o EtherType (o FCS é recalculado):</p>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Campo</th><th class="au-num">Bits</th><th>Para quê</th></tr></thead>
+      <tbody>
+        <tr><td>TPID</td><td class="au-num">16</td><td>vale <code>0x8100</code>: diz que a trama vem etiquetada</td></tr>
+        <tr><td>PCP (prioridade)</td><td class="au-num">3</td><td>classe de serviço (CoS), usada para QoS e voz</td></tr>
+        <tr><td>DEI</td><td class="au-num">1</td><td>pode ser descartada em congestão</td></tr>
+        <tr><td><b>VID</b></td><td class="au-num">12</td><td>número da VLAN (até 4094)</td></tr>
+      </tbody>
+    </table></div>
+    <div class="au-grid2">
+      <div class="au-box"><h3>VLAN nativa</h3><p>O tráfego da nativa atravessa o tronco <b>sem etiqueta</b>. Tem de ser <b>igual nos dois extremos</b>, senão o tráfego muda de VLAN em silêncio. Nunca é a VLAN 1 nem uma VLAN com utilizadores. No plano é a <code>999</code>, criada vazia.</p></div>
+      <div class="au-box"><h3>Lista de VLANs permitidas</h3><p>Por omissão passam todas: cómodo e mau, porque espalha difusão e aumenta a superfície de ataque. Põe só as necessárias. Para alterar usa <code>add</code> e <code>remove</code>.</p></div>
+    </div>
+<pre class="au-term"><span class="au-p">ASW1(config)#</span> interface gi0/1
+<span class="au-p">ASW1(config-if)#</span> switchport trunk encapsulation dot1q   <span class="au-c">! só no 3650; o 2960 não tem</span>
+<span class="au-p">ASW1(config-if)#</span> switchport mode trunk
+<span class="au-p">ASW1(config-if)#</span> switchport trunk native vlan 999
+<span class="au-p">ASW1(config-if)#</span> switchport trunk allowed vlan 143,243,343,943,999
+<span class="au-p">ASW1(config-if)#</span> switchport nonegotiate
+<span class="au-p">ASW1(config-if)#</span> end
+<span class="au-p">ASW1#</span> show interfaces trunk</pre>
+    <details class="au-ex"><summary>Queres juntar a VLAN 443 ao tronco. Qual é o erro clássico? <span class="au-hint">ver resposta</span></summary>
+      <div class="au-ans"><p>Escrever <code>switchport trunk allowed vlan 443</code> substitui a lista inteira: só passa a 443 e as outras caem. O certo é <code>switchport trunk allowed vlan add 443</code>. Para tirar: <code>switchport trunk allowed vlan remove 443</code>.</p></div></details>
+  </section>
+
+  <section class="au-topic" id="a2-t9">
+    <div class="au-topic-head"><h2><span class="au-n">9</span>DTP e porque se desliga</h2><span class="au-tag">No teste · pergunta 20</span></div>
+    <p>O <b>DTP</b> (Dynamic Trunking Protocol) é proprietário da Cisco e negoceia sozinho se uma ligação fica em acesso ou em tronco. <b>dynamic auto</b> espera que o outro lado peça. <b>dynamic desirable</b> pede.</p>
+    <div class="au-tbl"><table>
+      <thead><tr><th></th><th>dynamic auto</th><th>dynamic desirable</th><th>trunk</th><th>access</th></tr></thead>
+      <tbody>
+        <tr><th>dynamic auto</th><td>acesso</td><td><b>tronco</b></td><td><b>tronco</b></td><td>acesso</td></tr>
+        <tr><th>dynamic desirable</th><td><b>tronco</b></td><td><b>tronco</b></td><td><b>tronco</b></td><td>acesso</td></tr>
+        <tr><th>trunk</th><td><b>tronco</b></td><td><b>tronco</b></td><td><b>tronco</b></td><td>não funciona</td></tr>
+        <tr><th>access</th><td>acesso</td><td>acesso</td><td>não funciona</td><td>acesso</td></tr>
+      </tbody>
+    </table></div>
+    <p>Truque: <b>auto + auto = acesso</b>, porque nenhum dos dois pede.</p>
+    <p class="au-key">Razão para desligar: segurança. Um portátil com o software certo numa porta dinâmica negoceia um tronco e passa a receber todas as VLANs (switch spoofing, aula 6).</p>
+    <p>Regra do plano «A Minha Empresa»: modo fixo em todas as portas, <code>switchport nonegotiate</code> nos troncos e portas não usadas desligadas.</p>
+  </section>
+
+  <section class="au-topic" id="a2-t10">
+    <div class="au-topic-head"><h2><span class="au-n">10</span>Avarias comuns e o plano do TP3</h2><span class="au-tag">No teste · pergunta 1</span></div>
+    <div class="au-tbl"><table>
+      <thead><tr><th>Sintoma</th><th>Causa provável</th><th>Comando que mostra</th></tr></thead>
+      <tbody>
+        <tr><td>PC não fala com ninguém da sua VLAN</td><td>porta na VLAN errada ou ainda na VLAN 1</td><td><code>show vlan brief</code></td></tr>
+        <tr><td>Porta numa VLAN que não aparece</td><td>VLAN não criada no switch, ou apagada</td><td><code>show vlan brief</code></td></tr>
+        <tr><td>Uma VLAN não atravessa o tronco</td><td>VLAN fora da lista <code>allowed</code></td><td><code>show interfaces trunk</code></td></tr>
+        <tr><td>Tronco não se forma</td><td>modos DTP incompatíveis (auto + auto) ou porta em access</td><td><code>show interfaces gi0/1 switchport</code></td></tr>
+        <tr><td>Tráfego aparece na VLAN errada, mensagens de mismatch</td><td>VLAN nativa diferente nos dois extremos</td><td><code>show interfaces trunk</code></td></tr>
+        <tr><td>Interface em baixo</td><td>porta com <code>shutdown</code></td><td><code>show ip interface brief</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Plano de VLANs do TP3 com o teu NN:</p>
+    <div class="au-tbl"><table>
+      <thead><tr><th>VLAN</th><th>Nome</th><th>Sub-rede</th></tr></thead>
+      <tbody class="au-num">
+        <tr><td><code>143</code></td><td>ADMIN</td><td><code>10.43.1.0/24</code></td></tr>
+        <tr><td><code>243</code></td><td>COMERCIAL</td><td><code>10.43.2.0/24</code></td></tr>
+        <tr><td><code>343</code></td><td>TECNICO</td><td><code>10.43.3.0/24</code></td></tr>
+        <tr><td><code>443</code></td><td>SERVIDORES</td><td><code>10.43.4.0/24</code></td></tr>
+        <tr><td><code>543</code></td><td>WIFI</td><td><code>10.43.5.0/24</code></td></tr>
+        <tr><td><code>943</code></td><td>GESTAO</td><td><code>10.43.9.0/24</code></td></tr>
+        <tr><td><code>999</code></td><td>NATIVA</td><td>sem endereçamento, criada vazia</td></tr>
+      </tbody>
+    </table></div>
+    <p>Leitura recomendada: SRWE módulos 2 (Switching Concepts) e 3 (VLANs).</p>
+  </section>
+  </article>
+
+  <footer>Fonte: slides das aulas de RD2 2026/27 (Prof. António Cunha). As aulas seguintes vão aparecer nesta página.</footer>
+<!--/AULAS--></div>
 </section>
 
 <section class="view" id="v-mapa" hidden>
@@ -1641,12 +2094,15 @@ let lastTest=null; const backBtn=document.getElementById("backBtn");
 function show(view, tab){
   document.querySelectorAll(".view").forEach(v=>v.hidden = v.id!=="v-"+view);
   document.querySelectorAll("nav.tabs a").forEach(a=>{ if(a.dataset.view===(tab||view)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  const cur=document.querySelector('nav.tabs a[aria-current="page"]'); if(cur){ const nv=cur.parentElement; nv.scrollLeft = cur.offsetLeft - nv.clientWidth/2 + cur.offsetWidth/2; }
 }
 function route(){
   const h=(location.hash||"#inicio").slice(1);
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(BL[h]){ show("bases"); showB(h); window.scrollTo(0, document.getElementById("bBox").getBoundingClientRect().top + window.scrollY - 84); backBtn.hidden=true; return; }
   if(h==="bases"){ show("bases"); showB(BORDER[0]); window.scrollTo(0,0); backBtn.hidden=true; return; }
+  const am=h.match(/^aula-(\d+)$/)||h.match(/^a(\d+)-t\d+$/);
+  if(h==="aulas"||am){ show("aulas"); showAula(am?am[1]:null, /^a\d+-t\d+$/.test(h)?h:null); backBtn.hidden=true; return; }
   if(h==="exames"){ show("exames"); renderExa(); window.scrollTo(0,0); backBtn.hidden=true; return; }
   if(h==="painel"){ show("painel"); renderPainel(); window.scrollTo(0,0); backBtn.hidden=true; return; }
   if(h==="resumo"){ show("resumo"); showTopic(ORDER[0]); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
@@ -1817,6 +2273,18 @@ const EXX = {
  "T1 12 nov 2024 · Grupo III":{cen:CEN(`<p>Ping do PC-ADM1 (VLAN 143, 10.43.1.x) para o Server0 (10.43.4.10): o PC envia para o gateway 10.43.1.1 (o HSRP no DSW1). O DSW1 encaminha da SVI 143 para a SVI 443, tira 1 ao TTL e troca os MACs. Os IPs de origem e de destino nunca mudam.</p>`)}
 };
 EXA.forEach(g=>g.items.forEach(it=>{ Object.assign(it, EXX[it.src]||{}); if(it.figk){ it.fig=FIG[it.figk].q; it.figA=FIG[it.figk].a; } }));
+
+/* ======================= AULAS (resumos aula a aula, vêm de aulas-rd2.html) ======================= */
+function showAula(n, target){
+  const arts=[...document.querySelectorAll("#v-aulas article.au-aula")]; if(!arts.length) return;
+  if(!n || !document.getElementById("aula-"+n)) n=store.get("rd2-aula", arts[0].id.slice(5));
+  if(!document.getElementById("aula-"+n)) n=arts[0].id.slice(5);
+  store.set("rd2-aula", n);
+  arts.forEach(a=>a.hidden = a.id!=="aula-"+n);
+  document.querySelectorAll("#v-aulas .au-aulas a[href^='#aula-']").forEach(l=>{ if(l.getAttribute("href")==="#aula-"+n) l.setAttribute("aria-current","page"); else l.removeAttribute("aria-current"); });
+  const el = target && document.getElementById(target);
+  if(el) setTimeout(()=>window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 84), 0); else window.scrollTo(0,0);
+}
 /* ======================= PROGRESSO E PAINEL ======================= */
 const SYNC = {remote:null, state:"local"};
 function hist(){ return store.get("rd2-hist",[]); }
