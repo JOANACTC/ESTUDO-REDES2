@@ -1,10 +1,8 @@
-// Cola aqui a configuração da tua app web do Firebase
-// (Consola do Firebase → Definições do projeto → As tuas apps → SDK setup → Config).
+// Configuração da app web do Firebase (projeto estudo-redes2).
 // Estes valores não são segredos: identificam o projeto. Quem protege os dados são as regras do Firestore.
-// Enquanto apiKey estiver vazio, o site funciona sem login e guarda só no browser.
 export const FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  appId: ""
+  apiKey: "AIzaSyD5_VC1cSDjY0RrYU2uDBNBCzu6dkCfNNo",
+  authDomain: "estudo-redes2.firebaseapp.com",
+  projectId: "estudo-redes2",
+  appId: "1:868251786492:web:c38c14a2a1635ef6850b79"
 };
