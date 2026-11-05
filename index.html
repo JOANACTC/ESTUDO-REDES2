@@ -305,6 +305,7 @@ textarea:focus{border-color:var(--c);outline:none}
 
 <section class="view" id="v-bases" hidden>
   <div class="pagehead"><p class="eyebrow">Começa aqui se estás a zero</p><h1>Bases do zero</h1><p class="lead">19 lições curtas, com exemplos do teu plano NN = 43. Cada uma explica as palavras novas, tem uma pergunta para te testares e no fim leva-te ao resumo do teste.</p></div>
+  <div class="card mapwrap" id="bmap" style="margin-bottom:22px"></div>
   <div class="res-layout">
     <nav class="side card" id="bside" aria-label="Lições das bases"></nav>
     <div id="bBox"></div>
@@ -1324,6 +1325,15 @@ function showB(id){
     fb.hidden=false; fb.textContent=(ok?"Certo! ":"Ainda não. ")+o.q[3]; }));
 }
 
+const BMAP = [
+ {side:"L", name:"1 · O que é uma rede", color:"pink", leaves:[["Hosts, switch e router","b-rede"],["LAN e WAN","b-rede"],["Camadas 1, 2, 3 e 4","b-camadas"],["Trama (L2) e pacote (L3)","b-camadas"],["Modos da CLI: > # (config)#","b-cli"],["running vs startup-config","b-cli"]]},
+ {side:"L", name:"2 · Moradas", color:"sky", leaves:[["MAC: 48 bits, da placa","b-mac"],["Broadcast FFFF.FFFF.FFFF","b-mac"],["IP: rede + host","b-ip"],["Máscara /24 = 255.255.255.0","b-ip"],["169.254 = DHCP falhou","b-ip"],["Gateway e ARP","b-gateway"],["Plano: VLAN d43, 10.43.d.0","b-plano"]]},
+ {side:"L", name:"3 · Switches e VLANs", color:"lilac", leaves:[["Aprende pelo MAC de origem","b-switch"],["Flooding se não conhece","b-switch"],["VLAN = rede separada","b-vlan"],["Porta de acesso: 1 VLAN","b-vlan"],["Trunk: etiqueta 802.1Q","b-trunk"],["Nativa 999 e allowed add","b-trunk"]]},
+ {side:"R", name:"4 · Falar entre VLANs", color:"mint", leaves:[["Router e tabela de routing","b-router"],["SVI + ip routing","b-intervlan"],["Router-on-a-stick","b-intervlan"],["DHCP: DORA e pool","b-dhcp"],["Relay: ip helper-address","b-dhcp"],["IPv6, SLAAC e EUI-64","b-ipv6"]]},
+ {side:"R", name:"5 · Redundância", color:"butter", leaves:[["Loops e tempestades","b-stp"],["STP: root = menor Bridge ID","b-stp"],["PortFast e BPDU Guard","b-stp"],["EtherChannel: LACP/PAgP","b-ether"],["HSRP: IP virtual .1","b-hsrp"],["Active, Standby e preempt","b-hsrp"]]},
+ {side:"R", name:"6 · Segurança e Wi-Fi", color:"peach", leaves:[["Port security e err-disabled","b-seg"],["DHCP snooping: trusted","b-seg"],["Double tagging e DTP","b-seg"],["SSID, AP e WLC","b-wifi"],["Dicionário de palavras","b-dic"]]}
+];
+
 /* ======================= LÓGICA ======================= */
 const store = {
   get(k,f){try{const v=localStorage.getItem(k);return v===null?f:JSON.parse(v)}catch(e){return f}},
@@ -1376,9 +1386,9 @@ function renderCal(){
 }
 
 /* ---------- mapa mental ---------- */
-function renderMap(){
+function renderMap(M=MAP, el="map", t1="RD2 · Teste 1", t2="NN = 43 · 17 nov"){
   const W=1280, cx=640, rowH=28, gap=26;
-  const sides = {L:MAP.filter(b=>b.side==="L"), R:MAP.filter(b=>b.side==="R")};
+  const sides = {L:M.filter(b=>b.side==="L"), R:M.filter(b=>b.side==="R")};
   const hOf = arr => arr.reduce((s,b)=>s+b.leaves.length*rowH,0) + (arr.length-1)*gap;
   const H = Math.max(hOf(sides.L),hOf(sides.R)) + 60; const cy = H/2;
   let lines="", nodes="";
@@ -1399,8 +1409,8 @@ function renderMap(){
       y += b.leaves.length*rowH + gap;
     });
   }
-  nodes += `<g class="mm-center"><rect x="${cx-104}" y="${cy-38}" width="208" height="76" rx="30" style="fill:var(--ink)"/><text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="22">RD2 · Teste 1</text><text x="${cx}" y="${cy+21}" text-anchor="middle" font-size="14" font-family="var(--body)" style="font-weight:700">NN = 43 · 17 nov</text></g>`;
-  document.getElementById("map").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa mental da matéria do Teste 1">${lines}${nodes}</svg>`;
+  nodes += `<g class="mm-center"><rect x="${cx-104}" y="${cy-38}" width="208" height="76" rx="30" style="fill:var(--ink)"/><text x="${cx}" y="${cy-4}" text-anchor="middle" font-size="22">${esc(t1)}</text><text x="${cx}" y="${cy+21}" text-anchor="middle" font-size="14" font-family="var(--body)" style="font-weight:700">${esc(t2)}</text></g>`;
+  document.getElementById(el).innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Mapa mental: ${esc(t1)}">${lines}${nodes}</svg>`;
 }
 
 /* ---------- resumo ---------- */
@@ -1571,7 +1581,7 @@ function show(view, tab){
 function route(){
   const h=(location.hash||"#inicio").slice(1);
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
-  if(BL[h]){ show("bases"); showB(h); window.scrollTo(0,0); backBtn.hidden=true; return; }
+  if(BL[h]){ show("bases"); showB(h); window.scrollTo(0, document.getElementById("bBox").getBoundingClientRect().top + window.scrollY - 84); backBtn.hidden=true; return; }
   if(h==="bases"){ show("bases"); showB(BORDER[0]); window.scrollTo(0,0); backBtn.hidden=true; return; }
   if(h==="resumo"){ show("resumo"); showTopic(ORDER[0]); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(/^f2-\d+$/.test(h)){ show("folha2"); f2filter="all"; document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.f==="all"?"true":"false")); applyF2();
@@ -1587,7 +1597,7 @@ document.addEventListener("click",e=>{ const a=e.target.closest("a[data-from]");
 backBtn.addEventListener("click",()=>{ if(lastTest) location.hash="teste-"+lastTest.key; });
 window.addEventListener("hashchange",route);
 
-renderCal(); renderMap(); renderSide(); renderBSide(); renderF2(); renderVersions(); route();
+renderCal(); renderMap(); renderSide(); renderBSide(); renderMap(BMAP,"bmap","Bases do zero","as ideias de base"); renderF2(); renderVersions(); route();
 </script>
 </body>
 </html>
