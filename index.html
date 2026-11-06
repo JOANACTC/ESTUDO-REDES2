@@ -219,6 +219,8 @@ td.n{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:.84rem;
 .q.right{border-color:var(--ok)} .q.wrong{border-color:var(--bad)} .q.blank{border-color:var(--butter)}
 .qhead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .qn{font-family:var(--display);font-weight:700;background:var(--c-soft);color:var(--c);border-radius:11px;padding:1px 10px}
+.achip{font-size:.72rem;padding:2px 9px;margin-left:auto}
+.fill label .achip{margin-left:6px;vertical-align:1px}
 .qsub{font-size:.76rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .qtext{font-weight:700;margin:0 0 10px}
 .opts{display:grid;gap:6px}
@@ -1514,6 +1516,13 @@ const F2AULA = {1:2,2:2,3:3,4:3,5:2,6:3,7:2,8:2,9:3,10:2,11:3,12:3,13:3,14:2,15:
   21:5,22:5,23:6,24:6,25:5,26:4,27:4,28:4,29:4,30:6,31:6,32:5,33:4,34:4,35:6,36:6,37:4,38:5,39:5,40:4};
 const AULAS = {2:["Aula 02","Comutação e VLANs","sky"],3:["Aula 03","Inter-VLAN e atribuição de endereços (DHCP, IPv6)","peach"],
   4:["Aula 04","Spanning Tree (STP, RSTP, PVST+)","mint"],5:["Aula 05","EtherChannel e redundância do gateway (HSRP)","pink"],6:["Aula 06","Segurança na camada 2","lilac"]};
+/* aula de cada pergunta dos testes, pelo tema do resumo */
+const AULAX = Object.assign({1:["Aula 01","Revisões, IOS e cenário","butter"],7:["Aula 07","Redes sem fios","butter"]}, AULAS);
+const RAULA = {"r-cenario":0,"r-show":0,"r-gestao":2,"r-comutacao":2,"r-vlans":2,"r-trunks":2,"r-intervlan":3,"r-dhcp":3,"r-ipv6":3,
+  "r-stp":4,"r-rstp":4,"r-ether":5,"r-hsrp":5,"r-ataques":6,"r-portsec":6,"r-praticas":6,"r-wifi":7};
+/* r-cenario e r-show são gerais: usam a aula do resto do excerto (ctx) */
+const aulaOf = (ref, ctx) => RAULA[ref] || (ctx||[]).map(r=>RAULA[r]).find(Boolean) || 1;
+const aulaChip = n => { const a=AULAX[n]; return `<span class="chip achip" style="${cv(a[2])}" title="${esc(a[1])}">${a[0]}</span>`; };
 function renderF2(){
   const known = store.get("rd2-known",{});
   const card = ([n,ref,q,pts])=>{
@@ -1558,9 +1567,9 @@ function buildTest(key){
   return {key, title:"Teste "+v.n, focus:v.focus, mc:SUBS.map((s,i)=>{const L=s.q.length-1; const idx=((v.n-1) + i*Math.floor((v.n-1)/L)) % L; return {s:i, q:s.q[idx]};}), f2:v.f2, exh:v.exh, cfg:v.cfg};
 }
 const LET="ABCDE"; const ACC={}; const LIVE={};
-function fill(tid,key,label,acc,show,ref){
+function fill(tid,key,label,acc,show,ref,ctx){
   ACC[tid+"-"+key]=acc;
-  return `<div class="fill" data-key="${tid}-${key}" data-ref="${ref}" style="${tcv(ref)}"><label for="${tid}-${key}">${esc(label)}</label>
+  return `<div class="fill" data-key="${tid}-${key}" data-ref="${ref}" style="${tcv(ref)}"><label for="${tid}-${key}">${esc(label)} ${aulaChip(aulaOf(ref,ctx))}</label>
    <input id="${tid}-${key}" autocomplete="off" spellcheck="false" autocapitalize="off">
    <span class="ans" hidden>Resposta: <code>${esc(show)}</code><a class="golink" href="#${ref}" data-from="1" style="${tcv(ref)}">Rever: ${esc(T[ref].short)}</a></span></div>`;
 }
@@ -1580,14 +1589,14 @@ function renderTest(key){
   // folha 1
   h += `<div class="panel" data-panel="1"><div class="fhead" style="${cv("sky")}"><h3>Folha 1 · Escolha múltipla</h3><span class="tagf">certa +1 · errada −1/3 · branco 0</span></div>`;
   D.mc.forEach((m,i)=>{ const S=SUBS[m.s]; const q=m.q;
-    h += `<div class="q" id="${tid}-q${i}" style="${tcv(S.ref)}"><div class="qhead"><span class="qn">${i+1}</span><span class="qsub">Subgrupo ${i+1} · ${esc(S.name)}</span></div>
+    h += `<div class="q" id="${tid}-q${i}" style="${tcv(S.ref)}"><div class="qhead"><span class="qn">${i+1}</span><span class="qsub">Subgrupo ${i+1} · ${esc(S.name)}</span>${aulaChip(S.ref==="r-show"?3:aulaOf(S.ref))}</div>
      <p class="qtext">${esc(q[0])}</p><p class="selone">Selecione uma opção:</p><div class="opts">${q[1].map((o,j)=>`<label class="opt"><input type="radio" name="${tid}-q${i}" value="${j}"><span><b>${LET[j]}.</b> ${esc(o)}</span></label>`).join("")}</div>
      <div class="sol" hidden><span class="verdict"></span><span>${esc(q[3])}</span><a class="golink" href="#${S.ref}" data-from="1" style="${tcv(S.ref)}">Rever no resumo: ${esc(T[S.ref].short)}</a></div></div>`; });
   h += `<div class="tnav"><span></span><button class="btn" data-go="2">Folha 2 →</button></div></div>`;
   // folha 2
   h += `<div class="panel" data-panel="2" hidden><div class="fhead" style="${cv("butter")}"><h3>Folha 2 · Perguntas teóricas</h3><span class="tagf">2 valores cada · 5–6 linhas</span></div>`;
   D.f2.forEach((n,i)=>{ const [num,ref,q,pts]=F2BY[n]; const bl=num<=20?"A":"B";
-    h += `<div class="q" id="${tid}-t${i}" style="${tcv(ref)}"><div class="qhead"><span class="qn">${bl}</span><span class="qsub">Bloco ${bl} · pergunta ${num} da lista</span></div>
+    h += `<div class="q" id="${tid}-t${i}" style="${tcv(ref)}"><div class="qhead"><span class="qn">${bl}</span><span class="qsub">Bloco ${bl} · pergunta ${num} da lista</span>${aulaChip(F2AULA[num])}</div>
      <p class="qtext">${esc(q)}</p><textarea id="${tid}-ta${i}" placeholder="Ideia, como funciona, comandos e um exemplo com 10.43.d.0/24."></textarea>
      <div class="sol" hidden><span class="verdict">Marca os pontos que a tua resposta tem:</span>
       <div class="topics4">${pts.map((p,j)=>`<label><input type="checkbox" data-pt="${i}"> <span>${esc(p)}</span></label>`).join("")}</div>
@@ -1599,11 +1608,11 @@ function renderTest(key){
   let k=0;
   D.exh.forEach((ei,e)=>{ const ex=EXH[ei];
     h += `<div class="q" style="${cv("mint")}"><div class="exh-title">Excerto ${e+1} — ${esc(ex.t)}</div><div class="exhibit">${esc(ex.x)}</div>`;
-    ex.qs.forEach(q=>{k++; h += fill(tid,"a"+k,`A.${k} ${q[0]}`,q[1],q[2],q[3]);}); h += `</div>`; });
+    const cx=ex.qs.map(q=>q[3]); ex.qs.forEach(q=>{k++; h += fill(tid,"a"+k,`A.${k} ${q[0]}`,q[1],q[2],q[3],cx);}); h += `</div>`; });
   const C = CFG[D.cfg];
   h += `<div class="fhead" style="${cv("mint")}"><h3>Folha 3 (verso) · Parte B — Configuração</h3><span class="tagf">4 valores · 0,5 por linha</span></div><p class="legend">${esc(C.intro)}</p>
    <div class="q" style="${cv("mint")}"><span class="prompt-line">${esc(C.start)}</span>`;
-  C.lines.forEach((l,i)=>{ h += fill(tid,"b"+(i+1),`B.${i+1} ${l[0]}`,l[1],l[3]||l[1][0],l[2]); });
+  const cxb=C.lines.map(l=>l[2]); C.lines.forEach((l,i)=>{ h += fill(tid,"b"+(i+1),`B.${i+1} ${l[0]}`,l[1],l[3]||l[1][0],l[2],cxb); });
   h += `</div><div class="tnav"><button class="btn soft" data-go="2">← Folha 2</button><button class="btn pink" data-grade="1">Corrigir teste</button></div></div>`;
   host.innerHTML = h;
   host.querySelectorAll("[data-step],[data-go]").forEach(b=>b.addEventListener("click",()=>{ goStep(key, +(b.dataset.step||b.dataset.go)); window.scrollTo(0, host.offsetTop-80); }));
@@ -1723,11 +1732,11 @@ function renderExa(){
     return `<div class="exa-g" id="${g.id}" style="${cv(col)}"><div class="fhead"><h3>${esc(g.title)}</h3><span class="tagf">Sai no Teste 1</span></div><p class="lead" style="margin:0 0 12px">${esc(g.sub)}</p>`+
     g.items.map((it,i)=>{ n++; const k=g.id+"-"+i; const ref=it.ref&&T[it.ref]?`<a class="golink" href="#${it.ref}">Rever: ${esc(T[it.ref].short)}</a>`:"";
       if(it.mc){ const ch=done[k];
-        return `<div class="q ${ch==null?"":(ch===it.a?"right":"wrong")}" data-k="${k}"><div class="qhead"><span class="qn">${n}</span><span class="qsub">${esc(it.src)}</span></div><p class="qtext">${esc(it.q)}</p>${it.fig?`<figure class="exfig">${it.fig}</figure>`:""}<div class="opts">`+
+        return `<div class="q ${ch==null?"":(ch===it.a?"right":"wrong")}" data-k="${k}"><div class="qhead"><span class="qn">${n}</span><span class="qsub">${esc(it.src)}</span>${aulaChip(aulaOf(it.ref||"r-stp"))}</div><p class="qtext">${esc(it.q)}</p>${it.fig?`<figure class="exfig">${it.fig}</figure>`:""}<div class="opts">`+
           it.o.map((o,j)=>`<label class="opt${ch!=null&&j===it.a?" is-correct":""}${ch!=null&&j===ch&&ch!==it.a?" is-wrong":""}"><input type="radio" name="${k}" value="${j}"${ch===j?" checked":""}> <span><b>${"ABCDE"[j]})</b> ${esc(o)}</span></label>`).join("")+
           `</div><div class="sol"${ch==null?" hidden":""}><span class="verdict">${ch===it.a?"Certo!":"Resposta certa: "+"ABCDE"[it.a]}</span><span>${it.why}</span>${it.figA?`<figure class="exfig">${it.figA}</figure>`:""}${it.cen||""}${ref}</div></div>`;
       }
-      return `<div class="q" data-k="${k}"><div class="qhead"><span class="qn">${n}</span><span class="qsub">${esc(it.src)} · resposta aberta</span></div><p class="qtext">${esc(it.q)}</p>${it.fig?`<figure class="exfig">${it.fig}</figure>`:""}<button class="btn small soft" data-exa-open>Ver resposta</button><div class="sol" hidden>${it.figA?`<figure class="exfig">${it.figA}</figure>`:""}${it.a}${it.cen||""}${ref}</div></div>`;
+      return `<div class="q" data-k="${k}"><div class="qhead"><span class="qn">${n}</span><span class="qsub">${esc(it.src)} · resposta aberta</span>${aulaChip(aulaOf(it.ref||"r-stp"))}</div><p class="qtext">${esc(it.q)}</p>${it.fig?`<figure class="exfig">${it.fig}</figure>`:""}<button class="btn small soft" data-exa-open>Ver resposta</button><div class="sol" hidden>${it.figA?`<figure class="exfig">${it.figA}</figure>`:""}${it.a}${it.cen||""}${ref}</div></div>`;
     }).join("")+`</div>`;
   }).join("");
   document.querySelectorAll("#exaSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.f===exaFilter?"true":"false"));
