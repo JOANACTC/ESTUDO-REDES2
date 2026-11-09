@@ -348,7 +348,7 @@ textarea:focus{border-color:var(--c);outline:none}
   <div class="folhas">
     <a class="folha-card card" href="#testes" style="--c:var(--sky);--c-soft:var(--sky-soft)"><span class="fnum">1</span><h3>Folha 1 · 15 escolhas múltiplas</h3><p>Uma pergunta por cada subgrupo de matéria. Certa vale +1, errada −1/3 e em branco 0. Só respondas se eliminares pelo menos 2 opções.</p><span class="go">Treinar nos testes →</span></a>
     <a class="folha-card card" href="#folha2" style="--c:var(--butter);--c-soft:var(--butter-soft)"><span class="fnum">2</span><h3>Folha 2 · 2 perguntas teóricas</h3><p>Saem da lista de 40: uma das 20 do Bloco A e uma das 20 do Bloco B. Cada uma vale 2 valores.</p><span class="go">Ver as 40 perguntas →</span></a>
-    <a class="folha-card card" href="#testes" style="--c:var(--mint);--c-soft:var(--mint-soft)"><span class="fnum">3</span><h3>Folha 3 · perguntas práticas</h3><p>Sobre o cenário, até ao TP07. Parte A: ler saídas de show. Parte B: escrever comandos completos.</p><span class="go">Treinar nos testes →</span></a>
+    <a class="folha-card card" href="#testes" style="--c:var(--mint);--c-soft:var(--mint-soft)"><span class="fnum">3</span><h3>Folha 3 · perguntas práticas</h3><p>Sobre o cenário, até ao TP06. Parte A: ler saídas de show. Parte B: escrever comandos completos.</p><span class="go">Treinar nos testes →</span></a>
   </div>
   <div class="sec-title"><h2>Plano dia a dia</h2><small>marca cada dia quando o acabares</small></div>
   <div class="cal" id="cal"></div>
@@ -406,7 +406,7 @@ textarea:focus{border-color:var(--c);outline:none}
 
 <section class="view" id="v-exames" hidden>
   <div class="pagehead"><p class="eyebrow">Treino com perguntas reais</p><h1>Exames antigos: só a matéria do Teste 1</h1><p class="lead">As perguntas de 2024/25 (T1 de 12 nov 2024, teste de 17 dez 2024 e recurso de 5 fev 2025) que caem a 17 nov: STP, VLANs, trunks e inter-VLAN. Cada uma tem o desenho da topologia e, na resposta, a mesma ideia no teu cenário de Lisboa.</p></div>
-  <div class="card cenhero"><figure class="cenfig"><img id="exaCen" alt="Topologia de Lisboa: Router Lisboa, DSW1 e DSW2 ligados pelo Po1, ASW1, ASW2 e ASW3 com dois uplinks cada"><figcaption><b>O teu cenário (TP03–TP07).</b> DSW1: raiz e HSRP ativo de 143, 343, 543 e 943. DSW2: de 243 e 443. Cada ASW tem a Gi0/1 para o DSW1 e a Gi0/2 para o DSW2. O Po1 junta a Gi1/0/23–24 entre os DSW.</figcaption></figure></div>
+  <div class="card cenhero"><figure class="cenfig"><img id="exaCen" alt="Topologia de Lisboa: Router Lisboa, DSW1 e DSW2 ligados pelo Po1, ASW1, ASW2 e ASW3 com dois uplinks cada"><figcaption><b>O teu cenário (TP03–TP06).</b> DSW1: raiz e HSRP ativo de 143, 343, 543 e 943. DSW2: de 243 e 443. Cada ASW tem a Gi0/1 para o DSW1 e a Gi0/2 para o DSW2. O Po1 junta a Gi1/0/23–24 entre os DSW.</figcaption></figure></div>
   <div class="f2-tools"><span class="lead" style="margin:0">Escolhe uma opção para veres logo a correção. Nas abertas, tenta primeiro.</span><button class="btn small soft" id="exaReset">Limpar respostas</button></div>
   <div id="exaBox"></div>
 </section>
@@ -419,7 +419,7 @@ textarea:focus{border-color:var(--c);outline:none}
 
 <section class="view" id="v-teste" hidden></section>
 
-<p class="foot">Feito a partir das aulas 1–7, dos TP02–TP07, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
+<p class="foot">Feito a partir das aulas 1–6, dos TP02–TP06, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
 </main>
 <button class="back" id="backBtn" hidden>Voltar ao teste</button>
 <script>
@@ -432,21 +432,20 @@ const CHAPTERS = [
   {name:"Inter-VLAN e endereços", color:"peach", topics:["r-intervlan","r-dhcp","r-ipv6"]},
   {name:"STP e EtherChannel", color:"mint", topics:["r-stp","r-rstp","r-ether"]},
   {name:"Gateway redundante", color:"pink", topics:["r-hsrp"]},
-  {name:"Segurança L2", color:"lilac", topics:["r-ataques","r-portsec","r-praticas"]},
-  {name:"Wi-Fi (TP07)", color:"butter", topics:["r-wifi"]}
+  {name:"Segurança L2", color:"lilac", topics:["r-ataques","r-portsec","r-praticas"]}
 ];
 const T = {};
 function topic(o){ T[o.id]=o; }
 
-topic({id:"r-cenario", title:"O teu cenário", short:"Plano NN = 43", src:"TP03–TP07",
+topic({id:"r-cenario", title:"O teu cenário", short:"Plano NN = 43", src:"TP03–TP06",
  frase:"Quase todas as perguntas [Cenário] e a Folha 3 inteira usam este plano. Sabe-o de cor.",
- extra:`<figure class="cenfig"><img src="${CENIMG}" alt="Topologia de Lisboa: Router Lisboa, DSW1 e DSW2 ligados pelo Po1, ASW1, ASW2 e ASW3 com dois uplinks cada"><figcaption>A topologia de Lisboa dos TP03–TP07 (NN = o teu 43).</figcaption></figure><div class="tbl"><table>
+ extra:`<figure class="cenfig"><img src="${CENIMG}" alt="Topologia de Lisboa: Router Lisboa, DSW1 e DSW2 ligados pelo Po1, ASW1, ASW2 e ASW3 com dois uplinks cada"><figcaption>A topologia de Lisboa dos TP03–TP06 (NN = o teu 43).</figcaption></figure><div class="tbl"><table>
 <tr><th>VLAN</th><th>Nome</th><th>Rede</th><th>Gateway</th><th>Ativo e raiz</th><th>Portas de acesso</th></tr>
 <tr><td class="n">143</td><td>ADMIN-43</td><td class="n">10.43.1.0/24</td><td class="n">10.43.1.1</td><td>DSW1</td><td>ASW1 Fa0/1–8</td></tr>
 <tr><td class="n">243</td><td>COMERCIAL-43</td><td class="n">10.43.2.0/24</td><td class="n">10.43.2.1</td><td>DSW2</td><td>ASW1 Fa0/9–16 · ASW2 Fa0/1–8</td></tr>
 <tr><td class="n">343</td><td>TECNICO-43</td><td class="n">10.43.3.0/24</td><td class="n">10.43.3.1</td><td>DSW1</td><td>ASW2 Fa0/9–16 · ASW3 Fa0/1–8</td></tr>
 <tr><td class="n">443</td><td>SERVIDORES-43</td><td class="n">10.43.4.0/24</td><td class="n">10.43.4.1</td><td>DSW2</td><td>ASW3 Fa0/9–16 (Server0 10.43.4.10)</td></tr>
-<tr><td class="n">543</td><td>WIFI-CONV-43</td><td class="n">10.43.5.0/24</td><td class="n">10.43.5.1</td><td>DSW1</td><td>só pelo WLC (TP07)</td></tr>
+<tr><td class="n">543</td><td>WIFI-CONV-43</td><td class="n">10.43.5.0/24</td><td class="n">10.43.5.1</td><td>DSW1</td><td>só pelo WLC (TP07, sai no T2)</td></tr>
 <tr><td class="n">943</td><td>GESTAO-43</td><td class="n">10.43.9.0/24</td><td class="n">10.43.9.1</td><td>DSW1</td><td>ASW3 Fa0/20–23</td></tr>
 <tr><td class="n">999</td><td>NATIVA-BLACKHOLE</td><td>—</td><td>—</td><td>—</td><td>nativa dos trunks e portas não usadas</td></tr>
 </table></div>`,
@@ -469,7 +468,6 @@ topic({id:"r-show", title:"Comandos de verificação", short:"Comandos show", sr
 <tr><td>Port security</td><td><code>show port-security interface fa0/1</code></td></tr>
 <tr><td>DHCP e snooping</td><td><code>show ip dhcp binding</code> · <code>show ip dhcp snooping binding</code></td></tr>
 <tr><td>Rotas</td><td><code>show ip route</code></td></tr>
-<tr><td>Wi-Fi</td><td><code>show wlan summary</code> · <code>show ap summary</code></td></tr>
 </table></div>`,
  saber:["Trunks não aparecem no <code>show vlan brief</code>.","Uma SVI <b>down/down</b> = a VLAN não existe ou não tem portas ativas; <b>administratively down</b> = falta <code>no shutdown</code>."],
  cuidado:["Na Folha 3 escreve sempre o comando completo, sem abreviaturas (show interfaces trunk, não sh int tr)."], f2:[1]});
@@ -644,20 +642,6 @@ topic({id:"r-praticas", title:"Boas práticas nas portas", short:"Boas práticas
  shutdown`,
  cuidado:["A VLAN 999 não é usada por nenhum PC: é isso que trava o double tagging."], f2:[30]});
 
-topic({id:"r-wifi", title:"Wi-Fi com WLC", short:"Wi-Fi WLC", src:"Aula 7 · TP07",
- frase:"Um controlador gere todos os pontos de acesso e liga cada SSID a uma VLAN.",
- saber:["AP <b>autónomo</b> configura-se um a um; AP <b>lightweight (LAP)</b> é gerido pelo <b>WLC</b> por um túnel <b>CAPWAP</b>.","O WLC liga-se por <b>trunk</b> (ASW3 Fa0/21, nativa 999); os LAP ficam em acesso na VLAN 943.","SSIDs: colaboradores → VLAN <b>343</b>; convidados → VLAN <b>543</b>. Ambos WPA2-PSK com AES.","WPA3 troca o PSK por SAE, mais resistente a ataques de dicionário.","2,4 GHz: canais 1, 6 e 11 não se sobrepõem. 5 GHz: mais canais, menos alcance."],
- cmd:`vlan 543
- name WIFI-CONV-43
-interface range gi1/0/1 - 3
- switchport trunk allowed vlan add 543
-interface vlan 543
- ip address 10.43.5.2 255.255.255.0
- standby version 2
- standby 543 ip 10.43.5.1
- standby 543 priority 110
- standby 543 preempt`,
- cuidado:["Na FUC o Wi-Fi é matéria do T2. Estuda sobretudo a parte cablada e confirma com o professor."], f2:[]});
 
 /* ======================= MAPA MENTAL ======================= */
 const MAP = [
@@ -665,7 +649,6 @@ const MAP = [
  {side:"R", name:"Trunks", color:"butter", leaves:[["802.1Q: tag de 4 bytes","r-trunks"],["Nativa 999","r-trunks"],["allowed vlan add","r-trunks"],["DTP e nonegotiate","r-trunks"]]},
  {side:"R", name:"Inter-VLAN e endereços", color:"peach", leaves:[["Router-on-a-stick","r-intervlan"],["Switch L3: SVI e ip routing","r-intervlan"],["DHCP: DORA e lease","r-dhcp"],["Relay: ip helper-address","r-dhcp"],["IPv6: SLAAC e flags A/O/M","r-ipv6"]]},
  {side:"R", name:"Gestão", color:"lilac", leaves:[["SSH e palavras-passe","r-gestao"],["Cópias por TFTP","r-gestao"],["CDP e LLDP","r-gestao"]]},
- {side:"R", name:"Wi-Fi (TP07)", color:"butter", leaves:[["WLC e CAPWAP","r-wifi"],["SSIDs: 343 e 543","r-wifi"],["WPA2 e WPA3","r-wifi"]]},
  {side:"L", name:"STP", color:"mint", leaves:[["Porque é preciso","r-stp"],["Eleição da raiz (BID)","r-stp"],["Custos e root port","r-stp"],["Root, designated, alternate","r-stp"],["Tempos 2 / 15 / 20","r-rstp"],["RSTP e PVST+","r-rstp"],["PortFast e BPDU Guard","r-rstp"]]},
  {side:"L", name:"EtherChannel", color:"peach", leaves:[["LACP: active / passive","r-ether"],["PAgP: desirable / auto","r-ether"],["Po1 como trunk","r-ether"]]},
  {side:"L", name:"HSRP", color:"pink", leaves:[["Gateway virtual .1","r-hsrp"],["Prioridade 110 e preempt","r-hsrp"],["MAC virtual v1 e v2","r-hsrp"],["HSRP, VRRP e GLBP","r-hsrp"]]},
@@ -904,7 +887,7 @@ Vl943      943  100 P Standby  10.43.9.2   local       10.43.9.1`, qs:[
 999  NATIVA-BLACKHOLE   active`, qs:[
   ["Porta dos servidores que está na VLAN errada:",["fa0/16"],"Fa0/16","r-vlans"],
   ["Comando (em interface fa0/16) que a corrige:",["switchport access vlan 443"],"switchport access vlan 443","r-vlans"],
-  ["A Fa0/21 (WLC) não aparece. Em que modo está?",["trunk"],"Trunk (os trunks não aparecem aqui)","r-wifi"],
+  ["A Fa0/21 (WLC) não aparece. Em que modo está?",["trunk"],"Trunk (os trunks não aparecem aqui)","r-trunks"],
   ["A Fa0/17 não é usada. Depois de switchport access vlan 999, que comando falta?",["shutdown"],"shutdown","r-praticas"]]},
  {t:"DSW1# show ip interface brief | include Vlan", x:`Vlan143    10.43.1.2   YES manual up                    up
 Vlan243    10.43.2.2   YES manual up                    up
@@ -1026,15 +1009,15 @@ const CFG = [
   ["Domínio (dhcp-config):",["domain-name minhaempresa.pt"],"r-dhcp"],
   ["No DSW1, em interface vlan 243 (config-if):",["ip helper-address 10.43.0.1"],"r-dhcp"],
   ["No ASW1, em interface range gi0/1 - 2 (config-if-range):",["ip dhcp snooping trust"],"r-portsec"]]},
- {intro:"TP07: no DSW1, prepare a parte cablada da rede de convidados (VLAN 543).", start:"Lisboa-DSW1(config)# vlan 543", lines:[
-  ["Nome da VLAN segundo o plano (config-vlan):",["name WIFI-CONV-43"],"r-wifi"],
-  ["Em interface range gi1/0/1 - 3: acrescentar a 543 aos trunks (config-if-range):",["switchport trunk allowed vlan add 543"],"r-trunks"],
-  ["Criar a SVI (config):",["interface vlan 543"],"r-intervlan"],
-  ["Endereço da SVI do DSW1 (config-if):",["ip address 10.43.5.2 255.255.255.0"],"r-cenario"],
+ {intro:"No DSW1, configure a SVI da VLAN 343 (Técnico) como gateway ativo HSRP, com relay DHCP, e torne o DSW1 raiz STP dessa VLAN.", start:"Lisboa-DSW1(config)# interface vlan 343", lines:[
+  ["Endereço da SVI do DSW1 (config-if):",["ip address 10.43.3.2 255.255.255.0"],"r-cenario"],
+  ["Relay DHCP para o router Lisboa (config-if):",["ip helper-address 10.43.0.1"],"r-dhcp"],
   ["HSRP versão 2 (config-if):",["standby version 2"],"r-hsrp"],
-  ["IP virtual do grupo 543 (config-if):",["standby 543 ip 10.43.5.1"],"r-hsrp"],
-  ["Prioridade do ativo (config-if):",["standby 543 priority 110"],"r-hsrp"],
-  ["Recuperar o papel quando volta (config-if):",["standby 543 preempt"],"r-hsrp"]]},
+  ["IP virtual do grupo 343 (config-if):",["standby 343 ip 10.43.3.1"],"r-hsrp"],
+  ["Prioridade do ativo (config-if):",["standby 343 priority 110"],"r-hsrp"],
+  ["Recuperar o papel quando volta (config-if):",["standby 343 preempt"],"r-hsrp"],
+  ["Ligar a SVI (config-if):",["no shutdown"],"r-intervlan"],
+  ["Já no modo global: DSW1 raiz primária da VLAN 343 (config):",["spanning-tree vlan 343 root primary"],"r-stp"]]},
  {intro:"No DSW1, agregue as ligações ao DSW2 (Gi1/0/23–24) num EtherChannel LACP em trunk e defina os papéis de raiz do STP.", start:"Lisboa-DSW1(config)# interface range gi1/0/23 - 24", lines:[
   ["Agregar no grupo 1 com LACP, iniciando a negociação (config-if-range):",["channel-group 1 mode active"],"r-ether"],
   ["Entrar na interface lógica do EtherChannel (config):",["interface port-channel 1"],"r-ether"],
@@ -1095,7 +1078,7 @@ const CFG = [
 const VERSIONS = [
  {n:1, f2:[1,26], exh:[0,1], cfg:0, focus:"VLANs, trunks e STP"},
  {n:2, f2:[6,22], exh:[2,3], cfg:1, focus:"DHCP, EtherChannel e port security"},
- {n:3, f2:[13,25], exh:[4,5], cfg:2, focus:"HSRP, VLANs e Wi-Fi"},
+ {n:3, f2:[13,25], exh:[4,5], cfg:2, focus:"HSRP, VLANs e relay DHCP"},
  {n:4, f2:[4,23], exh:[6,8], cfg:3, focus:"SVIs, DTP e EtherChannel"},
  {n:5, f2:[9,37], exh:[7,9], cfg:4, focus:"Tabela MAC, DHCP e VLANs no ASW"},
  {n:6, f2:[19,28], exh:[10,11], cfg:5, focus:"BPDU Guard, DTP e SSH"},
@@ -1109,7 +1092,7 @@ const BP = [
  {name:"3 · Switches e VLANs", ls:["b-switch","b-vlan","b-trunk"]},
  {name:"4 · Falar entre VLANs", ls:["b-router","b-intervlan","b-dhcp","b-ipv6"]},
  {name:"5 · Redundância", ls:["b-stp","b-ether","b-hsrp"]},
- {name:"6 · Segurança e Wi-Fi", ls:["b-seg","b-wifi"]},
+ {name:"6 · Segurança", ls:["b-seg"]},
  {name:"Dicionário", ls:["b-dic"]}
 ];
 const BL = {
@@ -1363,15 +1346,6 @@ ASW1(config-if)# ip dhcp snooping trust      <span class="c">só nos uplinks Gi0
  <p>Modos de violação do port security: <b>shutdown</b> (por omissão: a porta vai para <b>err-disabled</b>), <b>restrict</b> (descarta e regista) e <b>protect</b> (descarta em silêncio).</p>`,
  pal:[["Port security","Limita os MACs por porta."],["err-disabled","Porta desligada por segurança."],["DHCP snooping","Bloqueia servidores DHCP falsos."],["Trusted","Porta de confiança (uplink)."]],
  q:["Qual é o modo de violação por omissão do port security?",["protect","restrict","shutdown","drop"],2,"É shutdown: a porta vai para err-disabled."], liga:["r-ataques","r-portsec","r-praticas"]},
-"b-wifi":{t:"Wi-Fi básico (TP07)", c:"lilac", ideia:"O Wi-Fi é uma porta de switch pelo ar. O AP é a 'tomada' sem fios e o WLC é o chefe de todos os APs.",
- body:`<ul><li><b>SSID</b>: o nome da rede Wi-Fi que aparece no telemóvel. Cada SSID liga a uma <b>VLAN</b> (no plano, convidados na 543).</li>
- <li><b>AP autónomo</b>: configura-se um a um. <b>LAP</b> (lightweight AP): é gerido por um <b>WLC</b> (Wireless LAN Controller), através de um túnel <b>CAPWAP</b>.</li>
- <li>Segurança: <b>WPA2/WPA3</b>. <b>Personal</b> (PSK) usa uma palavra-passe igual para todos; <b>Enterprise</b> usa um utilizador por pessoa, com um servidor <b>RADIUS</b>.</li>
- <li>Bandas: 2,4 GHz (mais alcance) e 5 GHz (mais rápido, mais canais).</li></ul>
- <p>No cenário: o <b>WLC</b> está na ASW3 Fa0/21 (em trunk, porque leva várias VLANs) e o <b>LAP</b> na ASW1 Fa0/20 (VLAN de gestão 943).</p>
- <p class="note">Confirma com o professor se o Wi-Fi sai neste teste (a FUC põe-no no Teste 2).</p>`,
- pal:[["SSID","Nome da rede Wi-Fi."],["WLC","Controlador que gere os APs."],["CAPWAP","Túnel entre o LAP e o WLC."],["RADIUS","Servidor de autenticação do WPA Enterprise."]],
- q:["Que equipamento gere vários LAPs de forma centralizada?",["Router","WLC","DHCP","Switch de acesso"],1,"O WLC (Wireless LAN Controller)."], liga:["r-wifi"]},
 "b-dic":{t:"Dicionário rápido", c:"butter", ideia:"Quando vires uma palavra estranha num enunciado, procura-a aqui.", body:"", pal:[], q:null, liga:[]}
 };
 const BORDER = BP.flatMap(g=>g.ls);
@@ -1407,7 +1381,7 @@ const BMAP = [
  {side:"L", name:"3 · Switches e VLANs", color:"lilac", leaves:[["Aprende pelo MAC de origem","b-switch"],["Flooding se não conhece","b-switch"],["VLAN = rede separada","b-vlan"],["Porta de acesso: 1 VLAN","b-vlan"],["Trunk: etiqueta 802.1Q","b-trunk"],["Nativa 999 e allowed add","b-trunk"]]},
  {side:"R", name:"4 · Falar entre VLANs", color:"mint", leaves:[["Router e tabela de routing","b-router"],["SVI + ip routing","b-intervlan"],["Router-on-a-stick","b-intervlan"],["DHCP: DORA e pool","b-dhcp"],["Relay: ip helper-address","b-dhcp"],["IPv6, SLAAC e EUI-64","b-ipv6"]]},
  {side:"R", name:"5 · Redundância", color:"butter", leaves:[["Loops e tempestades","b-stp"],["STP: root = menor Bridge ID","b-stp"],["PortFast e BPDU Guard","b-stp"],["EtherChannel: LACP/PAgP","b-ether"],["HSRP: IP virtual .1","b-hsrp"],["Active, Standby e preempt","b-hsrp"]]},
- {side:"R", name:"6 · Segurança e Wi-Fi", color:"peach", leaves:[["Port security e err-disabled","b-seg"],["DHCP snooping: trusted","b-seg"],["Double tagging e DTP","b-seg"],["SSID, AP e WLC","b-wifi"],["Dicionário de palavras","b-dic"]]}
+ {side:"R", name:"6 · Segurança", color:"peach", leaves:[["Port security e err-disabled","b-seg"],["DHCP snooping: trusted","b-seg"],["Double tagging e DTP","b-seg"],["Dicionário de palavras","b-dic"]]}
 ];
 
 /* ======================= LÓGICA ======================= */
@@ -1437,7 +1411,7 @@ const DAYS = [
  {d:11,w:"qua",tag:"Bloco B",c:"mint",items:["Aula 5: EtherChannel e HSRP","Teóricas 21, 22, 25, 32, 38, 39"],t:["r-ether","r-hsrp"]},
  {d:12,w:"qui",tag:"Bloco B",c:"mint",items:["Aula 6 e TP06: segurança L2","Teóricas 23, 24, 30, 31, 35, 36"],t:["r-ataques","r-portsec","r-praticas"]},
  {d:13,w:"sex",tag:"Treino",c:"pink",items:["Testes 3 e 4","Marcar as teóricas que já sabes"],t:[],x:[["teste-3","Teste 3"],["teste-4","Teste 4"],["folha2","40 teóricas"]]},
- {d:14,w:"sáb",tag:"TP07",c:"butter",items:["Aula 7 e TP07: Wi-Fi","Testes 5 e 6"],t:["r-wifi"],x:[["teste-5","Teste 5"],["teste-6","Teste 6"]]},
+ {d:14,w:"sáb",tag:"Revisão",c:"lilac",items:["Rever Aulas 5 e 6: HSRP e segurança L2","Testes 5 e 6"],t:["r-hsrp","r-portsec"],x:[["teste-5","Teste 5"],["teste-6","Teste 6"]]},
  {d:15,w:"dom",tag:"Treino",c:"pink",items:["Testes 7 e 8 com o cronómetro de 45 min"],t:[],x:[["teste-7","Teste 7"],["teste-8","Teste 8"]]},
  {d:16,w:"seg",tag:"Revisão",c:"lilac",items:["Teste surpresa","Rever as teóricas por saber","Dormir cedo"],t:[],x:[["teste-surpresa","Surpresa"],["folha2","40 teóricas"]]},
  {d:17,w:"ter",tag:"Teste",c:"pink",items:["Teste 1 de RD2","A errada desconta 1/3"],t:[],exam:true}
@@ -1519,9 +1493,9 @@ const F2AULA = {1:2,2:2,3:3,4:3,5:2,6:3,7:2,8:2,9:3,10:2,11:3,12:3,13:3,14:2,15:
 const AULAS = {2:["Aula 02","Comutação e VLANs","sky"],3:["Aula 03","Inter-VLAN e atribuição de endereços (DHCP, IPv6)","peach"],
   4:["Aula 04","Spanning Tree (STP, RSTP, PVST+)","mint"],5:["Aula 05","EtherChannel e redundância do gateway (HSRP)","pink"],6:["Aula 06","Segurança na camada 2","lilac"]};
 /* aula de cada pergunta dos testes, pelo tema do resumo */
-const AULAX = Object.assign({1:["Aula 01","Revisões, IOS e cenário","butter"],7:["Aula 07","Redes sem fios","butter"]}, AULAS);
+const AULAX = Object.assign({1:["Aula 01","Revisões, IOS e cenário","butter"]}, AULAS);
 const RAULA = {"r-cenario":0,"r-show":0,"r-gestao":2,"r-comutacao":2,"r-vlans":2,"r-trunks":2,"r-intervlan":3,"r-dhcp":3,"r-ipv6":3,
-  "r-stp":4,"r-rstp":4,"r-ether":5,"r-hsrp":5,"r-ataques":6,"r-portsec":6,"r-praticas":6,"r-wifi":7};
+  "r-stp":4,"r-rstp":4,"r-ether":5,"r-hsrp":5,"r-ataques":6,"r-portsec":6,"r-praticas":6};
 /* r-cenario e r-show são gerais: usam a aula do resto do excerto (ctx) */
 const aulaOf = (ref, ctx) => RAULA[ref] || (ctx||[]).map(r=>RAULA[r]).find(Boolean) || 1;
 const aulaChip = n => { const a=AULAX[n]; return `<span class="chip achip" style="${cv(a[2])}" title="${esc(a[1])}">${a[0]}</span>`; };
@@ -1700,7 +1674,7 @@ window.addEventListener("hashchange",route);
 
 
 /* ======================= EXAMES ANTIGOS (2024/25) ======================= */
-// t1:true = matéria que sai no Teste 1 de 17 nov (está na lista de estudo / TP03–TP07).
+// t1:true = matéria que sai no Teste 1 de 17 nov (está na lista de estudo / TP03–TP06).
 // t1:false = matéria que não está na lista do Teste 1 deste ano (VTP, RIP, OSPF, ACL, WAN).
 const CX = s => `<pre class="cmd">${s}</pre>`;
 const EXA = [
@@ -1832,7 +1806,7 @@ const FIG = {
   [["R","S0","Gi0/0/0","T","Gi0/1","T",{cls:"trk"}],["S0","PR","","",""],["S0","PB","","",""],["S0","PA","","",""]],["T"])
 };
 
-// "No teu cenário": a mesma ideia no plano NN = 43 (Lisboa, TP03–TP07)
+// "No teu cenário": a mesma ideia no plano NN = 43 (Lisboa, TP03–TP06)
 const CEN = n => `<div class="cenbox"><b>No teu cenário (NN = 43)</b>${n}</div>`;
 const EXX = {
  "T1 12 nov 2024 · 7.3":{cen:CEN(`<p>Os ASW têm dois uplinks, um para o DSW1 e outro para o DSW2, e o DSW1 e o DSW2 estão ligados pelo Po1. Isto forma triângulos (loops). O STP bloqueia um uplink de cada ASW por VLAN.</p>`)},
