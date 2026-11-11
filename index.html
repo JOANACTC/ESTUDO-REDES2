@@ -51,6 +51,31 @@ a{color:inherit}
 button{font-family:var(--body);cursor:pointer;color:inherit}
 :focus-visible{outline:3px solid var(--lilac);outline-offset:2px;border-radius:10px}
 [hidden]{display:none!important}
+.qa-pick{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.qa-sec{margin:0 0 34px;scroll-margin-top:90px}
+.qa-head{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start;border-left:6px solid var(--c);margin-bottom:12px}
+.qa-head h2{margin:2px 0 6px}
+.qa-acts{display:flex;flex-wrap:wrap;gap:8px}
+.qa-top,.qa-bar{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.92rem;color:var(--muted);margin-top:8px}
+.qa-bar{position:sticky;top:64px;z-index:5;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:8px 12px;margin:0 0 10px}
+.qa-ok b{color:var(--ok)} .qa-ko b{color:var(--bad)}
+.qa-q{margin:0 0 10px;padding:14px 16px}
+.qa-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
+.qa-n{font-family:var(--display);font-weight:700;background:var(--pink-soft);color:var(--pink);border-radius:999px;min-width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem}
+.qa-f2{background:var(--butter-soft);color:var(--butter);border-radius:999px;padding:2px 8px;font-weight:700}
+.qa-p{margin:8px 0 10px;font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+.qa-btn span,.qa-j{overflow-wrap:anywhere;min-width:0}
+.qa-o{display:grid;gap:6px}
+.qa-btn{display:flex;gap:8px;text-align:left;align-items:flex-start;width:100%;background:var(--paper2);border:2px solid var(--line);border-radius:12px;padding:8px 10px;color:var(--ink);font:inherit;cursor:pointer;line-height:1.4}
+.qa-btn:hover:not([disabled]){border-color:var(--pink)}
+.qa-btn[disabled]{cursor:default}
+.qa-btn.right{border-color:var(--ok);background:var(--ok-soft)}
+.qa-btn.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.qa-btn code,.qa-p code,.qa-j code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:1px 4px;border-radius:5px;overflow-wrap:anywhere}
+.qa-j{margin:10px 0 0;padding:8px 10px;border-radius:10px;line-height:1.45}
+.qa-j.ok{background:var(--ok-soft)} .qa-j.ko{background:var(--bad-soft)}
+.qa-j b{margin-right:4px}
+
 
 /* topo */
 header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);box-shadow:0 2px 0 var(--line)}
@@ -339,6 +364,7 @@ textarea:focus{border-color:var(--c);outline:none}
     <a href="#mapa" data-view="mapa">Mapa mental</a>
     <a href="#resumo" data-view="resumo">Resumo</a>
     <a href="#folha2" data-view="folha2">40 teóricas</a>
+    <a href="#testes-aula" data-view="testesaula">Testes por aula</a>
     <a href="#testes" data-view="testes">Testes</a>
     <a href="#exames" data-view="exames">Exames antigos</a>
     <a href="#painel" data-view="painel">O meu painel</a>
@@ -431,6 +457,13 @@ textarea:focus{border-color:var(--c);outline:none}
     <div class="progress"><span id="f2prog">0 de 40 já sei</span><div class="bar"><i id="f2bar"></i></div></div>
   </div>
   <div class="qlist" id="f2list"></div>
+</section>
+
+<section class="view" id="v-testesaula" hidden>
+  <div class="pagehead"><p class="eyebrow">Treino de escolha múltipla</p><h1>Testes por aula</h1><p class="lead">Só escolha múltipla, como a Folha 1: cinco opções, certa +1, errada −1/3. Carregas numa opção e vês logo se acertaste e porquê. As perguntas da Folha 2 dessas aulas também estão aqui, com a resposta em escolha múltipla. As respostas ficam guardadas neste browser.</p></div>
+  <div class="qa-pick"><a class="btn" href="#teste-aula-1">Teste 1 · Aula 1 + TP01</a><a class="btn" href="#teste-aula-2">Teste 2 · Aula 2 + TP02</a></div>
+  <section class="qa-sec" id="teste-aula-1"><div class="qa-head card" style="--c:var(--butter);--c-soft:var(--butter-soft)"><div><p class="eyebrow">Teste 1</p><h2>Aula 1 + TP01</h2><p class="lead" style="margin:0">Revisões (camadas, MAC, ARP, IPv4, /26, VLSM, IPv6, IOS, tabela de rotas, RIP) e o TP01 no Packet Tracer. 46 perguntas.</p><div class="qa-top" id="qa-1-top"></div></div><div class="qa-acts"><button class="btn small soft" data-qa-mix="1">Baralhar e recomeçar</button><button class="btn small soft" data-qa-reset="1">Limpar respostas</button></div></div><div id="qa-1"></div></section>
+  <section class="qa-sec" id="teste-aula-2"><div class="qa-head card" style="--c:var(--sky);--c-soft:var(--sky-soft)"><div><p class="eyebrow">Teste 2</p><h2>Aula 2 + TP02</h2><p class="lead" style="margin:0">Comutação, VLANs, VLAN de voz, trunks e DTP; SSH, passwords, IPv6, TFTP, CDP e as 3 avarias do TP02. Inclui as 12 perguntas da Folha 2 desta aula. 47 perguntas.</p><div class="qa-top" id="qa-2-top"></div></div><div class="qa-acts"><button class="btn small soft" data-qa-mix="2">Baralhar e recomeçar</button><button class="btn small soft" data-qa-reset="2">Limpar respostas</button></div></div><div id="qa-2"></div></section>
 </section>
 
 <section class="view" id="v-testes" hidden>
@@ -1680,8 +1713,166 @@ function show(view, tab){
   document.querySelectorAll("nav.tabs a").forEach(a=>{ if(a.dataset.view===(tab||view)) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   const cur=document.querySelector('nav.tabs a[aria-current="page"]'); if(cur){ const nv=cur.parentElement; nv.scrollLeft = cur.offsetLeft - nv.clientWidth/2 + cur.offsetWidth/2; }
 }
+/* Testes por aula: só escolha múltipla. a = índice certo (0–3, ou 4 = «Nenhuma das outras opções»). */
+const QA = {
+1: {title:"Teste da Aula 1 + TP01", sub:"Revisões (camadas, MAC, ARP, IPv4, VLSM, IPv6, IOS, rotas, RIP) e o TP01 no Packet Tracer", c:"butter", q:[
+ {t:"Camadas e tramas", q:"Em que camada do modelo OSI trabalha um switch tradicional?", o:["Camada 1 (física)","Camada 2 (ligação de dados)","Camada 3 (rede)","Camada 4 (transporte)"], a:1, j:"O switch decide pelo endereço MAC, que é da camada 2. O router decide pelo IP (camada 3)."},
+ {t:"Camadas e tramas", q:"Como se chama a unidade de dados da camada 2?", o:["Segmento","Pacote","Trama","Bit"], a:2, j:"Camada 2 = trama, camada 3 = pacote, camada 4 = segmento."},
+ {t:"Camadas e tramas", q:"Para que serve o campo FCS no fim de uma trama Ethernet?", o:["Indicar a VLAN da trama","Detetar erros na trama (CRC)","Guardar o endereço IP de destino","Indicar a prioridade da trama"], a:1, j:"O FCS leva um CRC calculado sobre a trama. Quem recebe recalcula-o e, se não bater, a trama tem erro."},
+ {t:"Endereço MAC", q:"Quantos bits tem um endereço MAC?", o:["32","48","64","128"], a:1, j:"48 bits, escritos em 12 dígitos hexadecimais (ex.: 0001.6411.a001)."},
+ {t:"Endereço MAC", q:"O que identificam os primeiros 24 bits de um endereço MAC (OUI)?", o:["A VLAN","O fabricante da placa","A porta do switch","A rede IP"], a:1, j:"O OUI (Organizationally Unique Identifier) é atribuído ao fabricante. Os outros 24 bits são o número da placa."},
+ {t:"Endereço MAC", q:"Qual é o endereço MAC de difusão (broadcast)?", o:["0000.0000.0000","FFFF.FFFF.FFFF","0100.5E00.0001","FF02::1"], a:1, j:"FFFF.FFFF.FFFF chega a todos os equipamentos do mesmo domínio de difusão (a mesma VLAN)."},
+ {t:"Switch e ARP", q:"Um switch recebe uma trama unicast cujo MAC de destino não está na tabela MAC. O que faz?", o:["Descarta a trama","Envia-a por todas as portas da mesma VLAN, menos a de entrada","Envia-a só para o router","Responde com um pedido ARP"], a:1, j:"É a inundação (flooding). Quando o destino responder, o switch aprende onde ele está."},
+ {t:"Switch e ARP", q:"Para que serve o ARP?", o:["Descobrir o IP a partir do nome","Descobrir o MAC a partir do IP","Atribuir IPs automaticamente","Descobrir o caminho até um router"], a:1, j:"O PC envia um pedido ARP em broadcast («quem tem o IP X?») e o dono responde em unicast com o seu MAC."},
+ {t:"Switch e ARP", q:"Um PC quer enviar um pacote para um IP de outra rede. Para que MAC envia a trama?", o:["Para o MAC do PC de destino","Para FFFF.FFFF.FFFF","Para o MAC da sua gateway (router)","Para o MAC do switch"], a:2, j:"Fora da sua rede, o PC entrega a trama à gateway. O IP de destino continua a ser o do PC final."},
+ {t:"IPv4 e VLSM", q:"Quantos endereços utilizáveis por hosts tem uma rede /26?", o:["30","62","64","126"], a:1, j:"/26 deixa 6 bits para hosts: 2⁶ = 64 endereços, menos o de rede e o de broadcast = 62."},
+ {t:"IPv4 e VLSM", q:"Qual é a máscara de um /26?", o:["255.255.255.0","255.255.255.128","255.255.255.192","255.255.255.224"], a:2, j:"26 bits a 1: 255.255.255.192 (o último octeto é 11000000)."},
+ {t:"IPv4 e VLSM", q:"Qual é o endereço de broadcast da rede 192.168.10.128/26?", o:["192.168.10.255","192.168.10.191","192.168.10.190","192.168.10.129"], a:1, j:"Blocos de 64: .128 a .191. O primeiro é a rede, o último (.191) é o broadcast. Hosts de .129 a .190."},
+ {t:"IPv4 e VLSM", q:"A que rede pertence o endereço 192.168.10.200/26?", o:["192.168.10.128","192.168.10.192","192.168.10.200","192.168.10.0"], a:1, j:"Os blocos /26 começam em 0, 64, 128 e 192. 200 está no bloco 192–255."},
+ {t:"IPv4 e VLSM", q:"Que prefixo se usa nas ligações série ponto a ponto entre routers (WAN) do cenário?", o:["/24","/26","/29","/30"], a:3, j:"Um /30 tem 2 endereços utilizáveis, um para cada router. No cenário são as redes 10.255.0.x/30."},
+ {t:"IPv4 e VLSM", q:"No VLSM, por que rede se começa a dividir o espaço de endereços?", o:["Pela que precisa de menos hosts","Pela que precisa de mais hosts","Pelas ligações WAN","Pela ordem alfabética dos departamentos"], a:1, j:"Começar pelas maiores evita que as sub-redes fiquem desalinhadas e sobrepostas."},
+ {t:"Gateway e router", q:"Quando é que um PC usa a sua gateway por omissão?", o:["Sempre que envia um pacote","Só quando o destino está noutra rede IP","Só para pedidos DHCP","Só quando o destino está na mesma VLAN"], a:1, j:"O PC compara o IP de destino com a sua rede (IP + máscara). Se for de fora, envia para a gateway."},
+ {t:"Gateway e router", q:"Um router recebe um broadcast IP (255.255.255.255) numa interface. O que faz?", o:["Reencaminha-o por todas as interfaces","Não o reencaminha para outras redes","Reencaminha-o só pela rota por omissão","Converte-o em multicast"], a:1, j:"Os routers separam domínios de difusão. Por isso o DHCP noutra sub-rede precisa de relay."},
+ {t:"IPv6", q:"Quantos bits tem um endereço IPv6?", o:["32","48","64","128"], a:3, j:"128 bits, escritos em 8 grupos de 4 dígitos hexadecimais."},
+ {t:"IPv6", q:"Qual é a forma abreviada correta de 2001:0DB8:0000:0000:0000:0000:0000:0001?", o:["2001:DB8::1","2001:DB8:0:0::0:1::","2001:DB8::0::1","21:DB8::1"], a:0, j:"Tiram-se os zeros à esquerda de cada grupo e uma sequência de grupos a zero passa a «::», só uma vez por endereço."},
+ {t:"IPv6", q:"Por que prefixo começa um endereço IPv6 link-local?", o:["2001::/16","FF00::/8","FE80::/10","FC00::/7"], a:2, j:"Os link-local (FE80::) só valem na ligação local. O RIPng usa-os como próximo salto."},
+ {t:"IPv6", q:"Que afirmação sobre o IPv6 é correta?", o:["Usa broadcast como o IPv4","Não tem broadcast; usa multicast (ex.: FF02::1 = todos os nós)","Não tem endereços multicast","Usa ARP para descobrir MACs"], a:1, j:"O IPv6 substitui o broadcast por multicast e o ARP pelo Neighbor Discovery (NS/NA)."},
+ {t:"IOS", q:"Que modo do IOS mostra o prompt Router#?", o:["Modo utilizador (user EXEC)","Modo privilegiado (privileged EXEC)","Configuração global","Configuração de interface"], a:1, j:"Router> é o modo utilizador; enable passa a Router#; configure terminal passa a Router(config)#."},
+ {t:"IOS", q:"Onde fica guardada a running-config?", o:["Na NVRAM","Na RAM","Na flash, no vlan.dat","No servidor TFTP"], a:1, j:"A running-config está na RAM e perde-se ao desligar. A startup-config está na NVRAM."},
+ {t:"IOS", q:"Que comando guarda a configuração ativa para que se mantenha depois de reiniciar?", o:["copy startup-config running-config","copy running-config startup-config","write erase","reload"], a:1, j:"Origem primeiro, destino depois: da RAM (running) para a NVRAM (startup)."},
+ {t:"IOS", q:"Em modo de configuração, que prefixo permite correr um comando show sem sair?", o:["run","exec","do","show all"], a:2, j:"Ex.: Router(config)# do show ip interface brief."},
+ {t:"IOS", q:"Que tecla completa um comando começado no IOS?", o:["?","Tab","Ctrl+Z","Ctrl+C"], a:1, j:"Tab completa; ? mostra as opções; Ctrl+Z volta ao modo privilegiado."},
+ {t:"TP01 · inventário", q:"Que comando mostra, numa só lista, as interfaces, os IPs e o estado (Status/Protocol)?", o:["show running-config","show ip interface brief","show interfaces trunk","show cdp neighbors"], a:1, j:"É o primeiro comando do inventário do TP01."},
+ {t:"TP01 · inventário", q:"Numa saída de show ip interface brief, uma interface aparece «administratively down / down». O que significa?", o:["O cabo está desligado","Foi desativada com shutdown","Falta o endereço IP","O protocolo de encaminhamento falhou"], a:1, j:"«administratively down» é sempre um shutdown. Corrige-se com no shutdown na interface."},
+ {t:"TP01 · inventário", q:"O que mostra show cdp neighbors?", o:["Todos os routers da rede","Os equipamentos Cisco ligados diretamente, com a interface local e a remota","As rotas aprendidas por RIP","A tabela MAC"], a:1, j:"O CDP é da camada 2: só vê vizinhos diretos. Mostra Device ID, interface local, plataforma e porta remota."},
+ {t:"TP01 · rotas", q:"Na tabela de rotas, que letra marca uma rota aprendida pelo RIP?", o:["C","S","R","O"], a:2, j:"C = ligada diretamente, L = local, S = estática, R = RIP, O = OSPF."},
+ {t:"TP01 · rotas", q:"Numa rota R com [120/2], o que é o 2?", o:["A distância administrativa","A métrica: 2 saltos até ao destino","O número de rotas iguais","O tempo desde a última atualização"], a:1, j:"[distância administrativa / métrica]. A distância administrativa do RIP é 120 e a métrica conta routers (saltos)."},
+ {t:"TP01 · rotas", q:"Qual é a distância administrativa do RIP?", o:["1","90","110","120"], a:3, j:"0 ligada, 1 estática, 90 EIGRP, 110 OSPF, 120 RIP."},
+ {t:"TP01 · RIP", q:"Qual é a métrica máxima utilizável no RIP?", o:["15 saltos (16 = inalcançável)","16 saltos","255 saltos","Não tem limite"], a:0, j:"Com 16 saltos a rota é considerada inalcançável."},
+ {t:"TP01 · RIP", q:"De quanto em quanto tempo o RIP envia as atualizações periódicas?", o:["10 s","30 s","90 s","180 s"], a:1, j:"Atualizações a cada 30 s. Inválida aos 180 s e removida aos 240 s."},
+ {t:"TP01 · RIP", q:"Que diferença há entre o RIPv2 e o RIPv1?", o:["O RIPv2 envia a máscara (suporta VLSM) e usa multicast 224.0.0.9","O RIPv2 usa a largura de banda como métrica","O RIPv2 só funciona em IPv6","Não há diferença"], a:0, j:"O RIPv1 é classful e usa broadcast. O RIPv2 é classless (leva a máscara) e usa multicast."},
+ {t:"TP01 · RIP", q:"Em que porta e endereço trabalha o RIPng?", o:["UDP 520, 224.0.0.9","UDP 521, FF02::9","TCP 179, FF02::5","UDP 69, FF02::1"], a:1, j:"RIPv2: UDP 520 e 224.0.0.9. RIPng: UDP 521 e FF02::9."},
+ {t:"TP01 · RIP", q:"Que comando ativa o RIPng com o processo RIP-PROC numa interface?", o:["network 2001:db8::/64","ipv6 rip RIP-PROC enable","router rip version ng","ipv6 router rip RIP-PROC"], a:1, j:"No RIPng não há network: ativa-se interface a interface. ipv6 router rip RIP-PROC só cria o processo."},
+ {t:"TP01 · RIP", q:"O que faz passive-interface Serial0/0/0 dentro de router rip?", o:["Desliga a interface","Deixa de enviar atualizações RIP por essa interface","Deixa de anunciar a rede dessa interface","Muda a métrica da interface para 16"], a:1, j:"A interface continua ativa e a rede continua a ser anunciada pelas outras, mas os vizinhos dessa ligação deixam de aprender rotas por ela."},
+ {t:"TP01 · RIP", q:"Há dois caminhos com o mesmo número de saltos até à mesma rede. O que faz o RIP?", o:["Escolhe sempre o primeiro que aprendeu","Põe os dois na tabela e reparte o tráfego","Descarta os dois","Escolhe o de maior largura de banda"], a:1, j:"Com custos iguais, o RIP instala os dois caminhos (balanceamento de carga)."},
+ {t:"TP01 · Simulation", q:"Que comando mostra os protocolos de encaminhamento ativos, as redes anunciadas e as interfaces passivas?", o:["show ip route","show ip protocols","show running-config interface","show cdp neighbors detail"], a:1, j:"É o comando que revela um passive-interface mal posto (uma das avarias do TP02)."},
+ {t:"TP01 · Simulation", q:"Em cada salto de um pacote, o que muda e o que se mantém?", o:["Muda o IP de destino, mantém-se o MAC","Mudam os MAC, mantém-se o IP de destino; o TTL desce 1","Muda tudo","Não muda nada"], a:1, j:"Cada router reescreve o cabeçalho da camada 2 e decrementa o TTL; o IP de destino fica igual."},
+ {t:"TP01 · Simulation", q:"Um ping a um servidor que está atrás de 3 routers responde com TTL=125. Porquê?", o:["O servidor responde com 128 e cada router tira 1","O ping tem 125 bytes","Há 125 saltos","O TTL é sempre 125 no Packet Tracer"], a:0, j:"128 − 3 = 125. O TTL conta os routers por onde a resposta passou."},
+ {t:"TP01 · Simulation", q:"O que mostra o tracert?", o:["A tabela de rotas do PC","Cada router por onde o pacote passa até ao destino","Os vizinhos CDP","O tempo de vida da lease DHCP"], a:1, j:"Envia pacotes com TTL 1, 2, 3… e cada router que o esgota responde. Assim aparece um router por linha."},
+ {t:"TP01 · Simulation", q:"No modo Simulation do Packet Tracer, para que serve o Edit Filters?", o:["Escolher que protocolos aparecem na Event List (ex.: só RIP ou só ICMP)","Apagar dispositivos","Mudar o IOS do router","Gravar a configuração"], a:0, j:"Filtra os eventos: por exemplo, só ICMP para seguir um ping salto a salto."},
+ {t:"TP01 · cabo", q:"Desliga-se (shutdown) uma ligação série que fazia parte do caminho. O que acontece com o RIP?", o:["A rede fica sem ligação para sempre","O RIP converge e passa a usar outro caminho, se existir","O RIP desliga-se em todos os routers","Nada, o RIP ignora o estado das interfaces"], a:1, j:"A rota pela ligação em baixo sai da tabela e entra a alternativa (com mais saltos ou igual)."},
+ {t:"IOS · rotas", q:"Que comando cria uma rota por omissão estática em IPv4?", o:["ip route 0.0.0.0 0.0.0.0 <próximo salto>","ip default-network 0.0.0.0","router default","ip route default"], a:0, j:"Rede 0.0.0.0 com máscara 0.0.0.0 = qualquer destino. Aparece como S* na tabela."}
+]},
+2: {title:"Teste da Aula 2 + TP02", sub:"Comutação, VLANs, trunks e DTP; SSH, passwords, IPv6, TFTP, CDP e avarias do TP02; perguntas da Folha 2 em escolha múltipla", c:"sky", q:[
+ {t:"Comutação", f2:2, q:"Que afirmação sobre a comutação store-and-forward é correta?", o:["Começa a reencaminhar logo após ler o MAC de destino","Tem latência menor do que o cut-through","Verifica o FCS e descarta as tramas com erro","Só funciona entre portas da mesma velocidade"], a:2, j:"Recebe a trama inteira e verifica o FCS. Tem mais latência, mas não propaga erros e liga portas de velocidades diferentes."},
+ {t:"Comutação", q:"O que faz um switch cut-through?", o:["Recebe a trama inteira antes de a enviar","Começa a enviar logo após ler o MAC de destino","Verifica sempre o FCS","Só encaminha broadcasts"], a:1, j:"É mais rápido mas pode passar tramas com erro. A variante fragment-free espera pelos primeiros 64 bytes."},
+ {t:"Comutação", q:"Quantos bytes lê um switch fragment-free antes de começar a reencaminhar?", o:["6","14","64","1518"], a:2, j:"64 bytes: assim descarta os fragmentos de colisão, que são mais pequenos."},
+ {t:"Comutação", f2:10, q:"Como constrói o switch a tabela MAC?", o:["Pelo MAC de destino das tramas","Pelo MAC de origem e pela porta onde a trama entrou","Por pedidos ARP","Só por configuração manual"], a:1, j:"Aprende origem + porta + VLAN. As entradas dinâmicas envelhecem ao fim de 300 s sem tráfego."},
+ {t:"Comutação", q:"Um switch recebe, numa porta da VLAN 143, uma trama com destino FFFF.FFFF.FFFF. O que faz?", o:["Envia-a por todas as portas da VLAN 143, exceto a de entrada","Envia-a por todas as portas do switch","Envia-a só pelos trunks","Descarta-a"], a:0, j:"O broadcast fica dentro da VLAN (e passa nos trunks que a permitem)."},
+ {t:"Comutação", f2:16, q:"Um switch de 24 portas em uso tem 3 VLANs. Quantos domínios de colisão e de difusão há?", o:["1 de colisão e 1 de difusão","24 de colisão e 1 de difusão","24 de colisão e 3 de difusão","3 de colisão e 24 de difusão"], a:2, j:"Cada porta do switch é um domínio de colisão; cada VLAN é um domínio de difusão."},
+ {t:"Comutação", q:"Que equipamento divide domínios de difusão?", o:["Hub","Switch sem VLANs","Router (ou VLANs num switch)","Repetidor"], a:2, j:"O switch só divide colisões. A difusão é dividida por routers e por VLANs."},
+ {t:"VLANs", q:"Qual é o intervalo das VLANs de gama normal (normal range)?", o:["1–4094","1006–4094","1–1005","2–1001"], a:2, j:"1–1005 (1002–1005 reservadas). 1006–4094 é a gama estendida."},
+ {t:"VLANs", q:"Onde guarda o switch a informação das VLANs de gama normal?", o:["Na startup-config","No ficheiro vlan.dat na flash","Na RAM apenas","No servidor TFTP"], a:1, j:"Por isso apagar a startup-config não apaga as VLANs: é preciso apagar também o vlan.dat."},
+ {t:"VLANs", f2:7, q:"Que comandos criam a VLAN 143 com o nome ADMIN-43?", o:["vlan 143 e depois name ADMIN-43","interface vlan 143 e depois description ADMIN-43","switchport access vlan 143 name ADMIN-43","vlan database 143 ADMIN-43"], a:0, j:"vlan cria a VLAN; interface vlan cria a SVI (a interface de camada 3), que é outra coisa."},
+ {t:"VLANs", q:"Que comando mostra rapidamente em que VLAN está cada porta de acesso?", o:["show interfaces trunk","show ip interface brief","show mac address-table","show vlan brief"], a:3, j:"show vlan brief lista as VLANs e as portas de acesso de cada uma. Os trunks não aparecem."},
+ {t:"VLANs", q:"Qual é a VLAN por omissão de todas as portas de um switch Cisco?", o:["VLAN 0","VLAN 1","VLAN 999","VLAN 1005"], a:1, j:"A VLAN 1 não se pode apagar. Por segurança não se usa para dados nem para gestão."},
+ {t:"VLANs", f2:17, q:"Por que se separa a VLAN de gestão das VLANs dos utilizadores e da VLAN 1?", o:["Para os utilizadores não chegarem aos equipamentos e controlar o acesso","Porque a VLAN 1 não suporta IP","Porque o SSH só funciona na VLAN 999","Para poupar endereços IP"], a:0, j:"No plano é a VLAN 943, com a SVI 10.43.9.x nos switches e ip default-gateway 10.43.9.1."},
+ {t:"VLANs", f2:8, q:"Por que é preciso um dispositivo de camada 3 para comunicar entre VLANs?", o:["Porque cada VLAN é uma rede IP diferente e um domínio de difusão próprio","Porque os trunks só levam uma VLAN","Porque o STP bloqueia as outras VLANs","Não é preciso: o switch encaminha entre VLANs sozinho"], a:0, j:"Em camada 2 as VLANs não se falam. É preciso um router ou um switch L3 como gateway."},
+ {t:"VLAN de voz", f2:5, q:"Uma porta tem switchport access vlan 143 e switchport voice vlan 643, ligada a um telefone IP com um PC atrás. Como circulam as tramas?", o:["As do PC sem etiqueta (VLAN 143) e as do telefone com etiqueta 802.1Q (VLAN 643)","Todas com etiqueta 802.1Q","Todas sem etiqueta, na VLAN 143","A porta passa a trunk com todas as VLANs"], a:0, j:"A porta continua de acesso. Só a voz leva etiqueta; o CDP diz ao telefone qual é a VLAN de voz."},
+ {t:"VLAN de voz", q:"Para que serve uma VLAN de voz separada?", o:["Separar o tráfego de voz para lhe dar prioridade (QoS)","Ter mais endereços IP para os PCs","Substituir a VLAN nativa","Desativar o STP nos telefones"], a:0, j:"A voz é sensível a atrasos. Numa VLAN própria pode ser marcada e priorizada."},
+ {t:"Trunks", q:"Qual é a função de uma ligação trunk?", o:["Ligar um PC a várias VLANs","Transportar tramas de várias VLANs numa só ligação","Aumentar a largura de banda juntando portas","Encaminhar pacotes entre VLANs"], a:1, j:"Cada trama leva a etiqueta 802.1Q da sua VLAN. Juntar portas é EtherChannel; encaminhar entre VLANs é camada 3."},
+ {t:"Trunks", q:"Quantos bytes acrescenta a etiqueta 802.1Q a uma trama?", o:["2","4","8","12"], a:1, j:"4 bytes, com o VLAN ID de 12 bits (por isso o máximo é 4094) e 3 bits de prioridade."},
+ {t:"Trunks", f2:15, q:"Como passam no trunk as tramas da VLAN nativa?", o:["Com etiqueta 802.1Q","Sem etiqueta","Não passam","Com duas etiquetas"], a:1, j:"A nativa vai sem etiqueta e tem de ser igual nos dois lados. No plano é a 999."},
+ {t:"Trunks", f2:14, q:"Num trunk com switchport trunk allowed vlan 143,243 aplica-se switchport trunk allowed vlan 343. Qual é o resultado?", o:["A lista passa a 143,243,343","O comando é rejeitado por já existir uma lista","A lista passa a ser só 343","A VLAN 343 é retirada da lista"], a:2, j:"Sem add, a lista é substituída. Para acrescentar: switchport trunk allowed vlan add 343."},
+ {t:"Trunks", q:"Que comando acrescenta a VLAN 443 a um trunk sem retirar as outras?", o:["switchport trunk allowed vlan 443","switchport trunk allowed vlan add 443","switchport trunk native vlan 443","switchport access vlan 443"], a:1, j:"Também existem remove e except. Verifica-se com show interfaces trunk."},
+ {t:"Trunks", q:"Que comando mostra os trunks, a VLAN nativa e as VLANs permitidas?", o:["show vlan brief","show interfaces trunk","show ip interface brief","show spanning-tree"], a:1, j:"Mostra Mode, Encapsulation, Status, Native vlan e «Vlans allowed on trunk»."},
+ {t:"Trunks", q:"Os dois lados de um trunk têm VLANs nativas diferentes (999 e 1). O que acontece?", o:["Nada, funciona normalmente","Native VLAN mismatch: o tráfego sem etiqueta passa para a VLAN errada","O trunk passa a access","O switch apaga a VLAN 999"], a:1, j:"O CDP avisa com «native VLAN mismatch». A nativa tem de ser igual nos dois lados."},
+ {t:"Trunks", q:"Num 3650, que comando é obrigatório antes de switchport mode trunk?", o:["switchport trunk encapsulation dot1q","switchport nonegotiate","ip routing","spanning-tree portfast"], a:0, j:"Os switches que suportam ISL e 802.1Q pedem o encapsulamento antes do modo trunk. No 2960 não é preciso."},
+ {t:"DTP", q:"Que combinação de modos DTP forma um trunk?", o:["dynamic auto – dynamic auto","dynamic desirable – dynamic auto","access – trunk","dynamic auto – access"], a:1, j:"auto+auto fica em access, porque nenhum dos lados pede. desirable pede e auto aceita."},
+ {t:"DTP", f2:20, q:"Por que se recomenda desativar o DTP?", o:["Gasta largura de banda","Permite que um atacante negoceie um trunk e veja todas as VLANs (switch spoofing)","Impede o STP de funcionar","Apaga a VLAN nativa"], a:1, j:"Usa-se switchport mode trunk com switchport nonegotiate nos trunks e switchport mode access nas portas dos PCs."},
+ {t:"DTP", q:"Uma porta mostra Administrative Mode: dynamic auto e Operational Mode: static access, na VLAN 1. Que comando a fixa em modo de acesso?", o:["switchport mode access","switchport nonegotiate","switchport access vlan 1","no switchport"], a:0, j:"Depois põe-se na VLAN certa com switchport access vlan <id> (na Folha 3 do professor, A.7 = 1 e A.8 = switchport mode access)."},
+ {t:"Tabela MAC", q:"Na tabela MAC do ASW3 aparece «343 0001.6411.c0aa DYNAMIC Gi0/1». Esse equipamento está ligado a uma porta de acesso do ASW3?", o:["Sim, à Gi0/1","Não: a Gi0/1 é o uplink (trunk) para o DSW1, o equipamento está noutro switch","Sim, porque é DYNAMIC","Não, porque o MAC é inválido"], a:1, j:"Num ASW, a Gi0/1 e a Gi0/2 são uplinks. Os PCs estão nas Fa0/x."},
+ {t:"Avarias", f2:1, q:"Um PC da VLAN 243 no ASW2 não chega à gateway no DSW1. Que comando revela se a VLAN 243 não é permitida no uplink Gi0/1?", o:["show vlan brief","show interfaces trunk","show mac address-table","show ip route"], a:1, j:"A coluna «Vlans allowed on trunk» mostra se a 243 está lá."},
+ {t:"TP02 · SSH", q:"Num 2960 configuraram-se hostname, ip domain-name, utilizador local e transport input ssh nas vty, mas show ip ssh mostra «SSH Disabled». Qual é a causa mais provável?", o:["Falta o enable secret","A SVI de gestão está em shutdown","Não foram geradas as chaves RSA (crypto key generate rsa)","Falta login local na consola"], a:2, j:"Sem chaves RSA o servidor SSH não arranca. As chaves precisam do hostname e do domínio."},
+ {t:"TP02 · SSH", q:"Antes de crypto key generate rsa funcionar, o equipamento precisa de ter:", o:["enable secret","Um hostname diferente do de omissão e ip domain-name","username com privilege 15","transport input ssh nas vty"], a:1, j:"O nome da chave é hostname.domínio."},
+ {t:"TP02 · SSH", q:"Que comando, nas linhas vty, só deixa entrar por SSH?", o:["login local","transport input ssh","ip ssh version 2","exec-timeout 5"], a:1, j:"login local obriga a usar o utilizador local; transport input ssh recusa o Telnet."},
+ {t:"TP02 · SSH", f2:19, q:"Por que se prefere o SSH ao Telnet?", o:["O SSH é mais rápido","O Telnet envia tudo em texto claro, incluindo a password; o SSH cifra a ligação","O Telnet não funciona em routers","O SSH não precisa de password"], a:1, j:"Telnet: TCP 23, sem cifra. SSH: TCP 22, com cifra e autenticação."},
+ {t:"TP02 · SSH", q:"Que porta TCP usa o SSH?", o:["21","22","23","69"], a:1, j:"21 FTP, 22 SSH, 23 Telnet, 69 é UDP do TFTP."},
+ {t:"TP02 · passwords", q:"Estão configurados enable password e enable secret com valores diferentes. Qual é pedido no enable?", o:["O enable password","O enable secret","Os dois, um a seguir ao outro","Nenhum"], a:1, j:"O enable secret tem prioridade e fica guardado com hash. O enable password fica em texto claro (ou tipo 7)."},
+ {t:"TP02 · passwords", q:"O que faz service password-encryption?", o:["Cifra o tráfego SSH","Mostra cifradas (tipo 7) as passwords em texto claro da configuração","Gera as chaves RSA","Obriga a passwords de 8 caracteres"], a:1, j:"É uma cifra fraca, mas impede que se leiam por cima do ombro."},
+ {t:"TP02 · IPv6", q:"Que mensagens ICMPv6 usa um PC para descobrir o router da rede (SLAAC)?", o:["NS e NA","RS e RA","Discover e Offer","Echo request e reply"], a:1, j:"Router Solicitation (133) e Router Advertisement (134). NS/NA (135/136) substituem o ARP."},
+ {t:"TP02 · IPv6", q:"Que mensagens do IPv6 fazem o papel do ARP?", o:["RS e RA","NS e NA (Neighbor Discovery)","DHCPv6 Solicit e Reply","Echo request e reply"], a:1, j:"O vizinho é procurado com Neighbor Solicitation e responde com Neighbor Advertisement. Vê-se com show ipv6 neighbors."},
+ {t:"TP02 · IPv6", q:"Que comando é preciso num router para encaminhar IPv6 e enviar RAs?", o:["ipv6 enable","ipv6 unicast-routing","ipv6 address autoconfig","ip routing"], a:1, j:"Sem ipv6 unicast-routing o router não encaminha IPv6 nem anuncia o prefixo."},
+ {t:"TP02 · TFTP", q:"Que comando guarda uma cópia da configuração ativa num servidor TFTP?", o:["copy running-config tftp","copy tftp running-config","write memory","show running-config"], a:0, j:"Origem primeiro, destino depois. copy tftp running-config é para repor."},
+ {t:"TP02 · TFTP", q:"Ao repor com copy tftp running-config, o que acontece à configuração ativa?", o:["É substituída por completo","É juntada (merge) com a do ficheiro","É apagada","Fica igual"], a:1, j:"Copiar para a running-config junta linhas. Para uma reposição limpa apaga-se primeiro ou copia-se para a startup-config e reinicia-se."},
+ {t:"TP02 · CDP", q:"Que comando desativa o CDP só numa interface?", o:["no cdp run","no cdp enable","no lldp run","cdp disable all"], a:1, j:"no cdp run desativa em todo o equipamento. Para o LLDP: lldp run (global) e lldp transmit/receive na interface."},
+ {t:"TP02 · CDP", q:"Qual é a diferença entre o CDP e o LLDP?", o:["O CDP é da Cisco; o LLDP é a norma aberta (IEEE 802.1AB)","O LLDP é da Cisco","O CDP funciona na camada 3","São o mesmo protocolo"], a:0, j:"Os dois descobrem vizinhos diretos na camada 2. O LLDP funciona entre fabricantes diferentes."},
+ {t:"TP02 · avarias", q:"Qual é o método recomendado para procurar uma avaria?", o:["Mudar configurações ao acaso até funcionar","Seguir as camadas: física, ligação, rede; isolar e registar sintoma, comando, causa e correção","Reiniciar todos os equipamentos","Começar pela camada de aplicação sempre"], a:1, j:"Primeiro confirma-se o sintoma, depois desce-se ou sobe-se camada a camada, e regista-se tudo."},
+ {t:"TP02 · avarias", q:"O IPv6 não chega a uma rede atrás do Porto e show ipv6 protocols não lista a Serial0/3/0. Qual é a correção?", o:["no shutdown na Serial0/3/0","ipv6 rip RIP-PROC enable na Serial0/3/0","network na Serial0/3/0","ipv6 unicast-routing no Braga"], a:1, j:"É a avaria 1 do ficheiro AVARIAS: falta ativar o RIPng nessa interface."},
+ {t:"TP02 · avarias", q:"Em Évora, show ip route 192.168.4.0 diz «not in table», e em Faro show ip protocols mostra Serial0/0/0 como passive. Qual é a correção?", o:["no passive-interface Serial0/0/0 dentro de router rip, em Faro","no shutdown na Serial0/0/0 de Faro","network 192.168.4.0 em Évora","version 1 em Faro"], a:0, j:"É a avaria 2: Faro deixou de enviar atualizações para Évora pela Serial0/0/0."},
+ {t:"TP02 · avarias", q:"Em Coimbra, show ip interface brief mostra a Serial0/2/1 «administratively down». O que falta?", o:["no shutdown na Serial0/2/1","clock rate na Serial0/2/1","ipv6 enable","network 10.255.0.0"], a:0, j:"É a avaria 3: a interface foi desligada com shutdown."}
+]}
+};
+
+/* ---- motor dos testes por aula: escolha múltipla com correção imediata ---- */
+const QA_NONE = "Nenhuma das outras opções.";
+const qaEsc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const QA_CMDS = ["show ip interface brief","show cdp neighbors","show ip route 192.168.4.0","show ip route","show ip protocols","show ipv6 protocols","show vlan brief","show interfaces trunk","show mac address-table","show ip ssh","show ipv6 neighbors","switchport access vlan 143","switchport voice vlan 643","switchport trunk allowed vlan 143,243","switchport trunk allowed vlan add 443","switchport trunk allowed vlan add 343","switchport trunk allowed vlan 343","switchport mode trunk","switchport mode access","switchport nonegotiate","switchport access vlan","switchport trunk allowed vlan","crypto key generate rsa","transport input ssh","login local","ip domain-name","enable secret","enable password","service password-encryption","ipv6 unicast-routing","ipv6 rip RIP-PROC enable","ipv6 router rip RIP-PROC","passive-interface Serial0/0/0","no passive-interface Serial0/0/0","router rip","copy running-config startup-config","copy startup-config running-config","copy tftp running-config","copy running-config tftp","no shutdown","shutdown","ip helper-address","configure terminal","enable","interface vlan","vlan 143","name ADMIN-43"].sort((a,b)=>b.length-a.length);
+const QA_RX = new RegExp("(^|[^\\w-])(" + QA_CMDS.map(c=>c.replace(/[.*+?^${}()|[\]\\\/]/g,"\\$&")).join("|") + ")(?![\\w-])","g");
+const qaCmdLike = /^(show|switchport|copy|ip |ipv6|no |vlan |interface|router|network|enable|login|transport|crypto|spanning|write|reload|service|lldp|cdp|exec|do$|run$|\?$|Tab$|Ctrl)/;
+const qaFmt = (s,opt) => opt && qaCmdLike.test(s) && !/\s(de|da|do|dos|dentro|em|na|nas|nos|com|para|e|é|ao|à|sem|só|o|a|as|os)\s/.test(" "+s+" ") ? "<code>"+qaEsc(s)+"</code>" : qaEsc(s).replace(QA_RX, (m,a,b)=>a+"<code>"+b+"</code>");
+function qaShuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+const QAS = {};
+function qaLoad(k){ try{ return JSON.parse(localStorage.getItem("rd2-qa-"+k)||"null"); }catch(e){ return null; } }
+function qaSave(k){ try{ localStorage.setItem("rd2-qa-"+k, JSON.stringify(QAS[k])); }catch(e){} }
+function qaNew(k, mix){
+  const n=QA[k].q.length; const ord=[...Array(n).keys()];
+  QAS[k]={ord: mix?qaShuffle(ord):ord, opt: ord.map(i=>qaShuffle([0,1,2,3]).concat(4)), ans:{}};
+  qaSave(k);
+}
+function qaRender(k){
+  const D=QA[k], box=document.getElementById("qa-"+k); if(!box) return;
+  if(!QAS[k]){ const s=qaLoad(k); if(s && s.ord && s.ord.length===D.q.length) QAS[k]=s; else qaNew(k,false); }
+  const S=QAS[k];
+  let h=`<div class="qa-bar" id="qa-${k}-bar"></div>`;
+  S.ord.forEach((qi,pos)=>{
+    const Q=D.q[qi], opts=S.opt[qi], got=S.ans[qi];
+    h+=`<article class="qa-q card${got!==undefined?" done":""}" data-q="${qi}"><div class="qa-h"><span class="qa-n">${pos+1}</span><span class="qa-t">${qaEsc(Q.t)}</span>${Q.f2?`<span class="qa-f2">Folha 2 · P${Q.f2}</span>`:""}</div><p class="qa-p">${qaFmt(Q.q)}</p><div class="qa-o">`;
+    opts.forEach((oi,li)=>{
+      const txt = oi===4?QA_NONE:Q.o[oi];
+      let cls=""; if(got!==undefined){ if(oi===Q.a) cls=" right"; else if(oi===got) cls=" wrong"; }
+      h+=`<button type="button" class="qa-btn${cls}" data-o="${oi}" ${got!==undefined?"disabled":""}><b>${"ABCDE"[li]}.</b> <span>${qaFmt(txt,true)}</span></button>`;
+    });
+    h+=`</div>${got!==undefined?`<p class="qa-j ${got===Q.a?"ok":"ko"}"><b>${got===Q.a?"Certo.":"Errado."}</b> ${qaFmt(Q.j)}</p>`:""}</article>`;
+  });
+  box.innerHTML=h; qaScore(k);
+  box.querySelectorAll(".qa-q:not(.done) .qa-btn").forEach(b=>b.onclick=()=>{
+    const qi=+b.closest(".qa-q").dataset.q; S.ans[qi]=+b.dataset.o; qaSave(k);
+    const y=window.scrollY; qaRender(k); window.scrollTo(0,y);
+  });
+}
+function qaScore(k){
+  const D=QA[k], S=QAS[k], n=D.q.length; let c=0,w=0;
+  for(const qi in S.ans){ if(S.ans[qi]===D.q[qi].a) c++; else w++; }
+  const nota=Math.max(0,c-w/3), v20=(nota/n*20).toFixed(1).replace(".",",");
+  const bar=`<span><b>${c+w}/${n}</b> respondidas</span><span class="qa-ok"><b>${c}</b> certas</span><span class="qa-ko"><b>${w}</b> erradas</span><span>Nota com desconto (−1/3): <b>${v20}/20</b></span>`;
+  const el=document.getElementById("qa-"+k+"-bar"); if(el) el.innerHTML=bar;
+  const top=document.getElementById("qa-"+k+"-top"); if(top) top.innerHTML=bar;
+}
+function initQA(){
+  Object.keys(QA).forEach(k=>{
+    if(!document.getElementById("qa-"+k).dataset.ready){
+      document.getElementById("qa-"+k).dataset.ready="1";
+      document.querySelector(`[data-qa-reset="${k}"]`).onclick=()=>{ qaNew(k,false); qaRender(k); };
+      document.querySelector(`[data-qa-mix="${k}"]`).onclick=()=>{ qaNew(k,true); qaRender(k); };
+    }
+    qaRender(k);
+  });
+}
+
 function route(){
   const h=(location.hash||"#inicio").slice(1);
+  if(h==="testes-aula"||h==="teste-aula-1"||h==="teste-aula-2"){ show("testesaula"); initQA(); setTimeout(()=>{ const el=h==="testes-aula"?null:document.getElementById(h); window.scrollTo(0, el? el.getBoundingClientRect().top+window.scrollY-84 : 0); },0); if(typeof backBtn!=="undefined") backBtn.hidden=true; return; }
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(BL[h]){ show("bases"); initDoZero(); showB(h); window.scrollTo(0, document.getElementById("bBox").getBoundingClientRect().top + window.scrollY - 84); backBtn.hidden=true; return; }
   { const m=h.match(/^video-40-(\d+)$/); if(m){ show("bases"); showB(BORDER[0]); initDoZero(); openQ40(+m[1]); backBtn.hidden=true; return; } }
