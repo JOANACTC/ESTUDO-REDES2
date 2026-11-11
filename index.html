@@ -372,6 +372,10 @@ textarea:focus{border-color:var(--c);outline:none}
   <div class="card vidcard" id="video"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Switch, tramas e MAC</h2><p class="lead" style="margin:0">Explicação animada em 14 passos, com voz e legenda. Carrega no play e vai ao teu ritmo.</p></div></div><div id="dozeroHost" class="vidhost" data-v="DOZERO_HTML"></div></div>
   <div class="card vidcard" id="video-aula2"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 2 inteira</h2><p class="lead" style="margin:0">A Aula 2 em animação narrada: 10 capítulos, 109 passos. Escolhe o capítulo e vai ao teu ritmo.</p></div></div><div id="aula2Host" class="vidhost" data-v="AULA2_HTML"></div></div>
   <div class="card vidcard" id="video-aula2-curto"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 2 em curtos</h2><p class="lead" style="margin:0">A Aula 2 em vídeos curtos e rápidos, para rever depressa.</p></div></div><div id="a2cHost" class="vidhost" data-v="A2C_HTML"></div></div>
+  <div class="card vidcard" id="video-aula1-mp4"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 1 em pixel art: bases e revisões (vídeo longo)</h2><p class="lead" style="margin:0">As bases todas em 16 capítulos animados: redes e camadas, MAC e tramas, switch e tabela MAC, ARP, IPv4, /26 e VLSM, gateway, IPv6, IOS, tabela de rotas e RIP, e treino da Folha 3 (Parte A e Parte B). Tem voz, pausas para perguntas e 5 exercícios resolvidos. Cerca de 28 minutos.</p></div></div>
+  <div class="mp4wrap"><div class="mp4player"><video id="mp4vid1" controls playsinline preload="metadata"></video></div>
+  <div><p class="mp4now" id="mp4now1"></p><div class="mp4list" id="mp4list1"></div>
+  <div class="mp4tools"><label><input type="checkbox" id="mp4auto1" checked> Passar sozinho ao capítulo seguinte</label><a id="mp4open1" target="_blank" rel="noopener">Abrir este vídeo noutro separador</a></div></div></div></div>
   <div class="card vidcard" id="video-aula2-mp4"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 2 em pixel art (vídeo longo)</h2><p class="lead" style="margin:0">A Aula 2 toda em 11 capítulos animados, com voz, pausas para perguntas e 3 exercícios resolvidos. Cerca de 33 minutos. Ao acabar um capítulo, começa o seguinte.</p></div></div>
   <div class="mp4wrap"><div class="mp4player"><video id="mp4vid" controls playsinline preload="metadata"></video></div>
   <div><p class="mp4now" id="mp4now"></p><div class="mp4list" id="mp4list"></div>
@@ -384,6 +388,10 @@ textarea:focus{border-color:var(--c);outline:none}
   <div class="mp4wrap"><div class="mp4player"><video id="mp4vid4" controls playsinline preload="metadata"></video></div>
   <div><p class="mp4now" id="mp4now4"></p><div class="mp4list" id="mp4list4"></div>
   <div class="mp4tools"><label><input type="checkbox" id="mp4auto4" checked> Passar sozinho ao capítulo seguinte</label><a id="mp4open4" target="_blank" rel="noopener">Abrir este vídeo noutro separador</a></div></div></div></div>
+  <div class="card vidcard" id="video-tp-mp4"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>TP01 e TP02 no Packet Tracer com o Prof. Pacote</h2><p class="lead" style="margin:0">11 episódios: inventário da rede, CLI, rotas RIPv2 e RIPng, modo Simulation, SSH, IPv6, TFTP e CDP, o método para encontrar avarias, as 3 avarias do ficheiro AVARIAS e a Folha 3 de cada TP. Cerca de 30 minutos.</p></div></div>
+  <div class="mp4wrap"><div class="mp4player"><video id="mp4vidtp" controls playsinline preload="metadata"></video></div>
+  <div><p class="mp4now" id="mp4nowtp"></p><div class="mp4list" id="mp4listtp"></div>
+  <div class="mp4tools"><label><input type="checkbox" id="mp4autotp" checked> Passar sozinho ao episódio seguinte</label><a id="mp4opentp" target="_blank" rel="noopener">Abrir este vídeo noutro separador</a></div></div></div></div>
   <div class="card vidcard" id="video-aula3"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 3 inteira</h2><p class="lead" style="margin:0">A Aula 3 em animação narrada, por capítulos. Escolhe o capítulo e vai ao teu ritmo.</p></div></div><div id="aula3Host" class="vidhost" data-v="AULA3_HTML"></div></div>
   <div class="card vidcard" id="video-aula4"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 4 inteira</h2><p class="lead" style="margin:0">Spanning Tree (STP, RSTP, PVST+) em animação narrada, por capítulos. Escolhe o capítulo e vai ao teu ritmo.</p></div></div><div id="aula4Host" class="vidhost" data-v="AULA4_HTML"></div></div>
   <div class="card vidcard" id="video-aula5"><div class="vidhead"><span class="vidtag">Vídeo</span><div><h2>Aula 5 inteira</h2><p class="lead" style="margin:0">EtherChannel e HSRP em animação narrada, por capítulos. Escolhe o capítulo e vai ao teu ritmo.</p></div></div><div id="aula5Host" class="vidhost" data-v="AULA5_HTML"></div></div>
@@ -1677,7 +1685,7 @@ function route(){
   if(T[h]){ show("resumo"); showTopic(h,true); window.scrollTo(0,0); backBtn.hidden=!lastTest; return; }
   if(BL[h]){ show("bases"); initDoZero(); showB(h); window.scrollTo(0, document.getElementById("bBox").getBoundingClientRect().top + window.scrollY - 84); backBtn.hidden=true; return; }
   { const m=h.match(/^video-40-(\d+)$/); if(m){ show("bases"); showB(BORDER[0]); initDoZero(); openQ40(+m[1]); backBtn.hidden=true; return; } }
-  if(h==="video"||h==="video-aula2"||h==="video-aula2-curto"||h==="video-aula2-mp4"||h==="video-aula3-mp4"||h==="video-aula4-mp4"||h==="video-aula3"||h==="video-aula4"||h==="video-aula5"||h==="video-40"){ show("bases"); showB(BORDER[0]); initDoZero(); initMp4(); setTimeout(()=>window.scrollTo(0, document.getElementById(h).getBoundingClientRect().top + window.scrollY - 84),0); backBtn.hidden=true; return; }
+  if(h==="video"||h==="video-aula2"||h==="video-aula2-curto"||h==="video-aula1-mp4"||h==="video-tp-mp4"||h==="video-aula2-mp4"||h==="video-aula3-mp4"||h==="video-aula4-mp4"||h==="video-aula3"||h==="video-aula4"||h==="video-aula5"||h==="video-40"){ show("bases"); showB(BORDER[0]); initDoZero(); initMp4(); setTimeout(()=>window.scrollTo(0, document.getElementById(h).getBoundingClientRect().top + window.scrollY - 84),0); backBtn.hidden=true; return; }
   if(h==="bases"){ show("bases"); initDoZero(); showB(BORDER[0]); window.scrollTo(0,0); backBtn.hidden=true; return; }
   const am=h.match(/^aula-(\d+)$/)||h.match(/^a(\d+)-t\d+$/);
   if(h==="aulas"||am){ show("aulas"); showAula(am?am[1]:null, /^a\d+-t\d+$/.test(h)?h:null); backBtn.hidden=true; return; }
@@ -1941,27 +1949,29 @@ function initMp4(){
 
 /* Vídeos MP4 longos da Aula 3 e da Aula 4 (feitos no Mac) */
 const MP4X = {
+ 1:[["capitulo01","O que é uma rede","1:13"],["capitulo02","As camadas","1:13"],["capitulo03","O endereço MAC e a trama","1:19"],["capitulo04","Como funciona um switch","2:14","Exercício: preencher a tabela MAC"],["capitulo05","Broadcast e ARP","1:26"],["capitulo06","O endereço IPv4","2:23","Exercício: a sub-rede /26"],["capitulo07","VLSM em Lisboa","1:35"],["capitulo08","O gateway e o router","1:28"],["capitulo09","IPv6","2:19","Exercício: abreviar um IPv6"],["capitulo10","Falar com o equipamento: o IOS","1:53"],["capitulo11","Ler a tabela de rotas","2:40","Exercício: decompor uma rota"],["capitulo12","O RIP","1:53"],["capitulo13","O que vem a seguir","1:01"],["capitulo14","Folha 3 · Parte A","2:37"],["capitulo15","Folha 3 · Parte B","1:59","Exercício: router Faro"],["capitulo16","Fecho","1:16"]],
+ tp:[["tp01-ep01","TP01 · Inventário da rede","3:17"],["tp01-ep02","TP01 · Fluência na CLI","2:42"],["tp01-ep03","TP01 · Ler as rotas: RIPv2 e RIPng","3:51"],["tp01-ep04","TP01 · Simulation: o RIP e um ping","3:10"],["tp01-ep05","TP01 · Desligar um cabo e gravar","1:57"],["tp02-ep06","TP02 · SSH em todos os routers","3:04"],["tp02-ep07","TP02 · IPv6, TFTP e CDP","2:52"],["tp02-ep08","TP02 · O método das avarias","1:46"],["tp02-ep09","TP02 · As 3 avarias","3:13"],["tp01-ep10","Folha 3 do TP01","2:08"],["tp02-ep11","Folha 3 do TP02","2:30"]],
  3:[["capitulo01","Ligar as VLANs outra vez","1:46"],["capitulo02","Porque é preciso camada 3","1:43"],["capitulo03","Router-on-a-stick","4:09","Exercício: subinterface do Comercial"],["capitulo04","Switch de camada 3","3:08"],["capitulo05","Comparar as duas soluções","1:50"],["capitulo06","DHCPv4 e o DORA","4:49","Exercício: pool do Comercial e relay"],["capitulo07","Relay e diagnóstico","1:53"],["capitulo08","IPv6 e SLAAC","3:22","Exercício: calcular o EUI-64"],["capitulo09","Os flags M e O","1:50"],["capitulo10","Fecho e TP4","1:34"]],
  4:[["capitulo01","Ligações redundantes","1:22"],["capitulo02","Porque é preciso o STP","1:41"],["capitulo03","BPDU, BID e a raiz","1:38"],["capitulo04","O custo até à raiz","1:19"],["capitulo05","Papéis das portas","1:50"],["capitulo06","Exercício de eleição","2:57","Exercício: eleição da raiz"],["capitulo07","Estados: STP e RSTP","1:52"],["capitulo08","PVST+ e a raiz escolhida","3:02","Exercício: raízes no DSW2"],["capitulo09","PortFast e BPDU Guard","2:21","Exercício: proteger as portas do ASW2"],["capitulo10","VTP e fecho","1:47"]]
 };
 const mp4xState = {};
-function mp4xBase(a){ return (/github\.io$/.test(location.hostname) ? "" : "https://joanactc.github.io/ESTUDO-REDES2/") + "videos/aula"+a+"/"; }
+function mp4xBase(a){ return (/github\.io$/.test(location.hostname) ? "" : "https://joanactc.github.io/ESTUDO-REDES2/") + "videos/"+(a==="tp"?"tp":"aula"+a)+"/"; }
 function mp4xPlay(a, i, autoplay){
   const v=document.getElementById("mp4vid"+a); if(!v) return;
   const L=MP4X[a], it=L[i], B=mp4xBase(a); mp4xState[a]=i;
   v.src=B+it[0]+".mp4"; v.poster=B+it[0]+".jpg";
-  document.getElementById("mp4now"+a).textContent="Capítulo "+(i+1)+" · "+it[1];
+  document.getElementById("mp4now"+a).textContent=(a==="tp"?"Episódio ":"Capítulo ")+(i+1)+" · "+it[1];
   document.getElementById("mp4open"+a).href=v.src;
   document.querySelectorAll("#mp4list"+a+" .mp4btn").forEach((b,j)=>b.classList.toggle("on",j===i));
   if(autoplay){ const p=v.play(); if(p&&p.catch) p.catch(()=>{}); }
 }
 function initMp4x(){
-  [3,4].forEach(a=>{
+  [1,"tp",3,4].forEach(a=>{
     const box=document.getElementById("mp4list"+a); if(!box || box.dataset.ready) return; box.dataset.ready="1";
     const L=MP4X[a], B=mp4xBase(a);
     L.forEach((it,i)=>{
       const b=document.createElement("button"); b.type="button"; b.className="mp4btn";
-      b.innerHTML='<img loading="lazy" alt="" src="'+B+it[0]+'.jpg"><span><b>Cap. '+(i+1)+'</b>'+it[1]+'<br><small>'+it[2]+(it[3]?" · "+it[3]:"")+'</small></span>';
+      b.innerHTML='<img loading="lazy" alt="" src="'+B+it[0]+'.jpg"><span><b>'+(a==="tp"?"Ep. ":"Cap. ")+(i+1)+'</b>'+it[1]+'<br><small>'+it[2]+(it[3]?" · "+it[3]:"")+'</small></span>';
       b.onclick=()=>mp4xPlay(a,i,true); box.appendChild(b);
     });
     document.getElementById("mp4vid"+a).addEventListener("ended",()=>{ const c=mp4xState[a]||0; if(document.getElementById("mp4auto"+a).checked && c<L.length-1) mp4xPlay(a,c+1,true); });
