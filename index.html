@@ -346,6 +346,8 @@ textarea:focus{border-color:var(--c);outline:none}
 @media (max-width:700px){.mp4wrap{grid-template-columns:1fr}.mp4player{max-width:340px}}
 .vidtag{flex:none;font-family:var(--display);font-weight:700;background:var(--pink);color:var(--on-accent);border-radius:12px;padding:5px 11px}
 .vidhost iframe{width:100%;border:0;border-radius:16px;display:block;min-height:480px;background:transparent}
+.t2sep{margin:10px 6px 0;padding:8px 10px;border-radius:12px;background:var(--ink);color:var(--paper);font-weight:800;font-size:.8rem;letter-spacing:.04em}
+@media (max-width:880px){.t2sep{width:100%}}
 /*AULAS-CSS*/
 #aulasHost iframe{width:100%;border:0;display:block;min-height:600px;background:transparent}
 /*/AULAS-CSS*/
@@ -493,7 +495,7 @@ textarea:focus{border-color:var(--c);outline:none}
 
 <section class="view" id="v-teste" hidden></section>
 
-<p class="foot">Feito a partir das aulas 1–6, dos TP02–TP06, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
+<p class="foot">Feito a partir das aulas 1–10, dos TP02–TP11, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
 </main>
 <button class="back" id="backBtn" hidden>Voltar ao teste</button>
 <script>
@@ -773,6 +775,626 @@ const F2 = [
  [39,"r-ether","O que é o EtherChannel e que vantagens tem face a várias ligações paralelas independentes?",["Agrega até 8 ligações físicas numa só ligação lógica","O STP vê uma porta e não bloqueia as ligações paralelas","Mais largura de banda, balanceamento de carga e redundância sem mudar a topologia","Configuração feita no port-channel; exemplo: Po1 entre DSW1 e DSW2"]],
  [40,"r-stp","Descreva os papéis das portas no STP/RSTP: root, designated e alternate.",["Root port: melhor caminho para a raiz; uma em cada switch não-raiz","Designated: a melhor porta de cada segmento, encaminha; todas as portas da raiz o são","Alternate: caminho de reserva para a raiz, fica a bloquear (backup é a reserva no mesmo segmento)","Exemplo: ASW1 na VLAN 243: Gi0/2 root, Gi0/1 alternate, portas de acesso designated"]]
 ];
+
+/* ======================= RESUMO T2: AULAS 7–10 E TP07–TP11 ======================= */
+CHAPTERS.push(
+  {name:"T2 · Wi-Fi e WLC", color:"sky", t2:true, topics:["r-80211","r-wlc","r-wsec","r-tp07"]},
+  {name:"T2 · Encaminhamento", color:"peach", t2:true, topics:["r-rotas"]},
+  {name:"T2 · OSPF", color:"mint", t2:true, topics:["r-ospf","r-ospfadj","r-ospfcfg","r-tp08"]},
+  {name:"T2 · ACL", color:"lilac", t2:true, topics:["r-acl","r-acltipos","r-tp09"]},
+  {name:"T2 · NAT e operação", color:"butter", t2:true, topics:["r-nat","r-tp10"]},
+  {name:"T2 · WAN, VPN e QoS", color:"pink", t2:true, topics:["r-wan","r-vpn","r-qos"]},
+  {name:"T2 · Automação", color:"sky", t2:true, topics:["r-tp11"]}
+);
+const pal = rows => `<div class="blk"><h3>Palavras novas</h3><dl class="pal">${rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl></div>`;
+
+/* ---------- Wi-Fi ---------- */
+topic({id:"r-80211", title:"O meio sem fios (802.11)", short:"802.11", src:"Aula 7",
+ frase:"No ar, uma estação não se ouve enquanto transmite: por isso o Wi-Fi evita colisões em vez de as detetar.",
+ extra: pal([["802.11","a norma do Wi-Fi (IEEE)"],["AP","ponto de acesso: liga os clientes sem fios à rede cablada"],["SSID","o nome da rede sem fios que o cliente vê"],["Half-duplex","ou se transmite ou se recebe, nunca as duas ao mesmo tempo"],["Beacon","trama que o AP envia periodicamente a anunciar o SSID"],["Canal","fatia de frequência onde o AP transmite"]]) + `
+<div class="tbl"><table>
+<tr><th>Tipo de trama</th><th>Exemplos</th><th>O que interessa</th></tr>
+<tr><td>Gestão</td><td>beacon, probe, authentication, association</td><td>em claro no 802.11 clássico; o WPA3 obriga a protegê-las (PMF)</td></tr>
+<tr><td>Controlo</td><td>RTS, CTS, ACK</td><td>coordenam o acesso ao meio</td></tr>
+<tr><td>Dados</td><td>tráfego dos utilizadores</td><td>cifrado com WPA2 ou WPA3</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th></th><th>2,4 GHz</th><th>5 GHz</th></tr>
+<tr><td>Canais sem sobreposição</td><td><b>3: 1, 6 e 11</b></td><td>muitos</td></tr>
+<tr><td>Alcance</td><td>maior, atravessa paredes</td><td>menor</td></tr>
+<tr><td>Interferência</td><td>micro-ondas, Bluetooth, o vizinho</td><td>muito menor</td></tr>
+<tr><td>Regra de desenho</td><td>cobertura e compatibilidade</td><td>densidade (muitos clientes)</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Geração</th><th>Norma</th><th>Novidade</th></tr>
+<tr><td>Wi-Fi 4</td><td>802.11n</td><td>2,4 e 5 GHz, MIMO</td></tr>
+<tr><td>Wi-Fi 5</td><td>802.11ac</td><td>só 5 GHz, canais mais largos</td></tr>
+<tr><td>Wi-Fi 6</td><td>802.11ax</td><td>OFDMA: melhor com muitos clientes</td></tr>
+<tr><td>Wi-Fi 6E</td><td>802.11ax</td><td>acrescenta os 6 GHz</td></tr>
+</table></div>`,
+ saber:["O meio é <b>partilhado e half-duplex</b>: quem transmite não ouve, logo <b>não há deteção de colisão</b> (CSMA/CD). Usa-se <b>CSMA/CA</b>: escuta o meio, espera um tempo aleatório (backoff), transmite e espera o <b>ACK</b>. Sem ACK, assume que houve colisão e repete.",
+  "<b>Nó escondido</b>: duas estações ouvem o AP mas não se ouvem uma à outra e transmitem ao mesmo tempo. Mitigação: <b>RTS/CTS</b> (pedir e receber licença para falar), com custo em débito.",
+  "Um cliente entra em 3 passos: <b>descoberta</b> (passiva, pelos beacons; ativa, por probes), <b>autenticação</b>, <b>associação</b>. Só depois há tráfego.",
+  "«Vê a rede mas não liga» é problema de autenticação/associação; «liga mas não navega» é problema de IP, VLAN ou DHCP.",
+  "Nos 2,4 GHz cada canal tem 22 MHz e os canais estão a 5 MHz uns dos outros: só <b>1, 6 e 11</b> não se sobrepõem. Três AP vizinhos: 1, 6 e 11, com potência ajustada para não se taparem.",
+  "<b>MIMO</b>: várias antenas, vários fluxos ao mesmo tempo. Canais de 40 ou 80 MHz dão mais débito mas sobram menos canais; em ambientes densos, canais estreitos dão melhor resultado total.",
+  "A evolução recente (Wi-Fi 6) é sobre <b>densidade</b>, não sobre velocidade de pico."],
+ cuidado:["Canais 1 e 3 interferem (sobrepõem-se); 1 e 6 não.","Com um 4.º AP nos 2,4 GHz repete-se um canal no AP mais afastado do outro com o mesmo canal, ou baixa-se a potência.","CSMA/CA é do Wi-Fi; CSMA/CD é da Ethernet antiga com hubs."], f2:[]});
+
+topic({id:"r-wlc", title:"AP autónomo, WLC e CAPWAP", short:"WLC e CAPWAP", src:"Aula 7 · TP07",
+ frase:"Com um controlador, os AP deixam de ter configuração própria: o WLC decide por todos.",
+ extra: pal([["AP autónomo","AP com configuração própria, configurado um a um"],["LAP","lightweight AP: não guarda configuração, descarrega-a do WLC"],["WLC","Wireless LAN Controller: configura e gere todos os AP"],["CAPWAP","protocolo dos túneis entre o LAP e o WLC"],["Interface dinâmica","interface do WLC numa VLAN de SSID, com IP próprio"],["Roaming","o cliente passa de um AP para outro sem perder a ligação"]]) + `
+<div class="tbl"><table>
+<tr><th>No AP (o que não pode esperar)</th><th>No WLC (o resto)</th></tr>
+<tr><td>transmitir e receber as tramas</td><td>associação e autenticação</td></tr>
+<tr><td>ACK e retransmissões</td><td>gestão de rádio: canal e potência</td></tr>
+<tr><td>beacons e probe responses</td><td>mobilidade entre AP (roaming)</td></tr>
+<tr><td>cifra das tramas</td><td>configuração e políticas (SSID, VLAN)</td></tr>
+</table></div>
+<p class="note">Esta divisão chama-se <b>split MAC</b>.</p>`,
+ saber:["<b>AP autónomo</b>: cada AP tem o seu SSID e a sua chave. Vinte AP são vinte configurações que podem divergir, e o roaming depende só do cliente (lento). Serve para uma loja, não para um edifício.",
+  "<b>LAP + WLC</b>: o AP não guarda configuração e descarrega-a ao arrancar. O WLC decide SSID, autenticação, VLAN, canal e potência. Um sítio para configurar e para ver o estado.",
+  "<b>CAPWAP</b>: dois túneis entre AP e WLC: <b>controlo em UDP 5246 (cifrado)</b> e <b>dados em UDP 5247</b>. Por aqui o AP recebe a configuração e entrega o tráfego dos clientes. AP e WLC podem estar em sub-redes diferentes.",
+  "O ponto que mais confunde: o tráfego do cliente vai do AP ao WLC dentro do túnel, e <b>é o WLC que o põe na VLAN do SSID</b>. Por isso o WLC precisa de uma <b>interface dinâmica em cada VLAN de SSID</b> e de um <b>trunk</b> para o switch; os AP só precisam de estar na VLAN de gestão e de chegar ao WLC por IP.",
+  "<b>FlexConnect</b>: para filiais com ligação lenta à sede, o AP comuta o tráfego localmente e só o controlo sobe ao WLC.",
+  "<b>Roaming com WLC</b>: o controlador conhece todos os AP, a transição é gerida centralmente e o cliente não muda de sub-rede. Com AP autónomos em VLANs diferentes, o cliente muda de IP e uma chamada de voz cai."],
+ cuidado:["A porta do WLC no switch é <b>trunk</b>; as portas dos LAP são de <b>acesso na VLAN de gestão (943)</b>.","Se o trunk do WLC não leva a VLAN 543, os convidados associam-se mas não obtêm IP."], f2:[]});
+
+topic({id:"r-wsec", title:"Segurança sem fios", short:"WPA2 e WPA3", src:"Aula 7 · TP07",
+ frase:"Com rádio basta estar no parque de estacionamento: a autenticação é obrigatória, não opcional.",
+ extra: pal([["PSK","chave pré-partilhada: a mesma palavra-passe para todos"],["802.1X","autenticação individual por utilizador, validada num servidor"],["RADIUS","o servidor que valida as credenciais no 802.1X"],["SAE","Simultaneous Authentication of Equals: o handshake do WPA3"],["PMF","proteção das tramas de gestão"]]) + `
+<div class="tbl"><table>
+<tr><th>Perfil</th><th>Autenticação</th><th>Rede</th></tr>
+<tr><td>Convidados</td><td>PSK mudada periodicamente</td><td>VLAN isolada (543); ACL só com saída para a Internet (TP09)</td></tr>
+<tr><td>Colaboradores</td><td>802.1X (Enterprise)</td><td>VLAN do departamento</td></tr>
+<tr><td>Colaboradores, transitório</td><td>WPA2-PSK, com a limitação documentada</td><td>VLAN do departamento (343 no TP07)</td></tr>
+</table></div>`,
+ saber:["<b>WPA2-Personal (PSK)</b>: uma chave partilhada por todos. O <b>four-way handshake</b> deriva chaves de sessão distintas para cada cliente (bom). Problemas: o handshake pode ser capturado e atacado por <b>dicionário offline</b>, e uma chave que toda a gente sabe <b>não se revoga</b> quando alguém sai.",
+  "<b>WPA2-Enterprise (802.1X)</b>: credenciais individuais validadas por <b>RADIUS</b>. Três papéis: <b>suplicante</b> (o cliente), <b>autenticador</b> (AP ou WLC) e <b>servidor</b> (RADIUS). Permite revogar, auditar e dar a VLAN pelo perfil. Recomendado para colaboradores.",
+  "<b>WPA3</b>: <b>SAE</b> em vez do handshake PSK (elimina o ataque de dicionário offline, mesmo com chave fraca), <b>proteção obrigatória das tramas de gestão</b> (PMF) e <b>Enhanced Open</b> para redes abertas (cifra sem autenticar).",
+  "Uma PSK é aceitável para convidados (acesso limitado à Internet, chave mudada periodicamente) mas fraca para colaboradores (não se revoga, partilha-se).",
+  "<b>Não são segurança</b>: esconder o SSID (vai nas tramas de associação) e filtrar por MAC (o MAC copia-se). A resposta profissional é explicar isto ao cliente, não implementá-lo em silêncio."],
+ cuidado:["No TP07 os dois SSIDs usam WPA2-PSK com AES (não TKIP).","Desassociar clientes à distância é possível porque as tramas de gestão vão em claro: o WPA3 corrige isso com PMF."], f2:[]});
+
+topic({id:"r-tp07", title:"TP07: Wi-Fi na sede", short:"TP07 Wi-Fi", src:"TP07",
+ frase:"O Wi-Fi não é uma rede à parte: é mais uma forma de entrar nas VLANs que já existem.",
+ extra:`<div class="tbl"><table>
+<tr><th>SSID</th><th>Interface no WLC</th><th>VLAN</th><th>IP do WLC</th><th>Gateway</th><th>Chave WPA2-PSK AES</th></tr>
+<tr><td>MinhaEmpresa-43</td><td>tecnico</td><td class="n">343</td><td class="n">10.43.3.20/24</td><td class="n">10.43.3.1</td><td>Tecnico2026!</td></tr>
+<tr><td>Convidados-43</td><td>convidados</td><td class="n">543</td><td class="n">10.43.5.20/24</td><td class="n">10.43.5.1</td><td>Bemvindo!2026</td></tr>
+<tr><td>(gestão)</td><td>management</td><td class="n">943</td><td class="n">10.43.9.20/24</td><td class="n">10.43.9.1</td><td>—</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Ligação</th><th>Porta</th><th>Modo</th></tr>
+<tr><td>WLC Gi1</td><td>ASW3 Fa0/21</td><td>trunk 343, 543, 943, 999 (nativa 999)</td></tr>
+<tr><td>LAP-1 / LAP-2</td><td>ASW1 Fa0/20 / ASW2 Fa0/20</td><td>acesso VLAN 943, PortFast, sem port security</td></tr>
+</table></div>
+<div class="blk"><h3>Verificar</h3><pre class="cmd">show interfaces trunk           <span class="c">! ASW3: Fa0/21 com 343,543,943,999</span>
+show standby brief              <span class="c">! DSW1: grupo 543 Active</span>
+show ip dhcp binding            <span class="c">! Lisboa: os LAP em 10.43.9.101+</span>
+<span class="c">! na CLI do WLC:</span>
+show interface summary          <span class="c">! management, tecnico, convidados</span>
+show ap summary                 <span class="c">! LAP-1 e LAP-2 Registered</span>
+show wlan summary               <span class="c">! os dois WLAN Enabled</span>
+show client summary             <span class="c">! clientes, SSID, AP e VLAN</span></pre></div>`,
+ saber:["Nova VLAN <b>543 WIFI-CONV-43</b> em todos os switches e acrescentada aos trunks (ASW Gi0/1-2, DSW Gi1/0/1-3 e Po1) com <code>switchport trunk allowed vlan add 543</code>.",
+  "SVI 543 nos dois DSW com HSRP grupo 543: <b>DSW1 = 10.43.5.2, prioridade 110, ativo</b> (VLAN ímpar); DSW2 = 10.43.5.3; virtual 10.43.5.1.",
+  "No router Lisboa: pool <b>WIFI-CONV-43</b> (excluídos .1–.20, DNS 10.43.4.10) e pool <b>GESTAO-AP-43</b> (10.43.9.0/24, excluídos .1–.100) só para os AP. Relay na SVI 943: <code>ip helper-address 10.43.0.1</code>.",
+  "No WLC: interface de gestão 10.43.9.20 (VLAN 943), interfaces dinâmicas <b>tecnico</b> (343) e <b>convidados</b> (543) com servidor DHCP 10.43.0.1. Os LAP descobrem o WLC por broadcast na VLAN 943 e ficam <b>Registered</b>.",
+  "É o <b>WLC que faz de relay DHCP</b>: o DISCOVER do cliente chega pelo túnel CAPWAP e sai pelo trunk, em unicast, para 10.43.0.1.",
+  "No fim do TP07 o smartphone (543) ainda chega ao Server0: o isolamento dos convidados só fica completo com a ACL do TP09."],
+ cmd:`vlan 543
+ name WIFI-CONV-43
+interface fa0/21                 <span class="c">! ASW3, porta do WLC</span>
+ switchport mode trunk
+ switchport trunk native vlan 999
+ switchport trunk allowed vlan 343,543,943,999
+ switchport nonegotiate
+ no switchport port-security
+interface fa0/20                 <span class="c">! ASW1 e ASW2, porta do LAP</span>
+ switchport mode access
+ switchport access vlan 943
+ spanning-tree portfast
+interface vlan 543               <span class="c">! DSW1</span>
+ ip address 10.43.5.2 255.255.255.0
+ standby version 2
+ standby 543 ip 10.43.5.1
+ standby 543 priority 110
+ standby 543 preempt
+ip dhcp excluded-address 10.43.5.1 10.43.5.20   <span class="c">! Lisboa</span>
+ip dhcp pool WIFI-CONV-43
+ network 10.43.5.0 255.255.255.0
+ default-router 10.43.5.1
+ dns-server 10.43.4.10`,
+ cuidado:["LAP Registered mas sem clientes num SSID: ver a VLAN desse SSID no trunk do WLC, a interface dinâmica (VLAN e gateway) e o pool DHCP.","Se os LAP não aparecem no WLC: VLAN 943 na porta do LAP, pool GESTAO-AP-43 e relay na SVI 943, ou a gestão do WLC sem a etiqueta 943."], f2:[]});
+
+/* ---------- Encaminhamento revisitado ---------- */
+topic({id:"r-rotas", title:"Como um router decide", short:"Encaminhamento", src:"Aula 7",
+ frase:"Primeiro o prefixo mais longo; só entre prefixos iguais contam a AD e a métrica.",
+ extra: pal([["Distância administrativa (AD)","quanto o router confia na origem da rota; menor ganha"],["Métrica","qualidade de um caminho dentro do mesmo protocolo"],["Longest match","escolher a rota com o prefixo mais comprido que serve ao destino"],["Rota flutuante","rota estática com AD alta, que só entra se a principal desaparecer"],["Gateway of last resort","a rota por omissão 0.0.0.0/0"]]) + `
+<div class="tbl"><table>
+<tr><th>Origem da rota</th><th>Código</th><th>AD</th><th>Métrica</th></tr>
+<tr><td>Conectada</td><td>C / L</td><td class="n">0</td><td>—</td></tr>
+<tr><td>Estática</td><td>S</td><td class="n">1</td><td>—</td></tr>
+<tr><td>OSPF</td><td>O</td><td class="n">110</td><td>custo (largura de banda)</td></tr>
+<tr><td>RIP</td><td>R</td><td class="n">120</td><td>saltos</td></tr>
+</table></div>
+<div class="blk"><h3>Exemplo de longest match</h3><div class="tbl"><table>
+<tr><th>Tabela</th><th>Destino</th><th>Usa</th></tr>
+<tr><td class="n">O 10.43.0.0/16 via Gi0/0<br>S 10.43.4.0/24 via Gi0/1<br>S* 0.0.0.0/0 via Se2/0</td><td class="n">10.43.4.10<br>10.43.7.5<br>8.8.8.8</td><td class="n">Gi0/1 (/24 é o mais longo)<br>Gi0/0 (só o /16 serve)<br>Se2/0 (só a omissão serve)</td></tr>
+</table></div></div>`,
+ saber:["Uma rota entra na tabela de três formas: <b>conectada</b>, <b>estática</b> ou <b>dinâmica</b> (aprendida por um protocolo). Vê-se com <code>show ip route</code>.",
+  "Em <code>O 192.168.1.0/24 [110/1294]</code>, o primeiro número é a <b>AD</b> e o segundo a <b>métrica</b>.",
+  "A métrica só compara rotas do mesmo protocolo. <b>Nunca se comparam métricas de protocolos diferentes</b> (saltos e custo medem coisas diferentes).",
+  "<b>Longest match</b> domina tudo: ganha sempre o prefixo mais específico, independentemente da AD e da métrica.",
+  "Como o router decide: 1) prefixo mais longo; 2) entre iguais, menor AD; 3) entre iguais, menor métrica; 4) se ainda empatar, <b>balanceamento</b> por vários caminhos.",
+  "<b>Rota flutuante</b>: estática com AD posta à mão (por exemplo 130). Fica fora da tabela enquanto a dinâmica existir e entra sozinha quando ela desaparece: é o backup clássico por outro caminho.",
+  "<b>Rota por omissão</b> 0.0.0.0/0: um pacote sem correspondência e sem rota por omissão é descartado. Na aula 8 o OSPF propaga-a com <code>default-information originate</code>."],
+ cmd:`show ip route
+ip route 0.0.0.0 0.0.0.0 203.0.113.1        <span class="c">! rota por omissão</span>
+ip route 192.168.1.0 255.255.255.0 se0/0/1 130  <span class="c">! flutuante: AD 130</span>`,
+ cuidado:["Pergunta garantida no T2: dada uma tabela, qual a interface de saída para cada destino. Aplica o longest match primeiro.","Uma estática com AD 130 perde para o OSPF (110) e para o RIP (120): fica escondida até eles falharem."], f2:[]});
+
+/* ---------- OSPF ---------- */
+topic({id:"r-ospf", title:"OSPF: estado de ligação", short:"OSPF link-state", src:"Aula 8",
+ frase:"Cada router publica o que vê, todos ficam com o mesmo mapa e cada um calcula o seu caminho.",
+ extra: pal([["Link-state","estado de ligação: cada router anuncia as suas próprias ligações"],["LSA","Link-State Advertisement: um pedaço do mapa"],["LSDB","a base de dados com todos os LSA da área: o mapa"],["SPF","Shortest Path First, o algoritmo de Dijkstra"],["Área","grupo de routers que partilham a mesma LSDB; a área 0 é a espinha dorsal"],["Count-to-infinity","falha do vetor distância em que a métrica de uma rota caída sobe sem fim"]]) + `
+<div class="tbl"><table>
+<tr><th>Queixa (TP08)</th><th>Limitação do RIP</th><th>Resposta do OSPF</th></tr>
+<tr><td>2–3 min sem Braga quando cai um enlace</td><td>converge lento (até 180 s)</td><td>converge em 1–5 s</td></tr>
+<tr><td>O tráfego vai pelo caminho mais longo</td><td>conta saltos</td><td>custo baseado na largura de banda</td></tr>
+<tr><td>Sem rota por omissão decente</td><td>—</td><td><code>default-information originate</code></td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Estrutura</th><th>O que guarda</th><th>Comando</th><th>Igual em todos?</th></tr>
+<tr><td>Tabela de vizinhos</td><td>routers com quem troca Hellos</td><td><code>show ip ospf neighbor</code></td><td>não</td></tr>
+<tr><td>LSDB</td><td>todos os LSA da área</td><td><code>show ip ospf database</code></td><td><b>sim</b>, em toda a área</td></tr>
+<tr><td>Tabela de encaminhamento</td><td>o melhor caminho para cada rede</td><td><code>show ip route ospf</code></td><td>não: cada um é a raiz</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th></th><th>OSPFv2</th><th>OSPFv3</th></tr>
+<tr><td>Para</td><td>IPv4</td><td>IPv6 (e ambos, com famílias de endereços)</td></tr>
+<tr><td>Norma</td><td>RFC 2328</td><td>RFC 5340</td></tr>
+<tr><td>Multicast</td><td>224.0.0.5 e 224.0.0.6</td><td>FF02::5 e FF02::6</td></tr>
+</table></div>`,
+ saber:["<b>Vetor distância</b> (RIP): cada router conta aos vizinhos o que ouviu. <b>Estado de ligação</b> (OSPF): cada router publica um mapa do que vê, todos ficam com o mesmo mapa e cada um traça o seu caminho.",
+  "Cada <b>LSA</b> tem número de sequência e idade, é confirmado pelos vizinhos (<b>LSAck</b>), reinundado quando muda e refrescado a cada 30 minutos. Em regime estável quase não há tráfego.",
+  "Não há count-to-infinity porque <b>ninguém repete informação de terceiros</b>: quem anuncia a queda de uma ligação é o dono dela, e todos calculam sobre a mesma base.",
+  "<b>Dijkstra</b>: parte da raiz com custo 0; escolhe sempre o nó não visitado com menor custo acumulado; baixa o custo dos vizinhos se o novo caminho for melhor; repete até visitar todos.",
+  "A LSDB é igual em toda a área, mas as <b>tabelas são diferentes</b> porque cada router corre o SPF a partir de si próprio (é a raiz da sua árvore).",
+  "Características: <b>sem classe</b> (VLSM e CIDR, anuncia a máscara), sem limite de saltos, multicast <b>224.0.0.5</b> (todos) e <b>224.0.0.6</b> (DR/BDR), <b>protocolo IP 89</b> (sem TCP nem UDP), autenticação, <b>AD 110</b>.",
+  "A área limita a inundação e o tamanho da LSDB. A empresa cabe numa <b>área única (área 0)</b>; dividir só com dezenas de routers. O router entre áreas chama-se <b>ABR</b>."],
+ cuidado:["A LSDB é igual em todos; a tabela de encaminhamento não.","OSPF não usa TCP nem UDP: é o protocolo IP 89."], f2:[]});
+
+topic({id:"r-ospfadj", title:"Hello, adjacências e DR/BDR", short:"Adjacências OSPF", src:"Aula 8 · TP08",
+ frase:"Para serem vizinhos, dois routers têm de concordar nos Hellos; numa rede multiacesso só falam a fundo com o DR e o BDR.",
+ extra: pal([["Hello","pacote que descobre e mantém os vizinhos"],["Dead interval","tempo sem Hellos ao fim do qual o vizinho é dado como morto"],["Adjacência","vizinhos que sincronizaram a LSDB (estado FULL)"],["DR / BDR","router designado e o seu suplente numa rede multiacesso"],["DROTHER","router que não é DR nem BDR"]]) + `
+<div class="flow"><span>Down</span><i>→</i><span>Init</span><i>→</i><span>2-Way</span><i>→</i><span>ExStart</span><i>→</i><span>Exchange</span><i>→</i><span>Loading</span><i>→</i><span>Full</span></div>
+<p class="note">Na primeira adjacência veem-se os pacotes <b>Hello → DBD → LSR → LSU → LSAck</b> (os cinco tipos de pacote OSPF).</p>
+<div class="tbl"><table>
+<tr><th>Estado no <code>show ip ospf neighbor</code></th><th>Significa</th></tr>
+<tr><td><code>FULL/ -</code></td><td>ponto a ponto (seriais): adjacência direta, sem eleição</td></tr>
+<tr><td><code>FULL/DR</code> ou <code>FULL/BDR</code></td><td>adjacência completa com o DR ou o BDR</td></tr>
+<tr><td><code>2WAY/DROTHER</code></td><td>vizinho mas não adjacente: <b>é o estado correto</b> entre dois DROTHER</td></tr>
+</table></div>`,
+ saber:["Hello a cada <b>10 s</b>, dead interval <b>40 s</b> (redes broadcast e ponto a ponto).",
+  "Para haver vizinhança têm de coincidir: <b>área</b>, <b>temporizadores</b> (hello/dead), <b>autenticação</b>, <b>máscara de sub-rede</b> e <b>flag stub</b>. É o primeiro sítio onde procurar quando dois routers não se veem.",
+  "Em n routers todos com todos haveria n(n − 1)/2 adjacências (5 → 10, 10 → 45). O <b>DR</b> recolhe e redistribui em nome do segmento; o <b>BDR</b> é o suplente; os outros só formam adjacência com eles.",
+  "Eleição: maior <b>prioridade</b> (omissão 1, máximo 255); em empate, maior <b>router-id</b>. <b>Não é preemptiva</b>: um router melhor que chega depois não tira o lugar.",
+  "<code>ip ospf priority 0</code>: fora da eleição, nunca DR nem BDR. Serve para garantir que o DR é o equipamento certo (a mesma ideia da raiz do STP).",
+  "Na empresa os enlaces WAN são todos <b>ponto a ponto</b> (sem DR). A única rede multiacesso planeada é a <b>VLAN 943</b> entre DSW1 e DSW2 (sobre o Po1): com prioridades iguais o DR é o <b>DSW2 (8.8.8.43)</b>, o router-id mais alto.",
+  "Atenção: os /30 Ethernet Lisboa–DSW também são broadcast por omissão, por isso também têm DR e BDR mesmo só com dois routers."],
+ cmd:`show ip ospf neighbor
+show ip ospf interface vlan 943
+interface vlan 943           <span class="c">! DSW1 sempre DR:</span>
+ ip ospf priority 255        <span class="c">! e reiniciar o processo</span>
+clear ip ospf process`,
+ cuidado:["2WAY/DROTHER não é avaria.","Mudar a prioridade não troca o DR atual (não preemptivo): é preciso reiniciar o processo OSPF (clear ip ospf process) ou a interface."], f2:[]});
+
+topic({id:"r-ospfcfg", title:"Custo, router-id e configuração", short:"Configurar OSPF", src:"Aula 8 · TP08",
+ frase:"Router-id fixo, network com wildcard, passivas onde não há routers e a mesma referência de custo em todos.",
+ extra:`<div class="tbl"><table>
+<tr><th>Interface</th><th>Largura de banda</th><th>Custo (ref. 100)</th><th>Custo (ref. 1000)</th></tr>
+<tr><td>10 Gigabit</td><td class="n">10 000 Mb/s</td><td class="n">1</td><td class="n">1</td></tr>
+<tr><td>Gigabit</td><td class="n">1000 Mb/s</td><td class="n">1</td><td class="n">1</td></tr>
+<tr><td>FastEthernet</td><td class="n">100 Mb/s</td><td class="n">1</td><td class="n">10</td></tr>
+<tr><td>Ethernet</td><td class="n">10 Mb/s</td><td class="n">10</td><td class="n">100</td></tr>
+<tr><td>Serial T1</td><td class="n">1,544 Mb/s</td><td class="n">64</td><td class="n">647</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Erro do TP08</th><th>Efeito</th><th>Como se vê</th></tr>
+<tr><td>wildcard errada</td><td>a interface não entra no processo</td><td><code>show ip ospf interface brief</code></td></tr>
+<tr><td>referência diferente entre routers</td><td>escolhas de caminho incoerentes</td><td><code>show ip ospf interface</code> (Cost)</td></tr>
+<tr><td>SVI sem passive-interface</td><td>Hellos para os PC; vizinhos indesejados</td><td><code>show ip protocols</code></td></tr>
+</table></div>`,
+ saber:["<b>Custo = referência ÷ largura de banda</b>, inteiro, mínimo 1. Referência por omissão 100 Mb/s: Gigabit e FastEthernet ficam ambos com 1. Por isso o TP08 usa <code>auto-cost reference-bandwidth 1000</code>, <b>igual em todos os routers</b>.",
+  "<code>ip ospf cost</code> na interface sobrepõe-se ao cálculo. No cenário: Porto–Braga com custo 1000 <b>nos dois lados</b>, para ser o caminho de último recurso.",
+  "<b>Router-id</b>, por esta ordem: o <code>router-id</code> explícito; o IP mais alto de uma loopback; o IP mais alto de uma interface ativa. Fixa-se sempre (TP08: 1.1.1.43 a 8.8.8.43).",
+  "<code>network</code> com <b>wildcard = 255.255.255.255 − máscara</b> (/30 → 0.0.0.3; /24 → 0.0.0.255). Não anuncia a rede escrita: <b>escolhe as interfaces</b> que entram no OSPF e anuncia as redes configuradas nelas. Alternativa por interface: <code>ip ospf 1 area 0</code>.",
+  "<code>passive-interface</code>: a rede continua a ser anunciada mas a interface deixa de enviar Hellos. A razão é <b>segurança</b> (quem envia Hellos aceita vizinhos). Passiva em todas as interfaces sem routers do outro lado, incluindo as SVI.",
+  "<code>default-information originate</code>: o router de fronteira anuncia a rota por omissão a toda a área (aparece como <b>O*E2</b>). Com <code>always</code> anuncia mesmo sem ter rota por omissão própria.",
+  "<b>Autenticação</b> MD5 ou SHA, por interface ou por área: sem a mesma chave não há adjacência.",
+  "<b>Migração sem cortes</b>: ativar o OSPF com o RIP a correr; como AD 110 &lt; 120, as rotas O substituem as R sozinhas; confirmar adjacências; só depois <code>no router rip</code>.",
+  "<b>OSPFv3</b>: ativa-se por interface (<code>ipv6 ospf 1 area 0</code>, sem network); o router-id continua com 32 bits (à mão se não houver IPv4); o next-hop é um endereço <b>link-local</b> FE80::, por isso a rota indica sempre a interface de saída."],
+ cmd:`router ospf 1
+ router-id 1.1.1.43
+ auto-cost reference-bandwidth 1000
+ network 10.43.0.0 0.0.0.3 area 0
+ passive-interface gi0/0
+ default-information originate
+interface se0/3/0
+ ip ospf cost 1000
+<span class="c">! verificar</span>
+show ip ospf neighbor
+show ip ospf interface brief
+show ip route ospf
+show ip ospf database
+show ip protocols`,
+ cuidado:["Escrever a máscara em vez da wildcard (network 192.168.2.0 255.255.255.0 area 0): o IOS aceita mas apanha interfaces a mais.","Gigabit com referência 100 dá 0,1, mas o custo mínimo é 1.","Se fizesses no router rip primeiro, a rede ficava sem rotas até o OSPF convergir."], f2:[]});
+
+topic({id:"r-tp08", title:"TP08: migrar RIP → OSPF", short:"TP08 OSPF", src:"TP08",
+ frase:"Toda a empresa em OSPF área 0, com custos que evitam o enlace lento Porto–Braga, sem os utilizadores darem por nada.",
+ extra:`<div class="tbl"><table>
+<tr><th>Equipamento</th><th>Router-id</th><th>network … area 0</th><th>Passivas / custo</th></tr>
+<tr><td>Lisboa</td><td class="n">1.1.1.43</td><td class="n">10.43.0.0 0.0.0.3 · 10.43.0.4 0.0.0.3 · 10.255.0.8/.16/.24 0.0.0.3</td><td>— (Se2/0 passiva no TP10)</td></tr>
+<tr><td>Porto</td><td class="n">2.2.2.43</td><td class="n">192.168.10.0 0.0.0.255 · 10.255.0.0/.4/.8 0.0.0.3</td><td>Fa0/0, Fa0/1, Et1/0, Et1/1 · Se0/3/0 custo 1000</td></tr>
+<tr><td>Braga</td><td class="n">3.3.3.43</td><td class="n">192.168.1.0 0.0.0.255 · 10.255.0.0/.12 0.0.0.3</td><td>Gi0/0 · Se0/0/0 custo 1000</td></tr>
+<tr><td>Coimbra</td><td class="n">4.4.4.43</td><td class="n">192.168.2.0 0.0.0.255 · 10.255.0.4/.12/.16/.20 0.0.0.3</td><td>Gi0/0/0</td></tr>
+<tr><td>Évora</td><td class="n">5.5.5.43</td><td class="n">192.168.3.0 0.0.0.255 · 10.255.0.20/.24/.28 0.0.0.3</td><td>Gi0/0</td></tr>
+<tr><td>Faro</td><td class="n">6.6.6.43</td><td class="n">192.168.4.0 0.0.0.255 · 10.255.0.28 0.0.0.3</td><td>Gi0/0</td></tr>
+<tr><td>DSW1 / DSW2</td><td class="n">7.7.7.43 / 8.8.8.43</td><td class="n">10.43.0.0 0.0.0.3 (DSW2: 10.43.0.4) · 10.43.0.0 0.0.255.255</td><td>default; no passive Gi1/1/1 e Vlan943</td></tr>
+</table></div>
+<div class="blk"><h3>Resultados que tens de saber explicar</h3><ul>
+<li>Lisboa → Braga vai por <b>Coimbra</b>: 647 + 647 = <b>1294</b> &lt; 647 + 1000. <code>show ip route 192.168.1.0</code> → <code>[110/1294] via 10.255.0.17</code>.</li>
+<li>Porto → Braga continua pelo enlace direto: 1000 &lt; 1294 (Porto–Coimbra–Braga). O custo forçado afasta Lisboa mas não o Porto.</li>
+<li>Em Lisboa, as redes da sede têm <b>dois next-hops</b> (10.43.0.2 e 10.43.0.6): caminhos de igual custo.</li>
+<li>LSDB igual em todos: <b>8 LSA tipo 1</b> (seis routers + dois DSW) e <b>1 LSA tipo 2</b> (a VLAN 943, gerado pelo DR). Os seriais ponto a ponto não geram tipo 2.</li>
+<li>Reconvergência após cair Lisboa–Coimbra: <b>1–5 s</b> com OSPF; o RIP demorava até 180 s.</li>
+<li>Vizinhos de Lisboa (TP09, teste 1): 2.2.2.43, 4.4.4.43, 5.5.5.43, 7.7.7.43 e 8.8.8.43, todos FULL.</li>
+</ul></div>`,
+ saber:["Antes de mudar: «fotografia» do RIP (<code>show ip route 192.168.1.0</code>, <code>traceroute</code>) e um <code>ping -t</code> do PC-ADM1 a correr durante toda a migração.",
+  "Nos seriais: <code>FULL/ -</code> (sem DR). Lisboa tem três vizinhos WAN, Coimbra quatro. <code>show ip ospf interface se6/0</code>: Cost 647, POINT_TO_POINT, Hello 10, Dead 40.",
+  "Os DSW também falam OSPF: com o router pelos /30 e entre si pela <b>SVI 943</b> (o Po1 é trunk, não tem IP). Todas as outras SVI ficam passivas.",
+  "<code>network 10.43.0.0 0.0.255.255</code> no DSW apanha todas as SVI 10.43.x.x de uma vez; o <code>passive-interface default</code> impede que mandem Hellos para os PC.",
+  "OSPFv3 no eixo Porto–Braga em vez do RIPng: <code>ipv6 router ospf 1</code>, router-id 2.2.2.43 / 3.3.3.43, <code>ipv6 ospf 1 area 0</code> em cada interface, depois <code>no ipv6 router rip RIP-PROC</code>. Em Braga as rotas do Porto aparecem com código O e next-hop FE80::…"],
+ cmd:`router ospf 1                  <span class="c">! Lisboa-DSW1</span>
+ router-id 7.7.7.43
+ auto-cost reference-bandwidth 1000
+ network 10.43.0.0 0.0.0.3 area 0
+ network 10.43.0.0 0.0.255.255 area 0
+ passive-interface default
+ no passive-interface gi1/1/1
+ no passive-interface vlan 943
+ipv6 router ospf 1             <span class="c">! Porto</span>
+ router-id 2.2.2.43
+ passive-interface fa0/0
+interface se0/3/0
+ ipv6 ospf 1 area 0
+ ip ospf cost 1000
+no router rip                  <span class="c">! só no fim</span>`,
+ cuidado:["Coimbra e Évora sem adjacência mas com ping: área diferente, hello/dead diferentes, máscara diferente, autenticação, ou a interface passiva/fora da wildcard. Confirmar com show ip ospf interface e show ip protocols.","Nomes de interface diferentes por modelo: Gi0/0 num 2901, Gi0/0/0 no ISR4321 de Coimbra.","Router-ids nunca terminados em .0 (com NN = 00 usa-se .100)."], f2:[]});
+
+/* ---------- ACL ---------- */
+topic({id:"r-acl", title:"Como uma ACL é avaliada", short:"ACL: avaliação", src:"Aula 9",
+ frase:"Linha a linha, por ordem; a primeira que corresponde decide; no fim há um deny escondido.",
+ extra: pal([["ACL","lista de controlo de acesso: regras permit/deny aplicadas ao tráfego"],["ACE","cada linha (entrada) da ACL"],["Wildcard","máscara invertida: 0 = o bit tem de coincidir, 1 = indiferente"],["in / out","sentido do tráfego visto pelo router: a entrar ou a sair da interface"]]) + `
+<div class="blk"><h3>Exercício de wildcard (NN = 43)</h3><div class="tbl"><table>
+<tr><th>Requisito</th><th>Prefixo</th><th>Na ACL</th></tr>
+<tr><td>a rede do Comercial</td><td class="n">10.43.2.0/24</td><td class="n">10.43.2.0 0.0.0.255</td></tr>
+<tr><td>o enlace Lisboa–DSW2</td><td class="n">10.43.0.4/30</td><td class="n">10.43.0.4 0.0.0.3</td></tr>
+<tr><td>só a 2.ª metade de 10.43.1.0/24</td><td class="n">10.43.1.128/25</td><td class="n">10.43.1.128 0.0.0.127</td></tr>
+<tr><td>um só host (Server0)</td><td class="n">10.43.4.10/32</td><td class="n">host 10.43.4.10 = 10.43.4.10 0.0.0.0</td></tr>
+<tr><td>qualquer endereço</td><td class="n">0.0.0.0/0</td><td class="n">any = 0.0.0.0 255.255.255.255</td></tr>
+</table></div></div>`,
+ saber:["As três regras que decidem tudo: 1) as entradas são avaliadas <b>por ordem</b>; 2) a <b>primeira que corresponde decide</b> e a avaliação para aí; 3) no fim há um <b>deny implícito</b> que não aparece no show. Uma ACL sem nenhum permit bloqueia tudo.",
+  "Consequência da ordem: <b>primeiro o específico, depois o geral</b>. Um <code>permit ip any any</code> no topo faz com que nada abaixo seja avaliado.",
+  "<b>in</b> filtra o que entra no router pela interface; <b>out</b> o que sai do router pela interface. Sempre do ponto de vista do router, não do utilizador.",
+  "<b>Wildcard = 255.255.255.255 − máscara</b>. Atalhos: <code>host</code> (wildcard 0.0.0.0) e <code>any</code>.",
+  "Uma ACL por interface, por sentido e por protocolo (IPv4/IPv6).",
+  "As queixas que as ACL resolvem não são avarias: a rede faz exatamente o que foi configurada para fazer. A ACL é a <b>política</b> da empresa escrita em configuração."],
+ cuidado:["O deny implícito não aparece no show access-lists: se precisas de ver os matches dos negados, escreve um deny explícito (com log).","Se os matches só sobem no permit ip any any final, a ACL está na interface ou no sentido errados."], f2:[]});
+
+topic({id:"r-acltipos", title:"Tipos de ACL e onde as colocar", short:"ACL: tipos", src:"Aula 9 · TP09",
+ frase:"Standard vê só a origem e vai perto do destino; extended vê tudo e vai perto da origem.",
+ extra:`<div class="tbl"><table>
+<tr><th></th><th>Standard</th><th>Extended</th></tr>
+<tr><td>Números</td><td class="n">1–99 e 1300–1999</td><td class="n">100–199 e 2000–2699</td></tr>
+<tr><td>Vê</td><td>só o endereço de <b>origem</b></td><td>protocolo, origem, destino e portos</td></tr>
+<tr><td>Coloca-se</td><td><b>perto do destino</b> (senão bloqueia demais)</td><td><b>perto da origem</b> (não transporta tráfego que vai ser descartado)</td></tr>
+<tr><td>Uso típico hoje</td><td><code>access-class</code> nas vty, filtros de rotas</td><td>políticas entre VLANs, saída para a Internet</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th></th><th>IPv4</th><th>IPv6</th></tr>
+<tr><td>Identificação</td><td>número ou nome</td><td>sempre nome</td></tr>
+<tr><td>Endereços</td><td>endereço + wildcard</td><td>prefixo (2001:DB8::/32)</td></tr>
+<tr><td>Aplicar</td><td><code>ip access-group</code></td><td><code>ipv6 traffic-filter</code></td></tr>
+<tr><td>Fim implícito</td><td><code>deny any</code></td><td><code>permit icmp any any nd-na</code>, <code>permit icmp any any nd-ns</code>, <code>deny ipv6 any any</code></td></tr>
+</table></div>`,
+ saber:["A regra de colocação é uma <b>heurística</b>, não uma lei: em redes com política central é comum concentrar as ACL no router de fronteira. Na entrevista pode-se defender o contrário, desde que se saiba porquê.",
+  "<b>Named ACLs</b> (<code>ip access-list extended NOME</code>): usá-las sempre. Têm números de sequência (inserir e apagar linhas), <code>remark</code> para documentar e um nome que diz o que fazem. Numa numerada, mudar uma linha obriga a apagar a lista.",
+  "<code>established</code>: corresponde a segmentos TCP com <b>ACK ou RST</b>, ou seja, respostas. Os de dentro navegam e os de fora não iniciam sessões. Falha com UDP e ICMP (não têm flags) e os flags podem ser forjados.",
+  "<code>access-class</code> aplica-se às <b>linhas vty</b>, não a uma interface: restringe quem se liga ao próprio equipamento, venha de que interface vier. Resolve «SSH vindo do Comercial» em duas linhas.",
+  "<b>Armadilha do NDP</b>: um <code>deny ipv6 any any</code> explícito corresponde antes dos permits implícitos de NS e NA; o NDP deixa de funcionar e o servidor fica inalcançável. Por isso permite-se ICMPv6 antes do deny.",
+  "Antes de mexer numa ACL remota: <code>reload in 5</code>; se correr bem, <code>reload cancel</code>. Aplicar uma ACL restritiva <b>in</b> na interface por onde estás ligado por SSH mata a sessão."],
+ cmd:`ip access-list extended ACL-COMERCIAL-43
+ remark P1 - Comercial so web para os servidores
+ permit tcp 10.43.2.0 0.0.0.255 host 10.43.4.10 eq 80
+ deny ip 10.43.2.0 0.0.0.255 10.43.3.0 0.0.0.255
+ permit ip any any
+interface vlan 243
+ ip access-group ACL-COMERCIAL-43 in
+<span class="c">! established: o Técnico inicia, o Comercial só responde</span>
+ permit tcp 10.43.2.0 0.0.0.255 10.43.3.0 0.0.0.255 established
+<span class="c">! verificar</span>
+show access-lists
+show ip interface vlan 243 | include access list`,
+ cuidado:["access-group é para interfaces; access-class é para linhas vty.","Uma access-class que refere uma ACL que não existe bloqueia todo o acesso; um ip access-group com uma ACL inexistente deixa passar tudo.","Em IPv6 aplica-se com ipv6 traffic-filter, não com ipv6 access-group."], f2:[]});
+
+topic({id:"r-tp09", title:"TP09: política de acesso e Desafio 1", short:"TP09 ACL", src:"TP09",
+ frase:"Quatro regras da direção, quatro ACLs, e depois seis avarias para diagnosticar com o comando que as revela.",
+ extra:`<div class="tbl"><table>
+<tr><th>#</th><th>Política</th><th>ACL</th><th>Tipo</th><th>Onde</th><th>Sentido</th></tr>
+<tr><td>P1</td><td>Comercial só chega aos servidores por HTTP/HTTPS (e DNS) e não chega ao Técnico; o resto é permitido</td><td>ACL-COMERCIAL-43</td><td>extended</td><td>SVI 243 no DSW1 <b>e</b> DSW2</td><td>in</td></tr>
+<tr><td>P2</td><td>Convidados só saem para a Internet (DHCP e DNS permitidos)</td><td>ACL-CONVIDADOS-43</td><td>extended</td><td>SVI 543 no DSW1 e DSW2</td><td>in</td></tr>
+<tr><td>P3</td><td>SSH só a partir da VLAN 943 e do PC-TEC1</td><td>ACL-GESTAO-43</td><td>standard</td><td>vty de todos os equipamentos</td><td>access-class in</td></tr>
+<tr><td>P4</td><td>Braga, IPv6: só ICMPv6 e HTTP para o Server3</td><td>ACL6-BRAGA-43</td><td>IPv6</td><td>Braga Gi0/0 (LAN)</td><td>out</td></tr>
+</table></div>
+<div class="blk"><h3>As outras três ACLs</h3><pre class="cmd">ip access-list extended ACL-CONVIDADOS-43
+ permit udp any any eq 67                          <span class="c">! DHCP antes de tudo</span>
+ permit udp 10.43.5.0 0.0.0.255 host 10.43.4.10 eq 53
+ deny ip 10.43.5.0 0.0.0.255 10.0.0.0 0.255.255.255
+ deny ip 10.43.5.0 0.0.0.255 192.168.0.0 0.0.255.255
+ permit ip 10.43.5.0 0.0.0.255 any
+ip access-list standard ACL-GESTAO-43
+ permit 10.43.9.0 0.0.0.255
+ permit host 10.43.3.10
+ deny any log
+line vty 0 4                     <span class="c">! switches: 0 15</span>
+ access-class ACL-GESTAO-43 in
+ipv6 access-list ACL6-BRAGA-43
+ permit icmp any any
+ permit tcp any host 2001:DB8:B8A6::A eq 80
+ deny ipv6 any any
+interface gi0/0
+ ipv6 traffic-filter ACL6-BRAGA-43 out</pre></div>
+<div class="blk"><h3>Desafio 1 (avaliado, 2 %)</h3><div class="tbl"><table>
+<tr><th>Queixa</th><th>Onde procurar primeiro</th></tr>
+<tr><td>Q1 PC-COM2 sem rede, PC-COM1 bem</td><td>camada 2 na porta: <code>show vlan brief</code>, <code>show interfaces status</code>, port security</td></tr>
+<tr><td>Q2 PC-TEC2 não chega ao Server0, PC-TEC1 chega</td><td>VLAN num trunk: <code>show interfaces trunk</code> (allowed, nativa)</td></tr>
+<tr><td>Q3 piso lento, link entre DSW a 100 %</td><td>STP: <code>show spanning-tree vlan …</code> (raiz errada, caminho pelo Po1)</td></tr>
+<tr><td>Q4 DSW1 desligado → Administrativo sem rede</td><td>HSRP: <code>show standby brief</code> (DSW2 sem o grupo, IP virtual errado)</td></tr>
+<tr><td>Q5 LANs de Coimbra fora da tabela de Lisboa</td><td>OSPF: <code>show ip protocols</code>, <code>show ip ospf interface brief</code> (network/wildcard)</td></tr>
+<tr><td>Q6 Évora e Faro isolados</td><td>adjacência: <code>show ip ospf neighbor</code>, área/hello/autenticação</td></tr>
+</table></div><p class="note">Estas são hipóteses de onde começar, não as respostas. Cotação: 0,25 % por avaria (0,15 diagnóstico com o comando que a revelou + 0,10 correção verificada); sem o comando vale metade; apagar tudo e reconfigurar vale zero; relatório 0,5 %.</p></div>`,
+ saber:["P1 e P2 são extended e vão <b>in na SVI da VLAN de origem</b>, nos <b>dois DSW</b>, porque com HSRP qualquer um pode ser o gateway ativo. Os contadores sobem no DSW ativo.",
+  "P1 aplicada <b>in na 243</b> em vez de out nas 343 e 443: o tráfego é descartado logo à entrada e chega uma ACL por DSW em vez de várias.",
+  "Em P2 o DHCP (UDP 67) tem de passar <b>antes</b> dos deny, senão os convidados nem endereço obtêm. Com o WLC a fazer relay, o pedido entra na rede cablada a partir do WLC (10.43.5.20).",
+  "Resultado de P1: PC-COM1 abre http://10.43.4.10, mas o ping a 10.43.4.10 e a 10.43.3.10 falha (<i>administratively prohibited</i>); ping a Braga funciona.",
+  "P3 é standard porque só interessa a origem. Aplica-se também nos switches de acesso porque também têm SSH (IP de gestão). Tentativas recusadas geram <code>%SEC-6-IPACCESSLOGNP</code> por causa do <code>log</code>.",
+  "P4 vai <b>out na LAN</b> de Braga para não interferir com o OSPFv3 na WAN. Aplicada in na Se0/0/0 com <code>deny ipv6 any any</code>, cortaria os Hellos OSPFv3 e a vizinhança cairia."],
+ cmd:`ip access-list extended ACL-COMERCIAL-43
+ remark P1 - Comercial: so web para os servidores, nada para o Tecnico
+ permit tcp 10.43.2.0 0.0.0.255 host 10.43.4.10 eq 80
+ permit tcp 10.43.2.0 0.0.0.255 host 10.43.4.10 eq 443
+ permit udp 10.43.2.0 0.0.0.255 host 10.43.4.10 eq 53
+ deny ip 10.43.2.0 0.0.0.255 10.43.4.0 0.0.0.255
+ deny ip 10.43.2.0 0.0.0.255 10.43.3.0 0.0.0.255
+ permit ip any any
+interface vlan 243
+ ip access-group ACL-COMERCIAL-43 in`,
+ cuidado:["Com o permit ip any any em primeiro lugar, nenhum deny é atingido: o Comercial chega a tudo.","Sem o permit ip any any final, o deny implícito corta tudo o resto (incluindo Braga e, mais tarde, a Internet).","Esquecer a ACL no DSW2: funciona até o DSW2 passar a ativo."], f2:[]});
+
+/* ---------- NAT e operação ---------- */
+topic({id:"r-nat", title:"NAT e PAT", short:"NAT", src:"Aula 9 · TP10",
+ frase:"Uma rede privada inteira sai para a Internet por um punhado de endereços públicos.",
+ extra: pal([["Endereço privado","10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 (RFC 1918): não se encaminham na Internet"],["NAT","tradução de endereços: troca o endereço privado pelo público ao sair"],["PAT","NAT com overload: muitos hosts num só endereço, distinguidos pelo porto"],["Inside / outside","interfaces viradas para dentro (rede da empresa) e para fora (ISP)"]]) + `
+<div class="tbl"><table>
+<tr><th>Termo</th><th>O que é</th><th>PC-ADM1 → 8.8.8.8</th><th>exterior → Server0</th></tr>
+<tr><td><b>Inside local</b></td><td>o host interno, visto de dentro</td><td class="n">10.43.1.21</td><td class="n">10.43.4.10</td></tr>
+<tr><td><b>Inside global</b></td><td>o mesmo host, visto de fora</td><td class="n">203.0.113.2</td><td class="n">198.51.100.43</td></tr>
+<tr><td><b>Outside global</b></td><td>o host externo, endereço real</td><td class="n">8.8.8.8</td><td class="n">203.0.113.10</td></tr>
+<tr><td><b>Outside local</b></td><td>o host externo, visto de dentro</td><td class="n">8.8.8.8</td><td class="n">203.0.113.10</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Tipo</th><th>Como é</th><th>Para quê</th></tr>
+<tr><td>Estático</td><td>um para um, permanente, bidirecional</td><td>publicar um servidor (custa um público por servidor)</td></tr>
+<tr><td>Dinâmico</td><td>pool de públicos, por ordem de chegada, a hosts escolhidos por ACL</td><td>pouco usado; pool esgotado = os seguintes ficam sem tradução</td></tr>
+<tr><td>PAT (overload)</td><td>muitos para um, pelo porto de origem (ICMP: identificador da query)</td><td>a saída de toda a empresa</td></tr>
+</table></div>
+<div class="blk"><h3>A ordem das operações no router</h3>
+<div class="flow"><i>dentro → fora:</i><span>ACL in</span><i>→</i><span>encaminhamento</span><i>→</i><span>NAT (traduz)</span><i>→</i><span>ACL out</span></div>
+<div class="flow"><i>fora → dentro:</i><span>ACL in (vê o público)</span><i>→</i><span>NAT (destraduz)</span><i>→</i><span>encaminhamento</span></div>
+<p>Por isso uma ACL na interface externa escreve-se com o <b>endereço público</b> (198.51.100.43).</p></div>`,
+ saber:["O IPv4 acabou: ou um público por posto, ou traduzir. O IPv6 resolve por abundância, mas o NAT vai continuar.",
+  "<code>ip nat inside</code> nas interfaces viradas para dentro e <code>ip nat outside</code> na do ISP. Sem estas duas linhas nada é traduzido: <code>show ip nat translations</code> vazia e tudo o resto aparentemente certo.",
+  "PAT com a interface (o caso da empresa): <code>ip nat inside source list NAT-INSIDE-43 interface se2/0 overload</code>. Com um pool: <code>… pool NOME overload</code>.",
+  "Em teoria cabem cerca de 65 000 traduções simultâneas num endereço (portos de 16 bits); na prática limitam a memória e o tempo de vida das entradas (<code>ip nat translation timeout</code>).",
+  "<b>O NAT estático expõe todos os portos</b> do servidor. Correções: NAT por porto (<code>ip nat inside source static tcp 10.43.4.10 80 198.51.100.43 80</code>) ou ACL na interface externa com o endereço público.",
+  "<b>O que o NAT parte</b>: protocolos com endereços na carga útil (FTP ativo, SIP: precisam de ALG), ligações entrantes não pedidas, IPsec AH (a integridade cobre o cabeçalho IP) e a rastreabilidade (milhares de pessoas atrás de um endereço).",
+  "Hairpinning: o PC-ADM1 pode não conseguir abrir http://198.51.100.43 por dentro, porque o pedido não atravessa a interface outside."],
+ cmd:`ip access-list standard NAT-INSIDE-43
+ permit 10.43.0.0 0.0.255.255
+ permit 192.168.0.0 0.0.255.255
+ip nat inside source list NAT-INSIDE-43 interface se2/0 overload
+ip nat inside source static 10.43.4.10 198.51.100.43
+interface range fa0/0 , fa1/0 , se6/0 , se7/0 , se8/0
+ ip nat inside
+interface se2/0
+ ip nat outside
+<span class="c">! verificar</span>
+show ip nat translations
+show ip nat statistics
+clear ip nat translation *`,
+ cuidado:["Inside local = o privado do host interno; inside global = o público que o representa lá fora.","A NAT acontece depois do encaminhamento na saída e antes do encaminhamento na entrada.","Na tabela, a entrada do NAT estático aparece sempre (--- 198.51.100.43 10.43.4.10 ---), mesmo sem tráfego."], f2:[]});
+
+topic({id:"r-tp10", title:"TP10: Internet, NAT e operação da rede", short:"TP10 NAT e gestão", src:"TP10",
+ frase:"Toda a empresa sai por Lisboa com um endereço público, o Server0 fica visível de fora e a rede passa a ter registos, relógio, monitorização e cópias.",
+ extra:`<div class="tbl"><table>
+<tr><th>Serviço</th><th>Servidor</th><th>Porto</th><th>Comandos</th><th>Verificação</th></tr>
+<tr><td>Syslog</td><td>Server0 10.43.4.10</td><td>UDP 514</td><td><code>logging 10.43.4.10</code> · <code>logging trap informational</code> · <code>service timestamps log datetime msec</code></td><td>Server0 → Syslog; <code>show logging</code></td></tr>
+<tr><td>NTP</td><td>Server0</td><td>UDP 123</td><td><code>ntp server 10.43.4.10</code> · <code>clock timezone WET 0</code></td><td><code>show ntp status</code> · <code>show clock</code></td></tr>
+<tr><td>SNMP v2c (leitura)</td><td>Portátil-GEST (MIB Browser)</td><td>UDP 161</td><td><code>snmp-server community minha43 ro</code> · location · contact</td><td>GET sysName, sysUpTime, ifNumber</td></tr>
+<tr><td>Cópias</td><td>Server0 (TFTP)</td><td>UDP 69</td><td><code>copy running-config tftp:</code></td><td>Server0 → TFTP</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Nível syslog</th><th>Nome</th><th>Nível</th><th>Nome</th></tr>
+<tr><td class="n">0</td><td>emergencies</td><td class="n">4</td><td>warnings</td></tr>
+<tr><td class="n">1</td><td>alerts</td><td class="n">5</td><td>notifications</td></tr>
+<tr><td class="n">2</td><td>critical</td><td class="n">6</td><td>informational</td></tr>
+<tr><td class="n">3</td><td>errors</td><td class="n">7</td><td>debugging</td></tr>
+</table></div>
+<p class="note"><code>logging trap informational</code> envia os níveis 0 a 6 (quanto menor o número, mais grave). Mensagens a ver: <code>%SYS-5-CONFIG_I</code>, <code>%LINK-3-UPDOWN</code>, <code>%LINEPROTO-5-UPDOWN</code>, <code>%SEC-6-IPACCESSLOGNP</code>.</p>`,
+ saber:["Contrato do ISP: Lisboa Se2/0 = <b>203.0.113.2/30</b> (ISP 203.0.113.1) e o bloco <b>198.51.100.0/24</b> para publicar serviços. O Server0 fica em <b>198.51.100.43</b>.",
+  "Rota por omissão em Lisboa e <code>default-information originate</code> no OSPF: em Faro, Porto e DSW aparece <b>O*E2 0.0.0.0/0 [110/1]</b>. Sem NAT, Faro → 8.8.8.8 falha: o ISP não sabe voltar para 192.168.4.x.",
+  "PAT: as duas ligações à sede (Fa0/0, Fa1/0) e os três seriais para as cidades são <b>inside</b>; a Se2/0 é <b>outside</b>. Em <code>show ip nat translations</code> o PC-ADM1, o PC9 e o smartphone aparecem todos com 203.0.113.2 e portos/IDs diferentes.",
+  "NAT estático: do ISP, <code>ping 198.51.100.43</code> e http funcionam; <code>ping 10.43.4.10</code> falha (privado, não encaminhável fora).",
+  "<b>NTP</b>: sem relógio comum é impossível saber que mensagem de syslog veio primeiro. <b>Stratum</b> = distância à fonte de tempo (0 é o relógio de referência, 1 o servidor ligado a ele…).",
+  "<b>SNMP</b>: <b>GET</b> lê, <b>SET</b> escreve, <b>TRAP</b> é o equipamento a avisar sozinho. A comunidade é uma palavra-passe; em v2c vai em claro. <b>SNMPv3</b> traz utilizadores, autenticação e cifra. Com <code>ro</code> o SET falha; com a comunidade errada não há resposta.",
+  "Syslog e NTP são tráfego interno: não passam pelo NAT."],
+ cmd:`interface se2/0
+ ip address 203.0.113.2 255.255.255.252
+ ip nat outside
+ip route 0.0.0.0 0.0.0.0 203.0.113.1
+router ospf 1
+ default-information originate
+ passive-interface se2/0
+service timestamps log datetime msec
+logging 10.43.4.10
+logging trap informational
+ntp server 10.43.4.10
+clock timezone WET 0
+snmp-server community minha43 ro
+snmp-server location Lisboa - sala tecnica
+copy running-config tftp:`,
+ cuidado:["Sem default-information originate, as cidades não têm rota por omissão e não chegam à Internet; se a estática de Lisboa cair, a omissão deixa de ser anunciada (a menos que se use always).","Lisboa → ping 8.8.8.8 funciona logo sem NAT porque a origem é 203.0.113.2 (conectada ao ISP)."], f2:[]});
+
+/* ---------- WAN, VPN, QoS ---------- */
+topic({id:"r-wan", title:"WAN: topologias e serviços", short:"WAN", src:"Aula 10",
+ frase:"Do outro lado da rua, metade da rede é de outra empresa e compra-se por contrato.",
+ extra: pal([["WAN","rede de longa distância: liga locais em cidades ou países"],["CPE","equipamento nas instalações do cliente"],["Local loop","o cabo entre o cliente e a central do operador"],["DTE / DCE","equipamento do cliente (router) / equipamento que fornece o relógio (modem, CSU/DSU)"],["CIR","débito contratado e garantido"],["SLA","contrato de nível de serviço"],["MPLS","rede do operador que encaminha por etiquetas"]]) + `
+<div class="tbl"><table>
+<tr><th></th><th>LAN</th><th>WAN</th></tr>
+<tr><td>Propriedade</td><td>da empresa</td><td>do operador: serviço comprado</td></tr>
+<tr><td>Distância</td><td>edifício, campus</td><td>cidades, países, continentes</td></tr>
+<tr><td>Débito</td><td>1 a 10 Gb/s por porta</td><td>de Mb/s a Gb/s, o contratado</td></tr>
+<tr><td>Custo</td><td>investimento único</td><td>mensalidade</td></tr>
+<tr><td>Latência</td><td>microssegundos</td><td>milissegundos</td></tr>
+<tr><td>Quem repara</td><td>nós</td><td>o operador, com um prazo</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Opção</th><th>Custo</th><th>Garantias</th><th>Adequada para</th></tr>
+<tr><td>Linha dedicada</td><td>muito alto</td><td>débito fixo</td><td>casos especiais</td></tr>
+<tr><td>Ethernet WAN</td><td>médio</td><td>SLA do operador</td><td>mesma área metropolitana</td></tr>
+<tr><td>MPLS</td><td>alto</td><td>SLA e classes de serviço</td><td>muitos locais, voz e vídeo</td></tr>
+<tr><td>Internet + VPN</td><td>baixo</td><td>nenhuma</td><td>filiais pequenas, reserva</td></tr>
+<tr><td>SD-WAN</td><td>médio</td><td>as dos enlaces</td><td>muitos locais, enlaces mistos</td></tr>
+</table></div>`,
+ saber:["A luz na fibra anda a cerca de 200 000 km/s (5 µs por km). Lisboa–Braga, uns 350 km: cerca de <b>3,5 ms de ida e volta</b> só de propagação. A propagação não se melhora com equipamento.",
+  "<b>Ponto a ponto</b>: circuito dedicado, simples e previsível, caro e cresce mal. <b>Hub-and-spoke</b>: todos ligam à sede (6 locais = 5 enlaces); barato, mas o tráfego entre filiais passa pela sede e a sede é ponto único de falha.",
+  "<b>Malha completa</b>: n(n − 1)/2 enlaces (6 locais → 15; 10 → 45); é teórica. <b>Malha parcial</b>: só os pares com tráfego real (a empresa tem 8 enlaces).",
+  "Redundância real: segundo enlace com <b>outro operador e outro caminho físico</b>. O mecanismo já é conhecido (rota flutuante, OSPF); o que é novo é o contrato.",
+  "<b>DTE</b> = router do cliente; <b>DCE</b> fornece o relógio. No laboratório põe-se <code>clock rate</code> no lado DCE do cabo série; se faltar, a interface fica <b>up, protocolo down</b>. Em produção é o operador que trata.",
+  "Porta de acesso ≠ <b>CIR</b>. Acima do CIR é excesso sem garantia; o operador sobre-subscreve. Um <b>SLA</b> garante disponibilidade e tempo de reparação, quase nunca latência.",
+  "Hoje compra-se um serviço: <b>Ethernet WAN</b> (o operador entrega uma porta Ethernet, a WAN parece um segmento de camada 2, débito em passos finos), <b>MPLS</b> (o operador encaminha por etiquetas, com classes de serviço) ou <b>Internet + VPN</b>. RDIS, Frame Relay e ATM já são história.",
+  "<b>SD-WAN</b>: um controlador escolhe por que ligação sai cada tipo de tráfego (MPLS, fibra, móvel) conforme a política e a qualidade medida."],
+ cuidado:["Interface série up / protocolo down no laboratório: falta o clock rate no lado DCE.","Esta aula não tem TP, mas é avaliada no T2."], f2:[]});
+
+topic({id:"r-vpn", title:"VPN e IPsec", short:"VPN e IPsec", src:"Aula 10",
+ frase:"Um túnel sobre uma rede pública: encapsular para atravessar, cifrar para ninguém ler.",
+ extra: pal([["VPN","rede privada virtual: um túnel sobre uma rede pública"],["GRE","túnel que encapsula qualquer protocolo, sem cifra"],["IPsec","conjunto de protocolos que protege pacotes IP"],["IKE","negociação das chaves e algoritmos antes do tráfego"],["Diffie-Hellman","forma de dois pares chegarem a uma chave comum sem a transmitir"]]) + `
+<div class="tbl"><table>
+<tr><th>Serviço do IPsec</th><th>Garante</th><th>Como</th></tr>
+<tr><td>Confidencialidade</td><td>ninguém lê os dados</td><td>cifra simétrica: AES</td></tr>
+<tr><td>Integridade</td><td>ninguém os altera sem se notar</td><td>HMAC com SHA-256</td></tr>
+<tr><td>Autenticação da origem</td><td>vêm do par esperado</td><td>PSK ou certificados (RSA)</td></tr>
+<tr><td>Anti-replay</td><td>um pacote capturado não se reenvia</td><td>números de sequência</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th></th><th>AH</th><th>ESP</th></tr>
+<tr><td>Protocolo IP</td><td class="n">51</td><td class="n">50</td></tr>
+<tr><td>Cifra</td><td>não</td><td><b>sim</b></td></tr>
+<tr><td>Integridade e autenticação</td><td>sim, incluindo o cabeçalho IP</td><td>sim, do conteúdo ESP</td></tr>
+<tr><td>Atravessa NAT</td><td>não</td><td>sim, com NAT-T (UDP 4500)</td></tr>
+<tr><td>Na prática</td><td>raro</td><td>o que se usa</td></tr>
+</table></div>`,
+ saber:["Uma VPN tem duas funções distintas: <b>encapsular</b> (endereços privados atravessam uma rede que não os encaminha) e <b>cifrar</b> (normalmente, não sempre). Encapsular sem cifrar é possível.",
+  "<b>Site-to-site</b>: entre routers (gateways VPN), permanente e transparente para o utilizador; substitui um circuito dedicado a uma fração do preço.",
+  "<b>Acesso remoto</b>: cliente no portátil, a pedido, autenticado por utilizador; hoje sobretudo SSL/TLS. <b>Split tunnelling</b>: tudo pela empresa (controlo, mais lento) ou só o tráfego corporativo (rápido, o resto sem inspeção).",
+  "<b>GRE</b>: transporta qualquer protocolo, incluindo multicast e protocolos de encaminhamento, mas tudo em claro. <b>GRE sobre IPsec</b> junta a flexibilidade do GRE à confidencialidade do IPsec. Em escala: <b>DMVPN</b> (GRE multiponto + NHRP + IPsec).",
+  "<b>Modo túnel</b>: o pacote original inteiro é protegido e leva um cabeçalho IP novo (entre gateways, site-to-site). <b>Modo transporte</b>: protege só a carga, mantém o cabeçalho original (entre dois hosts).",
+  "<b>IKE</b> negoceia antes de qualquer dado: autentica os pares e acorda algoritmos e chaves (com Diffie-Hellman), em duas fases. Só depois passa o tráfego protegido."],
+ cuidado:["GRE não cifra.","AH não atravessa NAT porque protege o cabeçalho IP, que o NAT altera; ESP com NAT-T (UDP 4500) atravessa."], f2:[]});
+
+topic({id:"r-qos", title:"QoS: quem sofre quando falta largura de banda", short:"QoS", src:"Aula 10",
+ frase:"«QoS não cria largura de banda: decide quem sofre quando ela falta.»",
+ extra: pal([["Atraso","quanto demora um pacote"],["Jitter","quanto varia o atraso"],["Perda","os pacotes que não chegam"],["DSCP","6 bits no cabeçalho IP que marcam a classe do pacote"],["CoS","3 bits na etiqueta 802.1Q: a marcação na camada 2"],["Policing / shaping","descartar o excesso / atrasá-lo numa fila"]]) + `
+<div class="tbl"><table>
+<tr><th></th><th>Voz</th><th>Vídeo</th><th>Dados</th></tr>
+<tr><td>Latência</td><td>≤ 150 ms</td><td>≤ 200–400 ms</td><td>tolerante</td></tr>
+<tr><td>Jitter</td><td>≤ 30 ms</td><td>≤ 30–50 ms</td><td>tolerante</td></tr>
+<tr><td>Perda</td><td>≤ 1 %</td><td>0,1 a 1 %</td><td>não aceita perdas: o TCP retransmite</td></tr>
+<tr><td>Débito</td><td>30–128 kb/s, constante</td><td>384 kb/s a mais de 20 Mb/s</td><td>variável, em rajadas</td></tr>
+<tr><td>Sensível sobretudo a</td><td>atraso e jitter</td><td>perda</td><td>perda</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Marcação DSCP</th><th>Valor</th><th>Para</th></tr>
+<tr><td>EF (Expedited Forwarding)</td><td class="n">46</td><td>voz</td></tr>
+<tr><td>AF (Assured Forwarding) AFxy</td><td class="n">ex.: AF41 = 34</td><td>vídeo e dados importantes (x = classe, y = probabilidade de descarte)</td></tr>
+<tr><td>CS (Class Selector)</td><td class="n">CS1–CS7</td><td>compatível com a antiga precedência IP</td></tr>
+<tr><td>BE (Best Effort)</td><td class="n">0</td><td>o resto</td></tr>
+</table></div>`,
+ saber:["Ligação congestionada → as filas enchem → fila cheia = descarte. Por omissão ninguém escolhe o que se perde (backup ou chamada). QoS é decidir isso de propósito.",
+  "100 ms constantes são utilizáveis numa chamada; atraso a variar entre 5 e 80 ms não é: o buffer de reprodução tem de acomodar a variação (jitter).",
+  "Os três passos: <b>classificar</b> (que tráfego é), <b>marcar</b> (DSCP no IP, CoS no 802.1Q) e <b>escalonar</b> (que fila sai primeiro).",
+  "Filas: <b>FIFO</b> (nenhuma política), <b>WFQ</b> (partilha justa por fluxo), <b>PQ</b> (a classe alta passa sempre e pode esfomear as outras), <b>CBWFQ</b> (débito garantido por classe), <b>LLQ</b> (CBWFQ com uma fila prioritária limitada: a que se usa para voz).",
+  "<b>WRED</b>: descartar cedo, por classe, antes de a fila encher.",
+  "<b>Policing</b> descarta o excesso; <b>shaping</b> atrasa-o.",
+  "Ligação congestionada todo o dia é um problema de capacidade: o QoS só o disfarça e comprar largura de banda pode ser a resposta certa."],
+ cuidado:["Voz: EF (46) e LLQ.","PQ pura pode deixar as outras classes sem passar; a LLQ limita a fila prioritária para evitar isso."], f2:[]});
+
+/* ---------- Automação ---------- */
+topic({id:"r-tp11", title:"TP11: automação e Desafio 2", short:"TP11 automação", src:"TP11",
+ frase:"Separar o que muda (dados) do que é sempre igual (template): escreve-se uma vez e gera-se para dez switches.",
+ extra: pal([["CSV / JSON","formatos de dados: tabela de texto / lista de objetos com pares chave-valor"],["Template","configuração com «buracos» que um programa preenche"],["Jinja2","biblioteca Python de templates: {{ variável }} e {% for %}"],["REST","API por HTTPS com verbos GET, POST, PUT, PATCH, DELETE"],["RESTCONF / NETCONF","APIs normalizadas dos equipamentos (JSON/XML sobre HTTPS / XML sobre SSH)"]]) + `
+<div class="blk"><h3>Os dados do ASW4 (switches.csv)</h3><pre class="cmd">hostname,mgmt_ip,vlan_id,vlan_nome,portas,modo
+Lisboa-ASW4,10.43.9.14,143,ADMIN-43,fa0/1-8,access
+Lisboa-ASW4,10.43.9.14,343,TECNICO-43,fa0/9-16,access
+Lisboa-ASW4,10.43.9.14,999,NATIVA-BLACKHOLE,fa0/17-24,shutdown
+Lisboa-ASW4,10.43.9.14,,,gi0/1-2,trunk</pre></div>
+<div class="blk"><h3>Desafio 2 (avaliado, 2 %)</h3><div class="tbl"><table>
+<tr><th>Queixa</th><th>Onde procurar primeiro</th></tr>
+<tr><td>Q1 Comercial sem intranet</td><td>ACL-COMERCIAL: <code>show access-lists</code> (ordem, porto, endereço)</td></tr>
+<tr><td>Q2 ninguém entra por SSH em Lisboa</td><td><code>show run | section line vty</code>: access-class a referir uma ACL inexistente ou errada</td></tr>
+<tr><td>Q3 metade da sede sem Internet, depende do departamento</td><td>NAT por VLAN: <code>show access-lists NAT-INSIDE-43</code>, <code>show ip nat statistics</code>, inside nas Fa0/0 e Fa1/0</td></tr>
+<tr><td>Q4 site 198.51.100.43 em baixo por fora</td><td>NAT estático: <code>show ip nat translations</code> (entrada estática)</td></tr>
+<tr><td>Q5 cidades sem Internet, sede com</td><td><code>show ip route</code> nas cidades (O*E2?), default-information originate, 192.168.0.0 na ACL do NAT, inside nos seriais</td></tr>
+<tr><td>Q6 Porto não chega ao Server3 por IPv6</td><td><code>show ipv6 ospf neighbor</code>, <code>show ipv6 access-list</code> em Braga</td></tr>
+</table></div><p class="note">Hipóteses de onde começar, não as respostas. Mesmas regras do Desafio 1.</p></div>
+<p class="note">No fim do TP11 começa a <b>entrevista prática</b> (30 %): 10 min, 4 perguntas de 2 min sobre a tua rede, nas áreas VLAN/inter-VLAN/DHCP, STP/EtherChannel/HSRP/segurança L2, OSPF e ACL/NAT/gestão.</p>`,
+ saber:["Cenário: um 4.º piso com o <b>Lisboa-ASW4</b> (Gi0/1 → DSW1 Gi1/0/4, Gi0/2 → DSW2 Gi1/0/4, trunks com 143,243,343,443,543,943,999) e o PC-ADM3 em DHCP na Fa0/1.",
+  "O script <code>gera_switch.py 43</code> lê o CSV, substitui NN, agrupa por switch, calcula a lista allowed e o gateway e escreve <code>Lisboa-ASW4.cfg</code> com o template <code>switch.j2</code>.",
+  "No Jinja2, <code>{{ hostname }}</code> é substituído pelo valor e <code>{% for b in blocos if b.modo == 'access' %}</code> repete o bloco só para as linhas de acesso. Uma variável que não existe faz o script parar com <b>UndefinedError</b>, que diz qual é.",
+  "A automação <b>não dispensa a verificação</b>: depois de colar o .cfg, os mesmos show de sempre (<code>show vlan brief</code>, <code>show interfaces trunk</code>, <code>show port-security</code>, <code>show spanning-tree summary</code>). Linhas rejeitadas aparecem com <code>% Invalid input</code>.",
+  "A lista allowed inclui VLANs que o ASW4 não usa (243, 443, 543) para ser igual à dos DSW e prevenir portas futuras; se só tivesse 143, 343 e 943, um PC dessas VLANs no ASW4 ficaria sem rede.",
+  "Lacunas esperadas do template: SSH (domain-name, chaves RSA, utilizador), <code>spanning-tree mode rapid-pvst</code>, DHCP snooping/DAI globais e a access-class (cuidado: tem de existir a ACL que ela refere).",
+  "A automação elimina erros de digitação e divergências entre switches, mas <b>amplifica</b> um erro do template: replica-o em todos.",
+  "<b>REST/RESTCONF</b>: em vez de colar texto na CLI, o script envia JSON por HTTPS (ex.: PUT/POST a <code>https://router/restconf/data/…</code>) e recebe JSON com o resultado. Na prática usa-se <code>requests</code>, <code>netmiko</code> (CLI por SSH) ou Ansible com os mesmos templates."],
+ cmd:`{% for b in blocos if b.modo == 'access' %}
+interface range {{ b.portas }}
+ switchport mode access
+ switchport access vlan {{ b.vlan_id }}
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+{% endfor %}
+interface vlan {{ mgmt_vlan }}
+ ip address {{ mgmt_ip }} 255.255.255.0
+ip default-gateway {{ mgmt_gw }}`,
+ cuidado:["Ao usar IA em configuração: ler tudo antes de aplicar, verificar cada afirmação com um show, e desconfiar de comandos de outro modelo (3650 num 2960) e de nomes de interface.","crypto key generate rsa sem ip domain-name antes falha."], f2:[]});
+
 /* ======================= FOLHA 1: BANCO POR SUBGRUPO ======================= */
 const N = "Nenhuma das outras opções.";
 const SUBS = [
@@ -1539,7 +2161,7 @@ function renderMap(M=MAP, el="map", t1="RD2 · Teste 1", t2="NN = 43 · 17 nov")
 
 /* ---------- resumo ---------- */
 function renderSide(){
-  document.getElementById("side").innerHTML = CHAPTERS.map(ch=>`<div><h4>${esc(ch.name)}</h4><div class="grp">${ch.topics.map(id=>`<a href="#${id}" data-t="${id}" style="${tcv(id)}">${esc(T[id].title)}</a>`).join("")}</div></div>`).join("");
+  document.getElementById("side").innerHTML = CHAPTERS.map((ch,i)=>`${ch.t2 && !(CHAPTERS[i-1]||{}).t2 ? `<p class="t2sep">Teste 2 · aulas 7–10 e TP07–TP11</p>` : ""}<div><h4>${esc(ch.name)}</h4><div class="grp">${ch.topics.map(id=>`<a href="#${id}" data-t="${id}" style="${tcv(id)}">${esc(T[id].title)}</a>`).join("")}</div></div>`).join("");
 }
 function showTopic(id, flash){
   const o = T[id]; const i = ORDER.indexOf(id); const prev = ORDER[i-1], next = ORDER[i+1];
