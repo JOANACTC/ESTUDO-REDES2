@@ -495,7 +495,7 @@ textarea:focus{border-color:var(--c);outline:none}
 
 <section class="view" id="v-teste" hidden></section>
 
-<p class="foot">Feito a partir das aulas 1–10, dos TP02–TP11, da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
+<p class="foot">Feito a partir das aulas 1–11, dos TP02–TP11 (TP05–TP10 nas versões revistas), da lista de estudo e da FUC de Redes de Dados II (UTAD 2026/27). Os 15 subgrupos seguem o teste modelo; os do teste real podem ter outros nomes.</p>
 </main>
 <button class="back" id="backBtn" hidden>Voltar ao teste</button>
 <script>
@@ -665,7 +665,7 @@ interface port-channel 1
  switchport mode trunk
  switchport trunk native vlan 999
 show etherchannel summary   <span class="c">! Po1(SU), portas (P)</span>`,
- cuidado:["Flags boas: S (camada 2), U (em uso), P (agregada). Más: D (down), I (sozinha), s (suspensa).","Depois de criado, configura o trunk no port-channel, não nas portas físicas."], f2:[25,38,39]});
+ cuidado:["Flags boas: S (camada 2), U (em uso), P (agregada). Más: D (down), I (sozinha), s (suspensa).","Depois de criado, configura o trunk no port-channel, não nas portas físicas.","Packet Tracer 9.0.x: o LACP entre os 3650 pode não formar. Correção testada (TP05/TP06 revistos): <code>channel-group 1 mode on</code> nos dois DSW, e confirmar com <code>show etherchannel summary</code> depois de desligar e voltar a ligar um cabo do Po1. O 3650 novo precisa da fonte AC-POWER-SUPPLY para arrancar."], f2:[25,38,39]});
 
 topic({id:"r-hsrp", title:"FHRP e HSRP", short:"HSRP", src:"Aula 5 · TP06",
  frase:"Dois switches partilham um gateway virtual; se um cai, o outro continua a responder.",
@@ -677,7 +677,7 @@ topic({id:"r-hsrp", title:"FHRP e HSRP", short:"HSRP", src:"Aula 5 · TP06",
  standby 143 priority 110
  standby 143 preempt
 show standby brief`,
- cuidado:["Active nos dois DSW = não recebem os hellos um do outro (a VLAN não passa no Po1).","Grupo 143 em v2: 143 = 0x08F → 0000.0C9F.F08F."], f2:[21,22,32]});
+ cuidado:["Active nos dois DSW = não recebem os hellos um do outro (a VLAN não passa no Po1, ou há um loop de camada 2). Critério do TP06 revisto: nenhum grupo pode estar Active nos dois ao mesmo tempo.","Grupo 143 em v2: 143 = 0x08F → 0000.0C9F.F08F."], f2:[21,22,32]});
 
 topic({id:"r-ataques", title:"Ataques à camada 2", short:"Ataques L2", src:"Aula 6 · TP06",
  frase:"Os ataques de camada 2 vêm de dentro da rede, a partir de uma porta de acesso.",
@@ -776,7 +776,7 @@ const F2 = [
  [40,"r-stp","Descreva os papéis das portas no STP/RSTP: root, designated e alternate.",["Root port: melhor caminho para a raiz; uma em cada switch não-raiz","Designated: a melhor porta de cada segmento, encaminha; todas as portas da raiz o são","Alternate: caminho de reserva para a raiz, fica a bloquear (backup é a reserva no mesmo segmento)","Exemplo: ASW1 na VLAN 243: Gi0/2 root, Gi0/1 alternate, portas de acesso designated"]]
 ];
 
-/* ======================= RESUMO T2: AULAS 7–10 E TP07–TP11 ======================= */
+/* ======================= RESUMO T2: AULAS 7–11 E TP07–TP11 ======================= */
 CHAPTERS.push(
   {name:"T2 · Wi-Fi e WLC", color:"sky", t2:true, topics:["r-80211","r-wlc","r-wsec","r-tp07"]},
   {name:"T2 · Encaminhamento", color:"peach", t2:true, topics:["r-rotas"]},
@@ -784,7 +784,8 @@ CHAPTERS.push(
   {name:"T2 · ACL", color:"lilac", t2:true, topics:["r-acl","r-acltipos","r-tp09"]},
   {name:"T2 · NAT e operação", color:"butter", t2:true, topics:["r-nat","r-tp10"]},
   {name:"T2 · WAN, VPN e QoS", color:"pink", t2:true, topics:["r-wan","r-vpn","r-qos"]},
-  {name:"T2 · Automação", color:"sky", t2:true, topics:["r-tp11"]}
+  {name:"T2 · Gestão, desenho e diagnóstico", color:"mint", t2:true, topics:["r-syslog","r-snmp","r-hier","r-diag"]},
+  {name:"T2 · Automação", color:"sky", t2:true, topics:["r-template","r-tp11"]}
 );
 const pal = rows => `<div class="blk"><h3>Palavras novas</h3><dl class="pal">${rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("")}</dl></div>`;
 
@@ -866,31 +867,31 @@ topic({id:"r-tp07", title:"TP07: Wi-Fi na sede", short:"TP07 Wi-Fi", src:"TP07",
 </table></div>
 <div class="tbl"><table>
 <tr><th>Ligação</th><th>Porta</th><th>Modo</th></tr>
-<tr><td>WLC Gi1</td><td>ASW3 Fa0/21</td><td>trunk 343, 543, 943, 999 (nativa 999)</td></tr>
+<tr><td>WLC Gi1</td><td>ASW3 Fa0/21</td><td>trunk 343, 543, 943, 999 com <b>nativa 943</b> (exceção no PT: a gestão do WLC vai sem etiqueta) · <code>ip dhcp snooping trust</code></td></tr>
 <tr><td>LAP-1 / LAP-2</td><td>ASW1 Fa0/20 / ASW2 Fa0/20</td><td>acesso VLAN 943, PortFast, sem port security</td></tr>
 </table></div>
 <div class="blk"><h3>Verificar</h3><pre class="cmd">show interfaces trunk           <span class="c">! ASW3: Fa0/21 com 343,543,943,999</span>
 show standby brief              <span class="c">! DSW1: grupo 543 Active</span>
 show ip dhcp binding            <span class="c">! Lisboa: os LAP em 10.43.9.101+</span>
-<span class="c">! na CLI do WLC:</span>
-show interface summary          <span class="c">! management, tecnico, convidados</span>
-show ap summary                 <span class="c">! LAP-1 e LAP-2 Registered</span>
-show wlan summary               <span class="c">! os dois WLAN Enabled</span>
-show client summary             <span class="c">! clientes, SSID, AP e VLAN</span></pre></div>`,
+<span class="c">! no WLC-3504 do PT não há CLI: verificar na interface web</span>
+<span class="c">! Monitor → Access Points: LAP-1 e LAP-2 Registered</span>
+<span class="c">! WLANs: os dois WLAN Enabled · Monitor → Clients: SSID, AP e VLAN</span></pre></div>
+<p class="note">Versão revista (23-11-2026): o §0 testa primeiro o núcleo (EtherChannel, coerência do HSRP, ping na VLAN 943).</p>`,
  saber:["Nova VLAN <b>543 WIFI-CONV-43</b> em todos os switches e acrescentada aos trunks (ASW Gi0/1-2, DSW Gi1/0/1-3 e Po1) com <code>switchport trunk allowed vlan add 543</code>.",
   "SVI 543 nos dois DSW com HSRP grupo 543: <b>DSW1 = 10.43.5.2, prioridade 110, ativo</b> (VLAN ímpar); DSW2 = 10.43.5.3; virtual 10.43.5.1.",
   "No router Lisboa: pool <b>WIFI-CONV-43</b> (excluídos .1–.20, DNS 10.43.4.10) e pool <b>GESTAO-AP-43</b> (10.43.9.0/24, excluídos .1–.100) só para os AP. Relay na SVI 943: <code>ip helper-address 10.43.0.1</code>.",
   "No WLC: interface de gestão 10.43.9.20 (VLAN 943), interfaces dinâmicas <b>tecnico</b> (343) e <b>convidados</b> (543) com servidor DHCP 10.43.0.1. Os LAP descobrem o WLC por broadcast na VLAN 943 e ficam <b>Registered</b>.",
-  "É o <b>WLC que faz de relay DHCP</b>: o DISCOVER do cliente chega pelo túnel CAPWAP e sai pelo trunk, em unicast, para 10.43.0.1.",
+  "O DISCOVER do cliente chega ao WLC pelo túnel CAPWAP e sai pelo trunk na VLAN 543; a <b>SVI 543</b> dos DSW tem <code>ip helper-address 10.43.0.1</code> e faz o relay para o Lisboa. Na Fa0/21 do ASW3 é preciso <code>ip dhcp snooping trust</code>, senão o snooping descarta as respostas.",
   "No fim do TP07 o smartphone (543) ainda chega ao Server0: o isolamento dos convidados só fica completo com a ACL do TP09."],
  cmd:`vlan 543
  name WIFI-CONV-43
 interface fa0/21                 <span class="c">! ASW3, porta do WLC</span>
  switchport mode trunk
- switchport trunk native vlan 999
+ switchport trunk native vlan 943     <span class="c">! exceção documentada (PT)</span>
  switchport trunk allowed vlan 343,543,943,999
  switchport nonegotiate
  no switchport port-security
+ ip dhcp snooping trust
 interface fa0/20                 <span class="c">! ASW1 e ASW2, porta do LAP</span>
  switchport mode access
  switchport access vlan 943
@@ -901,12 +902,13 @@ interface vlan 543               <span class="c">! DSW1</span>
  standby 543 ip 10.43.5.1
  standby 543 priority 110
  standby 543 preempt
+ ip helper-address 10.43.0.1
 ip dhcp excluded-address 10.43.5.1 10.43.5.20   <span class="c">! Lisboa</span>
 ip dhcp pool WIFI-CONV-43
  network 10.43.5.0 255.255.255.0
  default-router 10.43.5.1
  dns-server 10.43.4.10`,
- cuidado:["LAP Registered mas sem clientes num SSID: ver a VLAN desse SSID no trunk do WLC, a interface dinâmica (VLAN e gateway) e o pool DHCP.","Se os LAP não aparecem no WLC: VLAN 943 na porta do LAP, pool GESTAO-AP-43 e relay na SVI 943, ou a gestão do WLC sem a etiqueta 943."], f2:[]});
+ cuidado:["LAP Registered mas sem clientes num SSID: ver a VLAN desse SSID no trunk do WLC, a interface dinâmica (VLAN e gateway) e o pool DHCP.","Se os LAP não aparecem no WLC: VLAN 943 na porta do LAP, pool GESTAO-AP-43 e relay na SVI 943, ou a nativa da Fa0/21 diferente de 943 (no PT a gestão do WLC vai sem etiqueta)."], f2:[]});
 
 /* ---------- Encaminhamento revisitado ---------- */
 topic({id:"r-rotas", title:"Como um router decide", short:"Encaminhamento", src:"Aula 7",
@@ -1036,7 +1038,7 @@ topic({id:"r-tp08", title:"TP08: migrar RIP → OSPF", short:"TP08 OSPF", src:"T
  frase:"Toda a empresa em OSPF área 0, com custos que evitam o enlace lento Porto–Braga, sem os utilizadores darem por nada.",
  extra:`<div class="tbl"><table>
 <tr><th>Equipamento</th><th>Router-id</th><th>network … area 0</th><th>Passivas / custo</th></tr>
-<tr><td>Lisboa</td><td class="n">1.1.1.43</td><td class="n">10.43.0.0 0.0.0.3 · 10.43.0.4 0.0.0.3 · 10.255.0.8/.16/.24 0.0.0.3</td><td>— (Se2/0 passiva no TP10)</td></tr>
+<tr><td>Lisboa</td><td class="n">1.1.1.43</td><td class="n">10.43.0.0 0.0.0.3 · 10.43.0.4 0.0.0.3 · 10.255.0.8/.16/.24 0.0.0.3</td><td>— (Se9/0 passiva no TP10)</td></tr>
 <tr><td>Porto</td><td class="n">2.2.2.43</td><td class="n">192.168.10.0 0.0.0.255 · 10.255.0.0/.4/.8 0.0.0.3</td><td>Fa0/0, Fa0/1, Et1/0, Et1/1 · Se0/3/0 custo 1000</td></tr>
 <tr><td>Braga</td><td class="n">3.3.3.43</td><td class="n">192.168.1.0 0.0.0.255 · 10.255.0.0/.12 0.0.0.3</td><td>Gi0/0 · Se0/0/0 custo 1000</td></tr>
 <tr><td>Coimbra</td><td class="n">4.4.4.43</td><td class="n">192.168.2.0 0.0.0.255 · 10.255.0.4/.12/.16/.20 0.0.0.3</td><td>Gi0/0/0</td></tr>
@@ -1048,15 +1050,17 @@ topic({id:"r-tp08", title:"TP08: migrar RIP → OSPF", short:"TP08 OSPF", src:"T
 <li>Lisboa → Braga vai por <b>Coimbra</b>: 647 + 647 = <b>1294</b> &lt; 647 + 1000. <code>show ip route 192.168.1.0</code> → <code>[110/1294] via 10.255.0.17</code>.</li>
 <li>Porto → Braga continua pelo enlace direto: 1000 &lt; 1294 (Porto–Coimbra–Braga). O custo forçado afasta Lisboa mas não o Porto.</li>
 <li>Em Lisboa, as redes da sede têm <b>dois next-hops</b> (10.43.0.2 e 10.43.0.6): caminhos de igual custo.</li>
-<li>LSDB igual em todos: <b>8 LSA tipo 1</b> (seis routers + dois DSW) e <b>1 LSA tipo 2</b> (a VLAN 943, gerado pelo DR). Os seriais ponto a ponto não geram tipo 2.</li>
+<li>LSDB igual em todos: <b>8 LSA tipo 1</b> (seis routers + dois DSW). <b>LSA tipo 2</b>: um por cada segmento Ethernet com DR e vizinhos (Lisboa–DSW1, Lisboa–DSW2 e a VLAN 943); os seriais ponto a ponto não geram tipo 2. (Valor corrigido na versão revista: confirma no teu <code>show ip ospf database</code>.)</li>
 <li>Reconvergência após cair Lisboa–Coimbra: <b>1–5 s</b> com OSPF; o RIP demorava até 180 s.</li>
-<li>Vizinhos de Lisboa (TP09, teste 1): 2.2.2.43, 4.4.4.43, 5.5.5.43, 7.7.7.43 e 8.8.8.43, todos FULL.</li>
+<li>Vizinhos de Lisboa: <b>5</b>, os três seriais (2.2.2.43, 4.4.4.43, 5.5.5.43, FULL/ -) e os dois DSW (7.7.7.43, 8.8.8.43, FULL/DR ou BDR).</li>
+<li>Porto–Braga: <code>ip ospf cost 1000</code> configurado <b>nos dois lados</b> (Porto Se0/3/0 e Braga Se0/0/0).</li>
 </ul></div>`,
- saber:["Antes de mudar: «fotografia» do RIP (<code>show ip route 192.168.1.0</code>, <code>traceroute</code>) e um <code>ping -t</code> do PC-ADM1 a correr durante toda a migração.",
+ saber:["Se o PT não tiver <code>show ip ospf interface brief</code>, usa <code>show ip ospf interface</code>. No fim, <code>copy running-config startup-config</code>.",
+  "Antes de mudar: «fotografia» do RIP (<code>show ip route 192.168.1.0</code>, <code>traceroute</code>) e um <code>ping -t</code> do PC-ADM1 a correr durante toda a migração.",
   "Nos seriais: <code>FULL/ -</code> (sem DR). Lisboa tem três vizinhos WAN, Coimbra quatro. <code>show ip ospf interface se6/0</code>: Cost 647, POINT_TO_POINT, Hello 10, Dead 40.",
   "Os DSW também falam OSPF: com o router pelos /30 e entre si pela <b>SVI 943</b> (o Po1 é trunk, não tem IP). Todas as outras SVI ficam passivas.",
   "<code>network 10.43.0.0 0.0.255.255</code> no DSW apanha todas as SVI 10.43.x.x de uma vez; o <code>passive-interface default</code> impede que mandem Hellos para os PC.",
-  "OSPFv3 no eixo Porto–Braga em vez do RIPng: <code>ipv6 router ospf 1</code>, router-id 2.2.2.43 / 3.3.3.43, <code>ipv6 ospf 1 area 0</code> em cada interface, depois <code>no ipv6 router rip RIP-PROC</code>. Em Braga as rotas do Porto aparecem com código O e next-hop FE80::…"],
+  "OSPFv3 no eixo Porto–Braga em vez do RIPng: <code>ipv6 router ospf 1</code>, router-id 2.2.2.43 / 3.3.3.43, <code>ipv6 ospf 1 area 0</code> em cada interface, depois <code>no ipv6 router rip RIP-PROC</code> <b>e</b> <code>no ipv6 rip RIP-PROC enable</code> em cada interface (remoção completa). Em Braga as rotas do Porto aparecem com código O e next-hop FE80::…"],
  cmd:`router ospf 1                  <span class="c">! Lisboa-DSW1</span>
  router-id 7.7.7.43
  auto-cost reference-bandwidth 1000
@@ -1149,7 +1153,7 @@ ip access-list standard ACL-GESTAO-43
  permit 10.43.9.0 0.0.0.255
  permit host 10.43.3.10
  deny any log
-line vty 0 4                     <span class="c">! switches: 0 15</span>
+line vty 0 4                     <span class="c">! e line vty 5 15, se existir</span>
  access-class ACL-GESTAO-43 in
 ipv6 access-list ACL6-BRAGA-43
  permit icmp any any
@@ -1165,13 +1169,14 @@ interface gi0/0
 <tr><td>Q4 DSW1 desligado → Administrativo sem rede</td><td>HSRP: <code>show standby brief</code> (DSW2 sem o grupo, IP virtual errado)</td></tr>
 <tr><td>Q5 LANs de Coimbra fora da tabela de Lisboa</td><td>OSPF: <code>show ip protocols</code>, <code>show ip ospf interface brief</code> (network/wildcard)</td></tr>
 <tr><td>Q6 Évora e Faro isolados</td><td>adjacência: <code>show ip ospf neighbor</code>, área/hello/autenticação</td></tr>
-</table></div><p class="note">Estas são hipóteses de onde começar, não as respostas. Cotação: 0,25 % por avaria (0,15 diagnóstico com o comando que a revelou + 0,10 correção verificada); sem o comando vale metade; apagar tudo e reconfigurar vale zero; relatório 0,5 %.</p></div>`,
+</table></div><p class="note">Estas são hipóteses de onde começar, não as respostas. Tempo ≈ 35 min. Cotação: 0,25 % por avaria (0,15 diagnóstico com o comando que a revelou + 0,10 correção verificada); uma correção <b>sem o comando</b> que a revelou vale <b>0,10 %</b>; apagar tudo e reconfigurar vale zero; relatório 0,5 %.</p></div>`,
  saber:["P1 e P2 são extended e vão <b>in na SVI da VLAN de origem</b>, nos <b>dois DSW</b>, porque com HSRP qualquer um pode ser o gateway ativo. Os contadores sobem no DSW ativo.",
   "P1 aplicada <b>in na 243</b> em vez de out nas 343 e 443: o tráfego é descartado logo à entrada e chega uma ACL por DSW em vez de várias.",
-  "Em P2 o DHCP (UDP 67) tem de passar <b>antes</b> dos deny, senão os convidados nem endereço obtêm. Com o WLC a fazer relay, o pedido entra na rede cablada a partir do WLC (10.43.5.20).",
+  "Em P2 o DHCP (UDP 67) tem de passar <b>antes</b> dos deny, senão os convidados nem endereço obtêm. O DISCOVER chega em broadcast à SVI 543, onde a ACL in é avaliada antes de o helper o reencaminhar.",
   "Resultado de P1: PC-COM1 abre http://10.43.4.10, mas o ping a 10.43.4.10 e a 10.43.3.10 falha (<i>administratively prohibited</i>); ping a Braga funciona.",
-  "P3 é standard porque só interessa a origem. Aplica-se também nos switches de acesso porque também têm SSH (IP de gestão). Tentativas recusadas geram <code>%SEC-6-IPACCESSLOGNP</code> por causa do <code>log</code>.",
-  "P4 vai <b>out na LAN</b> de Braga para não interferir com o OSPFv3 na WAN. Aplicada in na Se0/0/0 com <code>deny ipv6 any any</code>, cortaria os Hellos OSPFv3 e a vizinhança cairia."],
+  "P3 é standard porque só interessa a origem. Aplica-se também nos switches de acesso porque também têm SSH (IP de gestão), e também nas <code>line vty 5 15</code> se existirem. Routers sem SSH: configurá-lo primeiro. Tentativas recusadas geram <code>%SEC-6-IPACCESSLOGNP</code> por causa do <code>log</code>.",
+  "P4 vai <b>out na LAN</b> de Braga para não interferir com o OSPFv3 na WAN. Aplicada in na Se0/0/0 com <code>deny ipv6 any any</code>, cortaria os Hellos OSPFv3 e a vizinhança cairia.",
+  "Teste de P4 (versão revista): do PC9, http://[2001:DB8:B8A6::A] abre e <b>https://</b> falha (o servidor do PT não tem SSH, por isso testar com ssh não provava nada)."],
  cmd:`ip access-list extended ACL-COMERCIAL-43
  remark P1 - Comercial: so web para os servidores, nada para o Tecnico
  permit tcp 10.43.2.0 0.0.0.255 host 10.43.4.10 eq 80
@@ -1207,19 +1212,19 @@ topic({id:"r-nat", title:"NAT e PAT", short:"NAT", src:"Aula 9 · TP10",
 <p>Por isso uma ACL na interface externa escreve-se com o <b>endereço público</b> (198.51.100.43).</p></div>`,
  saber:["O IPv4 acabou: ou um público por posto, ou traduzir. O IPv6 resolve por abundância, mas o NAT vai continuar.",
   "<code>ip nat inside</code> nas interfaces viradas para dentro e <code>ip nat outside</code> na do ISP. Sem estas duas linhas nada é traduzido: <code>show ip nat translations</code> vazia e tudo o resto aparentemente certo.",
-  "PAT com a interface (o caso da empresa): <code>ip nat inside source list NAT-INSIDE-43 interface se2/0 overload</code>. Com um pool: <code>… pool NOME overload</code>.",
+  "PAT com a interface (o caso da empresa): <code>ip nat inside source list NAT-INSIDE-43 interface se9/0 overload</code>. Com um pool: <code>… pool NOME overload</code>.",
   "Em teoria cabem cerca de 65 000 traduções simultâneas num endereço (portos de 16 bits); na prática limitam a memória e o tempo de vida das entradas (<code>ip nat translation timeout</code>).",
   "<b>O NAT estático expõe todos os portos</b> do servidor. Correções: NAT por porto (<code>ip nat inside source static tcp 10.43.4.10 80 198.51.100.43 80</code>) ou ACL na interface externa com o endereço público.",
   "<b>O que o NAT parte</b>: protocolos com endereços na carga útil (FTP ativo, SIP: precisam de ALG), ligações entrantes não pedidas, IPsec AH (a integridade cobre o cabeçalho IP) e a rastreabilidade (milhares de pessoas atrás de um endereço).",
-  "Hairpinning: o PC-ADM1 pode não conseguir abrir http://198.51.100.43 por dentro, porque o pedido não atravessa a interface outside."],
+  "Hairpinning: o PC-ADM1 <b>não</b> consegue abrir http://198.51.100.43 por dentro (o IOS/PT não o suporta por omissão): de dentro usa-se <b>10.43.4.10</b>."],
  cmd:`ip access-list standard NAT-INSIDE-43
  permit 10.43.0.0 0.0.255.255
  permit 192.168.0.0 0.0.255.255
-ip nat inside source list NAT-INSIDE-43 interface se2/0 overload
+ip nat inside source list NAT-INSIDE-43 interface se9/0 overload
 ip nat inside source static 10.43.4.10 198.51.100.43
 interface range fa0/0 , fa1/0 , se6/0 , se7/0 , se8/0
  ip nat inside
-interface se2/0
+interface se9/0
  ip nat outside
 <span class="c">! verificar</span>
 show ip nat translations
@@ -1244,20 +1249,26 @@ topic({id:"r-tp10", title:"TP10: Internet, NAT e operação da rede", short:"TP1
 <tr><td class="n">3</td><td>errors</td><td class="n">7</td><td>debugging</td></tr>
 </table></div>
 <p class="note"><code>logging trap informational</code> envia os níveis 0 a 6 (quanto menor o número, mais grave). Mensagens a ver: <code>%SYS-5-CONFIG_I</code>, <code>%LINK-3-UPDOWN</code>, <code>%LINEPROTO-5-UPDOWN</code>, <code>%SEC-6-IPACCESSLOGNP</code>.</p>`,
- saber:["Contrato do ISP: Lisboa Se2/0 = <b>203.0.113.2/30</b> (ISP 203.0.113.1) e o bloco <b>198.51.100.0/24</b> para publicar serviços. O Server0 fica em <b>198.51.100.43</b>.",
+ saber:["Contrato do ISP: Lisboa <b>Se9/0</b> = <b>203.0.113.2/30</b> (ISP 203.0.113.1, Se0/0/0 do lado DCE) e o bloco <b>198.51.100.0/24</b> para publicar serviços. O Server0 fica em <b>198.51.100.43</b>.",
+  "<b>Versão revista (23-11-2026)</b>: o enlace ao ISP usa a <b>Serial9/0</b> do Lisboa, que já existe e está livre. <b>Não se instala o NM-1S</b> (o slot 2 já tem a Fa2/0).",
   "Rota por omissão em Lisboa e <code>default-information originate</code> no OSPF: em Faro, Porto e DSW aparece <b>O*E2 0.0.0.0/0 [110/1]</b>. Sem NAT, Faro → 8.8.8.8 falha: o ISP não sabe voltar para 192.168.4.x.",
-  "PAT: as duas ligações à sede (Fa0/0, Fa1/0) e os três seriais para as cidades são <b>inside</b>; a Se2/0 é <b>outside</b>. Em <code>show ip nat translations</code> o PC-ADM1, o PC9 e o smartphone aparecem todos com 203.0.113.2 e portos/IDs diferentes.",
+  "PAT: as duas ligações à sede (Fa0/0, Fa1/0) e os três seriais para as cidades (Se6/0, Se7/0, Se8/0) são <b>inside</b>; a Se9/0 é <b>outside</b>. Se o PT recusar o <code>interface range</code> com tipos mistos, configura uma a uma. Em <code>show ip nat translations</code> o PC-ADM1, o PC9 e o smartphone aparecem todos com 203.0.113.2 e portos/IDs diferentes.",
   "NAT estático: do ISP, <code>ping 198.51.100.43</code> e http funcionam; <code>ping 10.43.4.10</code> falha (privado, não encaminhável fora).",
   "<b>NTP</b>: sem relógio comum é impossível saber que mensagem de syslog veio primeiro. <b>Stratum</b> = distância à fonte de tempo (0 é o relógio de referência, 1 o servidor ligado a ele…).",
   "<b>SNMP</b>: <b>GET</b> lê, <b>SET</b> escreve, <b>TRAP</b> é o equipamento a avisar sozinho. A comunidade é uma palavra-passe; em v2c vai em claro. <b>SNMPv3</b> traz utilizadores, autenticação e cifra. Com <code>ro</code> o SET falha; com a comunidade errada não há resposta.",
-  "Syslog e NTP são tráfego interno: não passam pelo NAT."],
- cmd:`interface se2/0
+  "Syslog e NTP são tráfego interno: não passam pelo NAT.",
+  "<b>SNMP nos restantes</b>: o mesmo contacto (<code>acunha@minhaempresa.pt</code>); routers com <code>snmp-server location &lt;Cidade&gt; - bastidor</code> (ex.: Faro - bastidor); os dois DSW com <code>Lisboa - sala tecnica</code>.",
+  "Cópias: <code>copy running-config tftp:</code> de todos com o nome <code>&lt;hostname&gt;-TP10-&lt;n.º&gt;.cfg</code>; no Server0 ficam <b>11 ficheiros .cfg</b> (6 routers + 2 DSW + 3 ASW; o ISP não conta).",
+  "Notas do PT: se <code>show logging | include …</code> não for aceite, usa <code>show logging</code> sem filtro; <code>%SEC-6-IPACCESSLOGNP</code> pode não aparecer, confirma o deny pelos contadores de <code>show access-lists</code>; o stratum do Server0 pode ser 2 ou outro (o cliente fica <i>synchronized</i>, o valor exato não interessa).",
+  "<b>Hairpin</b>: de dentro, http://198.51.100.43 não funciona; os utilizadores internos usam <b>10.43.4.10</b>."],
+ cmd:`interface se9/0
+ description Enlace ISP
  ip address 203.0.113.2 255.255.255.252
  ip nat outside
 ip route 0.0.0.0 0.0.0.0 203.0.113.1
 router ospf 1
  default-information originate
- passive-interface se2/0
+ passive-interface se9/0
 service timestamps log datetime msec
 logging 10.43.4.10
 logging trap informational
@@ -1353,6 +1364,164 @@ topic({id:"r-qos", title:"QoS: quem sofre quando falta largura de banda", short:
  cuidado:["Voz: EF (46) e LLQ.","PQ pura pode deixar as outras classes sem passar; a LLQ limita a fila prioritária para evitar isso."], f2:[]});
 
 /* ---------- Automação ---------- */
+/* ---------- Aula 11: gestão, desenho e diagnóstico ---------- */
+topic({id:"r-syslog", title:"Syslog e NTP: quem, quando e o quê", short:"Syslog e NTP", src:"Aula 11 · TP10",
+ frase:"Uma rede que funciona faz passar pacotes; uma rede operada responde a «quem mexeu, quando e o quê?». Primeiro o NTP, depois o syslog.",
+ extra: pal([["Syslog","mensagens de cada equipamento enviadas para um servidor central (UDP 514)"],["Buffer local","onde as mensagens ficam sem servidor: volátil, perde-se ao reiniciar"],["NTP","protocolo que sincroniza os relógios (UDP 123)"],["Stratum","distância à fonte de tempo: 0 é a fonte (atómico, GPS), 1 está ligado a ela, 2, 3…"],["SIEM","plataforma que correlaciona registos; só faz sentido com equipa para a operar"]]) + `
+<div class="tbl"><table>
+<tr><th>Nível</th><th>Palavra-chave</th><th>Significado</th><th>Mnemónica</th></tr>
+<tr><td class="n">0</td><td>emergencies</td><td>sistema inutilizável</td><td><b>E</b>very</td></tr>
+<tr><td class="n">1</td><td>alerts</td><td>ação imediata necessária</td><td><b>A</b>wesome</td></tr>
+<tr><td class="n">2</td><td>critical</td><td>condição crítica</td><td><b>C</b>isco</td></tr>
+<tr><td class="n">3</td><td>errors</td><td>condição de erro</td><td><b>E</b>ngineer</td></tr>
+<tr><td class="n">4</td><td>warnings</td><td>aviso</td><td><b>W</b>ill</td></tr>
+<tr><td class="n">5</td><td>notifications</td><td>normal mas significativo</td><td><b>N</b>eed</td></tr>
+<tr><td class="n">6</td><td>informational</td><td>informativo: o nível do TP10</td><td><b>I</b>ce cream</td></tr>
+<tr><td class="n">7</td><td>debugging</td><td>depuração: enche um disco numa noite</td><td><b>D</b>aily</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Comando</th><th>Responde a</th></tr>
+<tr><td><code>logging host 10.43.4.10</code></td><td>para onde</td></tr>
+<tr><td><code>logging trap informational</code></td><td>até que nível (envia 0 a 6)</td></tr>
+<tr><td><code>logging source-interface …</code></td><td>com que endereço de origem</td></tr>
+<tr><td><code>service sequence-numbers</code></td><td>numerar as mensagens</td></tr>
+<tr><td><code>service timestamps log datetime msec</code></td><td>com hora ao milissegundo</td></tr>
+</table></div>`,
+ saber:["Sem servidor central só há o <b>buffer local</b>, que se perde ao reiniciar. No TP10 o servidor de syslog é o <b>Server0 (10.43.4.10)</b>.",
+  "A pergunta que justifica o NTP: Faro regista «10:14:03» e Lisboa «09:58:41» sobre o mesmo incidente. Qual foi primeiro? <b>Sem relógio comum, não se sabe</b>, e os registos deixam de servir para investigar.",
+  "O NTP organiza-se por <b>stratum</b>, mede o atraso de ida e volta e corrige a deriva <b>gradualmente, sem saltos</b>.",
+  "Configuração: uma ou duas referências internas (no TP10 o Server0); todos os outros com <code>ntp server</code>. <code>ntp master</code> faz do equipamento a referência. Verificar com <code>show ntp status</code> e <code>show ntp associations</code>.",
+  "<b>A regra prática</b>: <code>service timestamps log datetime msec</code> + NTP em todos os equipamentos, ou não vale a pena ter syslog. Sem <code>msec</code>, dois eventos no mesmo segundo ficam sem ordem.",
+  "Guardar não chega: retenção definida, filtros por severidade, alertas só para o que interessa. Nesta empresa: um servidor syslog e uma revisão semanal.",
+  "Aplicado ao caso da direção técnica: a resposta é uma linha <code>%SYS-5-CONFIG_I</code>. <b>Quem</b>: utilizador e endereço de origem; <b>quando</b>: hora fiável ao milissegundo; <b>o quê</b>: comparar com a cópia da véspera."],
+ cmd:`service timestamps log datetime msec
+service sequence-numbers
+ntp server 10.43.4.10
+clock timezone WET 0
+logging host 10.43.4.10
+logging trap informational
+show ntp status          <span class="c">! Clock is synchronized</span>
+show ntp associations
+show logging`,
+ cuidado:["Quanto <b>menor</b> o número do nível, mais grave. <code>logging trap informational</code> (6) envia 0 a 6; debugging (7) nunca em produção.","Primeiro o NTP, depois o syslog: registos com horas erradas não se conseguem correlacionar.","O cliente NTP fica com o stratum do servidor + 1 (no PT o valor exato pode variar)."], f2:[]});
+
+topic({id:"r-snmp", title:"SNMP e cópias de segurança", short:"SNMP e backups", src:"Aula 11 · TP10",
+ frase:"O syslog diz o que aconteceu; o SNMP diz como está. E sem cópia da véspera não se sabe o que mudou.",
+ extra: pal([["NMS","o gestor: o sistema de monitorização que pergunta"],["Agente","o software SNMP no equipamento que responde"],["MIB","árvore hierárquica e normalizada de objetos geridos (mais ramos de cada fabricante)"],["OID","o identificador de cada objeto na MIB (ex.: …mib-2.system.sysName)"],["Comunidade","a «palavra-passe» do SNMP v1/v2c, em texto claro"]]) + `
+<div class="tbl"><table>
+<tr><th>Operação</th><th>Quem inicia</th><th>Para quê</th></tr>
+<tr><td><b>GET</b></td><td>gestor lê (polling)</td><td>tendências: CPU, memória, tráfego das interfaces</td></tr>
+<tr><td><b>SET</b></td><td>gestor escreve</td><td>raramente ativado, e por boas razões</td></tr>
+<tr><td><b>TRAP</b></td><td>o agente avisa sem esperar pergunta</td><td>alertas</td></tr>
+<tr><td><b>INFORM</b></td><td>o agente avisa</td><td>como o TRAP, mas com confirmação</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Versão / nível</th><th>Autenticação</th><th>Cifra</th><th>Onde se usa</th></tr>
+<tr><td>v1</td><td>community em claro</td><td>não</td><td>obsoleto</td></tr>
+<tr><td>v2c</td><td>community em claro</td><td>não</td><td>TP10: rede fechada, limite do PT</td></tr>
+<tr><td>v3 noAuthNoPriv</td><td>só o nome de utilizador</td><td>não</td><td>não usar</td></tr>
+<tr><td>v3 authNoPriv</td><td>utilizador + HMAC (SHA)</td><td>não</td><td>autentica, mas os dados vão legíveis</td></tr>
+<tr><td>v3 <b>authPriv</b></td><td>utilizador + HMAC (SHA)</td><td><b>sim (AES)</b></td><td><b>produção</b></td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Comando</th><th>Efeito</th></tr>
+<tr><td><code>copy running-config tftp:</code></td><td>guardar a cópia</td></tr>
+<tr><td><code>copy tftp: running-config</code></td><td><b>funde</b> com o que lá está: resultado irreproduzível</td></tr>
+<tr><td><code>copy tftp: startup-config</code> + <code>reload</code></td><td><b>substitui</b>: a forma certa de restaurar</td></tr>
+</table></div>`,
+ saber:["Syslog e SNMP são <b>complementares</b> e confundem-se sempre: syslog = eventos (o que aconteceu); SNMP = estado (utilização, CPU, memória, temperatura).",
+  "<b>Polling</b> (GET) serve para tendências; <b>traps</b> servem para alertas. Na prática o sistema de monitorização já conhece os OID.",
+  "TP10: <code>snmp-server community minha43 ro</code> em v2c, lido pelo MIB Browser do Portátil-GEST (UDP 161). Com <code>ro</code> o SET falha; com a comunidade errada não há resposta (timeout).",
+  "O que se guarda numa cópia: a <b>startup-config</b> de cada equipamento, a <b>imagem do IOS</b> e o <b>inventário</b> (modelo, versão, número de série). Nome = equipamento + data, ex.: <code>ASW1-43_2026-11-24.cfg</code>.",
+  "Automatizar a cópia com <code>archive</code>: <code>path</code> (para onde e com que nome), <code>write-memory</code> (uma cópia a cada gravação) e <code>time-period</code> (periodicamente). Ou um script que percorre o inventário: configuração à mão não escala."],
+ cmd:`snmp-server community minha43 ro
+snmp-server location Lisboa - sala tecnica
+snmp-server contact acunha@minhaempresa.pt
+archive
+ path tftp://10.43.4.10/$h-
+ write-memory
+ time-period 1440
+copy running-config tftp:`,
+ cuidado:["v2c manda a comunidade em claro: quem captura o tráfego lê-a. Em produção, SNMPv3 authPriv.","Restaurar para a running <b>funde</b> configurações (fica o que já lá estava); para repor exatamente, copiar para a startup e fazer reload."], f2:[]});
+
+topic({id:"r-hier", title:"Desenho hierárquico e núcleo colapsado", short:"Desenho hierárquico", src:"Aula 11",
+ frase:"Acesso liga, distribuição agrega e aplica política, núcleo transporta depressa. E saber quando não usar as três camadas é tão importante como conhecê-las.",
+ extra:`<div class="tbl"><table>
+<tr><th>Camada</th><th>Função</th><th>Na empresa</th></tr>
+<tr><td><b>Acesso</b></td><td>liga os utilizadores: port security, QoS de entrada</td><td>ASW1–ASW3 (e ASW4 no TP11)</td></tr>
+<tr><td><b>Distribuição</b></td><td>agrega; encaminha entre VLANs; aplica política (ACL)</td><td>DSW1 e DSW2 (SVI, HSRP, ACL)</td></tr>
+<tr><td><b>Núcleo</b></td><td>transporta depressa, e não faz mais nada</td><td>colapsado no router Lisboa</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Documento</th><th>O que responde</th></tr>
+<tr><td>Diagrama físico</td><td>que cabo liga a que porta, em que bastidor</td></tr>
+<tr><td>Diagrama lógico</td><td>sub-redes, VLANs, gateways, encaminhamento</td></tr>
+<tr><td>Plano de endereçamento</td><td>que endereço tem cada interface e cada serviço</td></tr>
+<tr><td>Plano de VLANs</td><td>que VLAN, com que nome, em que switches e troncos</td></tr>
+<tr><td>Inventário</td><td>modelo, versão do IOS, número de série, localização</td></tr>
+</table></div>`,
+ saber:["<b>Benefícios</b>: escalabilidade (cresce por módulos), redundância (caminhos alternativos na distribuição e no núcleo), desempenho (agregação de ligações), segurança (port security no acesso, política na distribuição) e gestão (sabe-se onde cada configuração deve estar).",
+  "<b>Diâmetro da rede</b> = número de equipamentos entre dois pontos quaisquer. Deve ser baixo e previsível: latência estimável e convergência rápida do STP e do OSPF. Na sede: ASW, DSW, ASW, <b>três</b>, venha de onde vier.",
+  "<b>Agregação</b>: cada camada agrega a de baixo, por isso os uplinks têm de ter capacidade para o que agregam (o EtherChannel entre DSW1 e DSW2 do TP05).",
+  "<b>Redes convergentes</b>: dados, voz e vídeo na mesma infraestrutura; é isso que torna necessário o QoS da aula 10.",
+  "<b>Collapsed core</b>: nesta empresa não há núcleo dedicado, o núcleo colapsa no router de Lisboa. Duas camadas é o modelo correto aqui; um núcleo dedicado seria dinheiro parado.",
+  "Quando se justifica separar o núcleo: <b>vários edifícios</b>, <b>mais de três ou quatro switches de distribuição</b> (número indicativo), ou uma disponibilidade que não tolera encaminhamento e política no mesmo equipamento.",
+  "<b>O mapa a partir do CDP</b>: <code>show cdp neighbors detail</code> de equipamento em equipamento reconstrói a topologia física de uma rede não documentada. Num tronco é ferramenta; numa porta de acesso é risco (por isso <code>no cdp enable</code> nas portas de acesso)."],
+ cmd:`show cdp neighbors            <span class="c">! vizinhos diretos, porta local e remota</span>
+show cdp neighbors detail     <span class="c">! + IP, modelo e versão do IOS</span>
+interface range fa0/1 - 24
+ no cdp enable                <span class="c">! nas portas de acesso</span>`,
+ cuidado:["O núcleo não aplica política nem filtra: só transporta. ACL e encaminhamento inter-VLAN são da distribuição.","Três camadas não é sempre melhor: numa empresa com um só edifício e dois DSW, o núcleo colapsado é a resposta certa."], f2:[]});
+
+topic({id:"r-diag", title:"Metodologia de diagnóstico", short:"Diagnóstico", src:"Aula 11 · Desafios 1 e 2",
+ frase:"Um ping que falha diz apenas que há um problema. A causa prova-se com a saída de um show.",
+ extra:`<div class="tbl"><table>
+<tr><th>Abordagem</th><th>Como</th><th>Quando</th><th>Custo</th></tr>
+<tr><td><b>Bottom-up</b></td><td>começa na camada física e sobe</td><td>suspeita da infraestrutura; problema que afeta muita gente</td><td>em problemas aplicacionais, muito tempo a confirmar o que estava bem</td></tr>
+<tr><td><b>Top-down</b></td><td>começa na aplicação e desce</td><td>«o programa não abre» e mais ninguém se queixa</td><td>simétrico: se a causa for física, chega-se lá no fim</td></tr>
+<tr><td><b>Divide-and-conquer</b></td><td>parte pela camada 3 (ping ao gateway, ping ao destino) e sobe ou desce</td><td>quem tem intuição sobre a rede</td><td>o mais rápido, mas a intuição vem de ter feito bottom-up muitas vezes</td></tr>
+</table></div>
+<div class="blk"><h3>Recolher sintomas a sério</h3><ul>
+<li>Quem é afetado? Quem mais?</li>
+<li>Desde quando? Funcionava antes?</li>
+<li><b>O que é que mudou ontem?</b> A pergunta mais rentável de todas.</li>
+</ul></div>`,
+ saber:["Desde o TP2 usam o diagnóstico por camadas (bottom-up); a aula 11 dá nome ao método e acrescenta as alternativas.",
+  "Ter método não é burocracia: permite parar a meio, entregar a outra pessoa, e essa pessoa continuar.",
+  "O método em seis passos (ciclo): recolher sintomas → isolar/delimitar o problema → formular hipótese → testar a hipótese com um comando → corrigir → verificar e documentar.",
+  "<b>A evidência é o comando</b>: a causa prova-se com a saída de um <code>show</code>, não com uma intuição confirmada só porque a correção funcionou. É o critério de avaliação dos <b>dois desafios</b> (uma correção sem o comando que a revelou vale só 0,10 %).",
+  "Divide-and-conquer na prática: o PC chega ao gateway? Se não, desce (VLAN, trunk, porta, port security). Se sim mas não chega ao destino, sobe/avança (encaminhamento, OSPF, ACL, NAT)."],
+ cmd:`<span class="c">! camada 1–2</span>
+show interfaces status
+show vlan brief
+show interfaces trunk
+show port-security interface fa0/1
+<span class="c">! camada 3</span>
+show ip interface brief
+show ip route
+show ip ospf neighbor
+<span class="c">! política</span>
+show access-lists
+show ip nat translations`,
+ cuidado:["«Funciona agora» não prova a causa: regista o show que mostrou o erro antes de corrigir.","Apagar tudo e reconfigurar resolve o sintoma mas não é diagnóstico (nos desafios vale zero)."], f2:[]});
+
+topic({id:"r-template", title:"Dados separados do template", short:"Template e dados", src:"Aula 11 · TP11",
+ frase:"Com template, 40 switches levam o mesmo tempo que 4, e a política fica num sítio só.",
+ extra:`<div class="tbl"><table>
+<tr><th></th><th>À mão</th><th>Com template</th></tr>
+<tr><td>4 switches</td><td>uma tarde, dois erros de transcrição</td><td rowspan="2">o mesmo tempo para 4 ou 40</td></tr>
+<tr><td>40 switches</td><td>uma semana, vinte erros</td></tr>
+<tr><td>Mudar o servidor de syslog</td><td>entrar em todos os equipamentos</td><td>uma linha no template</td></tr>
+</table></div>`,
+ saber:["A ideia central do TP11: separar <b>o que muda</b> (dados: nome, portas, VLANs, IP de gestão) do <b>que é sempre igual</b> (template). Um programa junta os dois e gera a configuração.",
+  "Candidatos naturais a template são as linhas iguais em todos os equipamentos: <code>logging host</code>, <code>ntp server</code>, <code>snmp-server</code>, SSH, port security.",
+  "Calendário: o TP11 desta semana já faz automação, mas a <b>aula 12 (15 de dezembro)</b> é que trata REST e JSON, colar texto na consola vs chamar uma API, SDN e virtualização, e o que a IA muda no trabalho. Leitura: ENSA 10, 11 e 12.",
+  "Esta semana: TP11 com o <b>Desafio 2</b> avaliado, com os mesmos critérios do Desafio 1."],
+ cmd:`hostname {{ hostname }}
+logging host {{ syslog }}     <span class="c">! mudar o servidor = mudar um dado</span>
+ntp server {{ ntp }}`,
+ cuidado:["Um erro no template replica-se em todos os equipamentos: rever o ficheiro gerado e verificar com show depois de aplicar."], f2:[]});
+
 topic({id:"r-tp11", title:"TP11: automação e Desafio 2", short:"TP11 automação", src:"TP11",
  frase:"Separar o que muda (dados) do que é sempre igual (template): escreve-se uma vez e gera-se para dez switches.",
  extra: pal([["CSV / JSON","formatos de dados: tabela de texto / lista de objetos com pares chave-valor"],["Template","configuração com «buracos» que um programa preenche"],["Jinja2","biblioteca Python de templates: {{ variável }} e {% for %}"],["REST","API por HTTPS com verbos GET, POST, PUT, PATCH, DELETE"],["RESTCONF / NETCONF","APIs normalizadas dos equipamentos (JSON/XML sobre HTTPS / XML sobre SSH)"]]) + `
@@ -2161,7 +2330,7 @@ function renderMap(M=MAP, el="map", t1="RD2 · Teste 1", t2="NN = 43 · 17 nov")
 
 /* ---------- resumo ---------- */
 function renderSide(){
-  document.getElementById("side").innerHTML = CHAPTERS.map((ch,i)=>`${ch.t2 && !(CHAPTERS[i-1]||{}).t2 ? `<p class="t2sep">Teste 2 · aulas 7–10 e TP07–TP11</p>` : ""}<div><h4>${esc(ch.name)}</h4><div class="grp">${ch.topics.map(id=>`<a href="#${id}" data-t="${id}" style="${tcv(id)}">${esc(T[id].title)}</a>`).join("")}</div></div>`).join("");
+  document.getElementById("side").innerHTML = CHAPTERS.map((ch,i)=>`${ch.t2 && !(CHAPTERS[i-1]||{}).t2 ? `<p class="t2sep">Teste 2 · aulas 7–11 e TP07–TP11</p>` : ""}<div><h4>${esc(ch.name)}</h4><div class="grp">${ch.topics.map(id=>`<a href="#${id}" data-t="${id}" style="${tcv(id)}">${esc(T[id].title)}</a>`).join("")}</div></div>`).join("");
 }
 function showTopic(id, flash){
   const o = T[id]; const i = ORDER.indexOf(id); const prev = ORDER[i-1], next = ORDER[i+1];
